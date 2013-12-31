@@ -1,0 +1,86 @@
+<resources>
+    <style name="Fill">
+        <item name="android:layout_width">fill_parent</item>
+        <item name="android:layout_height">fill_parent</item>
+    </style>
+    <style name="Wrap">
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">wrap_content</item>
+    </style>
+    <style name="FillWidth" parent="Wrap">
+        <item name="android:layout_width">fill_parent</item>
+    </style>
+    <style name="FillHeight" parent="Wrap">
+        <item name="android:layout_height">fill_parent</item>
+    </style>
+
+    <style name="HeaderDivider">
+        <item name="android:layout_width">fill_parent</item>
+        <item name="android:layout_height">1dp</item>
+        <item name="android:background">@color/white</item>
+        <item name="android:layout_marginLeft">16dp</item>
+        <item name="android:layout_marginRight">16dp</item>
+    </style>
+
+    <style name="ItemDivider">
+        <item name="android:layout_width">fill_parent</item>
+        <item name="android:layout_height">2dp</item>
+        <item name="android:background">@color/stacknav_white</item>
+        <item name="android:layout_marginLeft">16dp</item>
+        <item name="android:layout_marginRight">16dp</item>
+    </style>
+
+    <style name="ShadowText">
+        <item name="android:shadowColor">@color/black_overlay</item>
+        <item name="android:shadowDx">0</item>
+        <item name="android:shadowDy">4</item>
+        <item name="android:shadowRadius">5.0</item>
+    </style>
+
+    <style name="NavDrawerItem" parent="FillWidth">
+        <item name="android:onClick">navigationDrawerItemClick</item>
+    </style>
+
+    <style name="NavigationDrawerDivider">
+        <item name="android:layout_width">fill_parent</item>
+        <item name="android:layout_height">1dp</item>
+        <item name="android:background">@color/white_overlay</item>
+    </style>
+
+    <style name="CustomTitlePageIndicator">
+        <item name="android:background">@color/translucent_black</item>
+        <item name="footerColor">#B8041C</item>
+        <item name="footerLineHeight">1dp</item>
+        <item name="footerIndicatorHeight">3dp</item>
+        <item name="footerIndicatorStyle">underline</item>
+        <item name="android:textColor">#E5E5E5</item>
+        <item name="selectedColor">#E5E5E5</item>
+        <item name="selectedBold">true</item>
+    </style>
+
+    <style name="CheckinTitlePageIndicator">
+        <item name="android:background">@color/translucent_black</item>
+        <item name="footerColor">#B8041C</item>
+        <item name="footerLineHeight">1dp</item>
+        <item name="footerIndicatorHeight">3dp</item>
+        <item name="footerIndicatorStyle">underline</item>
+        <item name="android:textColor">#E5E5E5</item>
+        <item name="selectedColor">#E5E5E5</item>
+        <item name="selectedBold">true</item>
+    </style>
+
+    <style name="Theme.SmoothProgressBarDefaults" parent="android:Theme">
+        <item name="spbStyle">@style/SmoothProgressBar</item>
+    </style>
+
+    <style name="SmoothProgressBar" parent="android:Widget.ProgressBar.Horizontal">
+        <item name="spb_color">@color/spb_default_color</item>
+        <item name="spb_sections_count">@integer/spb_default_sections_count</item>
+        <item name="spb_speed">@string/spb_default_speed</item>
+        <item name="spb_stroke_width">@dimen/spb_default_stroke_width</item>
+        <item name="spb_stroke_separator_length">@dimen/spb_default_stroke_separator_length</item>
+        <item name="spb_reversed">@bool/spb_default_reversed</item>
+        <item name="spb_mirror_mode">@bool/spb_default_mirror_mode</item>
+    </style>
+
+</resources>

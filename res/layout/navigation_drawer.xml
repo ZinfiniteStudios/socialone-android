@@ -1,0 +1,159 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:socialone="http://socialone-android/schema"
+    xmlns:oak="http://oak/oak/schema"
+    android:orientation="vertical"
+    android:layout_width="240dp"
+    android:layout_height="match_parent"
+    android:layout_gravity="start"
+    android:background="@color/black_overlay">
+
+    <ScrollView
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent"
+        android:scrollbars="none"
+        android:overScrollMode="never">
+
+        <LinearLayout
+            android:orientation="vertical"
+            android:layout_width="fill_parent"
+            android:layout_height="fill_parent">
+
+            <RelativeLayout
+                android:id="@+id/drawer_user_profile"
+                android:layout_height="120dp"
+                android:layout_width="fill_parent" >
+
+                <ImageView
+                    android:id="@+id/user_background_image"
+                    android:layout_height="fill_parent"
+                    android:layout_width="fill_parent"
+                    android:scaleType="centerCrop"/>
+
+                <ImageView
+                    android:id="@+id/user_profile_image"
+                    android:layout_width="75dp"
+                    android:layout_height="75dp"
+                    android:layout_margin="4dp"
+                    android:layout_alignParentBottom="true"
+                    android:layout_alignParentLeft="true"
+                    android:scaleType="centerCrop" />
+
+                <oak.widget.TextViewWithFont
+                    style="@style/ShadowText"
+                    android:id="@+id/user_name"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentBottom="true"
+                    android:layout_marginBottom="24dp"
+                    android:layout_marginLeft="85dp"
+                    android:text="David Hodge" />
+
+                <oak.widget.TextViewWithFont
+                    style="@style/ShadowText"
+                    android:id="@+id/user_location"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentBottom="true"
+                    android:layout_marginBottom="4dp"
+                    android:layout_marginLeft="85dp"
+                    oak:font="Roboto-Thin.ttf"
+                    android:text="Charlottesville, VA" />
+
+            </RelativeLayout>
+
+            <View
+                style="@style/NavigationDrawerDivider"/>
+
+            <com.socialone.android.viewcomponents.NavDrawerItem
+                style="@style/NavDrawerItem"
+                android:id="@+id/nav_item_share"
+                socialone:itemText="Share" />
+
+            <View
+                style="@style/NavigationDrawerDivider"/>
+
+            <com.socialone.android.viewcomponents.NavDrawerItem
+                style="@style/NavDrawerItem"
+                android:id="@+id/nav_item_optifeed"
+                socialone:itemText="OptiFeed" />
+
+            <View
+                style="@style/NavigationDrawerDivider"/>
+
+            <com.socialone.android.viewcomponents.NavDrawerItem
+                style="@style/NavDrawerItem"
+                android:id="@+id/nav_item_facebook"
+                socialone:itemText="Facebook" />
+
+            <View
+                style="@style/NavigationDrawerDivider"/>
+
+            <com.socialone.android.viewcomponents.NavDrawerItem
+                style="@style/NavDrawerItem"
+                android:id="@+id/nav_item_twitter"
+                socialone:itemText="Twitter" />
+
+            <View
+                style="@style/NavigationDrawerDivider"/>
+
+            <com.socialone.android.viewcomponents.NavDrawerItem
+                style="@style/NavDrawerItem"
+                android:id="@+id/nav_item_gplus"
+                socialone:itemText="Google+" />
+
+            <View
+                style="@style/NavigationDrawerDivider"/>
+
+            <com.socialone.android.viewcomponents.NavDrawerItem
+                style="@style/NavDrawerItem"
+                android:id="@+id/nav_item_myspace"
+                socialone:itemText="Myspace" />
+
+            <View
+                style="@style/NavigationDrawerDivider"/>
+
+            <com.socialone.android.viewcomponents.NavDrawerItem
+                style="@style/NavDrawerItem"
+                android:id="@+id/nav_item_appnet"
+                socialone:itemText="App.net" />
+
+            <View
+                style="@style/NavigationDrawerDivider"/>
+
+            <com.socialone.android.viewcomponents.NavDrawerItem
+                style="@style/NavDrawerItem"
+                android:id="@+id/nav_item_foursquare"
+                socialone:itemText="Foursquare" />
+
+            <View
+                style="@style/NavigationDrawerDivider"/>
+
+            <com.socialone.android.viewcomponents.NavDrawerItem
+                style="@style/NavDrawerItem"
+                android:id="@+id/nav_item_instagram"
+                socialone:itemText="Instagram" />
+
+            <View
+                style="@style/NavigationDrawerDivider"/>
+
+            <com.socialone.android.viewcomponents.NavDrawerItem
+                style="@style/NavDrawerItem"
+                android:id="@+id/nav_item_settings"
+                socialone:itemText="Settings" />
+
+            <View
+                style="@style/NavigationDrawerDivider"/>
+
+            <com.socialone.android.viewcomponents.NavDrawerItem
+                style="@style/NavDrawerItem"
+                android:id="@+id/nav_item_about"
+                socialone:itemText="About" />
+
+            <View
+                style="@style/NavigationDrawerDivider"/>
+
+        </LinearLayout>
+    </ScrollView>
+</LinearLayout>

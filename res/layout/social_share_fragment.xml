@@ -1,0 +1,546 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:socialone="http://socialone-android/schema"
+    xmlns:oak="http://oak/oak/schema"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <LinearLayout
+        android:orientation="vertical"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <LinearLayout
+            android:weightSum="2"
+            android:orientation="horizontal"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+        <oak.widget.ButtonWithFont
+            android:layout_weight="1"
+            android:id="@+id/social_reset_button"
+            android:text="Reset"
+            android:layout_margin="4dp"
+            android:layout_width="match_parent"
+            android:layout_height="56dp" />
+
+            <oak.widget.ButtonWithFont
+                android:layout_weight="1"
+                android:id="@+id/social_share_button"
+                android:text="Share"
+                android:layout_margin="4dp"
+                android:layout_width="match_parent"
+                android:layout_height="56dp" />
+
+    </LinearLayout>
+
+        <LinearLayout
+            android:layout_margin="8dp"
+            android:background="@color/translucent_white"
+            android:orientation="vertical"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content">
+
+            <oak.widget.TextViewWithFont
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:layout_marginLeft="20dp"
+                android:text="@string/share_networks_header" />
+
+            <View style="@style/HeaderDivider" />
+
+            <RelativeLayout
+                android:id="@+id/facebook_share_layout"
+                android:layout_width="fill_parent"
+                android:layout_height="48dp"
+                android:layout_margin="4dp"
+                android:orientation="horizontal">
+
+                <ImageView
+                    android:src="@drawable/facebook"
+                    android:layout_alignParentLeft="true"
+                    android:layout_centerInParent="true"
+                    android:layout_marginLeft="16dp"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content" />
+
+                <oak.widget.TextViewWithFont
+                    oak:font="Roboto-Light.ttf"
+                    android:layout_height="wrap_content"
+                    android:layout_width="wrap_content"
+                    android:layout_alignParentLeft="true"
+                    android:layout_centerInParent="true"
+                    android:layout_marginLeft="56dp"
+                    android:text="@string/facebook" />
+
+                <Switch
+                    android:id="@+id/facebook_switch"
+                    android:layout_height="wrap_content"
+                    android:layout_width="wrap_content"
+                    android:layout_marginRight="16dp"
+                    android:layout_centerInParent="true"
+                    android:layout_alignParentRight="true" />
+
+            </RelativeLayout>
+
+            <View style="@style/ItemDivider" />
+
+            <RelativeLayout
+                android:id="@+id/twitter_share_layout"
+                android:layout_width="fill_parent"
+                android:layout_height="48dp"
+                android:layout_margin="4dp"
+                android:orientation="horizontal">
+
+                <ImageView
+                    android:src="@drawable/twitter"
+                    android:layout_alignParentLeft="true"
+                    android:layout_centerInParent="true"
+                    android:layout_marginLeft="16dp"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content" />
+
+                <oak.widget.TextViewWithFont
+                    oak:font="Roboto-Light.ttf"
+                    android:layout_height="wrap_content"
+                    android:layout_width="wrap_content"
+                    android:layout_alignParentLeft="true"
+                    android:layout_centerInParent="true"
+                    android:layout_marginLeft="56dp"
+                    android:text="@string/twitter" />
+
+                <Switch
+                    android:id="@+id/twitter_switch"
+                    android:layout_height="wrap_content"
+                    android:layout_width="wrap_content"
+                    android:layout_marginRight="16dp"
+                    android:layout_centerInParent="true"
+                    android:layout_alignParentRight="true" />
+
+            </RelativeLayout>
+
+            <View style="@style/ItemDivider" />
+
+            <RelativeLayout
+                android:id="@+id/plus_share_layout"
+                android:layout_width="fill_parent"
+                android:layout_height="48dp"
+                android:layout_margin="4dp"
+                android:orientation="horizontal">
+
+                <ImageView
+                    android:src="@drawable/google_plus"
+                    android:layout_alignParentLeft="true"
+                    android:layout_centerInParent="true"
+                    android:layout_marginLeft="16dp"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content" />
+
+                <oak.widget.TextViewWithFont
+                    oak:font="Roboto-Light.ttf"
+                    android:layout_height="wrap_content"
+                    android:layout_width="wrap_content"
+                    android:layout_alignParentLeft="true"
+                    android:layout_centerInParent="true"
+                    android:layout_marginLeft="56dp"
+                    android:text="@string/google_plus" />
+
+                <Switch
+                    android:id="@+id/plus_switch"
+                    android:layout_height="wrap_content"
+                    android:layout_width="wrap_content"
+                    android:layout_marginRight="16dp"
+                    android:layout_centerInParent="true"
+                    android:layout_alignParentRight="true" />
+
+            </RelativeLayout>
+
+            <View style="@style/ItemDivider" />
+
+            <RelativeLayout
+                android:id="@+id/app_net_share_layout"
+                android:layout_width="fill_parent"
+                android:layout_height="48dp"
+                android:layout_margin="4dp"
+                android:orientation="horizontal">
+
+                <ImageView
+                    android:src="@drawable/appnet"
+                    android:layout_alignParentLeft="true"
+                    android:layout_centerInParent="true"
+                    android:layout_marginLeft="16dp"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content" />
+
+                <oak.widget.TextViewWithFont
+                    oak:font="Roboto-Light.ttf"
+                    android:layout_height="wrap_content"
+                    android:layout_width="wrap_content"
+                    android:layout_alignParentLeft="true"
+                    android:layout_centerInParent="true"
+                    android:layout_marginLeft="56dp"
+                    android:text="@string/app_net" />
+
+                <Switch
+                    android:id="@+id/app_net_switch"
+                    android:layout_height="wrap_content"
+                    android:layout_width="wrap_content"
+                    android:layout_marginRight="16dp"
+                    android:layout_centerInParent="true"
+                    android:layout_alignParentRight="true" />
+
+            </RelativeLayout>
+
+            <View style="@style/ItemDivider" />
+
+            <RelativeLayout
+                android:id="@+id/myspace_share_layout"
+                android:layout_width="fill_parent"
+                android:layout_height="48dp"
+                android:layout_margin="4dp"
+                android:orientation="horizontal">
+
+                <ImageView
+                    android:src="@drawable/myspace"
+                    android:layout_alignParentLeft="true"
+                    android:layout_centerInParent="true"
+                    android:layout_marginLeft="16dp"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content" />
+
+                <oak.widget.TextViewWithFont
+                    oak:font="Roboto-Light.ttf"
+                    android:layout_height="wrap_content"
+                    android:layout_width="wrap_content"
+                    android:layout_alignParentLeft="true"
+                    android:layout_centerInParent="true"
+                    android:layout_marginLeft="56dp"
+                    android:text="@string/myspace" />
+
+                <Switch
+                    android:id="@+id/myspace_switch"
+                    android:layout_height="wrap_content"
+                    android:layout_width="wrap_content"
+                    android:layout_marginRight="16dp"
+                    android:layout_centerInParent="true"
+                    android:layout_alignParentRight="true" />
+
+            </RelativeLayout>
+
+            <View style="@style/ItemDivider" />
+
+            <RelativeLayout
+                android:id="@+id/tumblr_share_layout"
+                android:layout_width="fill_parent"
+                android:layout_height="48dp"
+                android:layout_margin="4dp"
+                android:orientation="horizontal">
+
+                <ImageView
+                    android:src="@drawable/tumblr"
+                    android:layout_alignParentLeft="true"
+                    android:layout_centerInParent="true"
+                    android:layout_marginLeft="16dp"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content" />
+
+                <oak.widget.TextViewWithFont
+                    oak:font="Roboto-Light.ttf"
+                    android:layout_height="wrap_content"
+                    android:layout_width="wrap_content"
+                    android:layout_alignParentLeft="true"
+                    android:layout_centerInParent="true"
+                    android:layout_marginLeft="56dp"
+                    android:text="@string/tumblr" />
+
+                <Switch
+                    android:id="@+id/tumblr_switch"
+                    android:layout_height="wrap_content"
+                    android:layout_width="wrap_content"
+                    android:layout_marginRight="16dp"
+                    android:layout_centerInParent="true"
+                    android:layout_alignParentRight="true" />
+
+            </RelativeLayout>
+
+            <View style="@style/ItemDivider" />
+
+            <RelativeLayout
+                android:id="@+id/linkedin_share_layout"
+                android:layout_width="fill_parent"
+                android:layout_height="48dp"
+                android:layout_margin="4dp"
+                android:orientation="horizontal">
+
+                <ImageView
+                    android:src="@drawable/linkedin"
+                    android:layout_alignParentLeft="true"
+                    android:layout_centerInParent="true"
+                    android:layout_marginLeft="16dp"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content" />
+
+                <oak.widget.TextViewWithFont
+                    oak:font="Roboto-Light.ttf"
+                    android:layout_height="wrap_content"
+                    android:layout_width="wrap_content"
+                    android:layout_alignParentLeft="true"
+                    android:layout_centerInParent="true"
+                    android:layout_marginLeft="56dp"
+                    android:text="@string/linkedin" />
+
+                <Switch
+                    android:id="@+id/linkedin_switch"
+                    android:layout_height="wrap_content"
+                    android:layout_width="wrap_content"
+                    android:layout_marginRight="16dp"
+                    android:layout_centerInParent="true"
+                    android:layout_alignParentRight="true" />
+
+            </RelativeLayout>
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_margin="8dp"
+            android:background="@color/translucent_white"
+            android:orientation="vertical"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content">
+
+            <oak.widget.TextViewWithFont
+                android:layout_marginTop="4dp"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="20dp"
+                android:text="@string/share_details_header" />
+
+            <View style="@style/HeaderDivider" />
+
+
+
+                <LinearLayout
+                    android:layout_height="wrap_content"
+                    android:layout_width="fill_parent"
+                    android:layout_marginRight="4dp"
+                    android:layout_marginLeft="4dp"
+                    android:orientation="horizontal">
+
+                    <oak.widget.CancelEditText
+                        android:id="@+id/share_details_text"
+                        android:layout_height="wrap_content"
+                        android:layout_width="0px"
+                        android:layout_weight="1"
+                        android:hint="@string/share_details_text_hint" />
+
+                    <oak.widget.TextViewWithFont
+                        android:id="@+id/share_text_count"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_margin="4dp"
+                        android:textSize="12sp"
+                        android:text="0" />
+
+                </LinearLayout>
+
+
+
+            <RelativeLayout
+                android:id="@+id/location_share_layout"
+                android:layout_width="fill_parent"
+                android:layout_height="48dp"
+                android:orientation="horizontal">
+
+                <oak.widget.TextViewWithFont
+                    android:layout_height="wrap_content"
+                    android:layout_width="wrap_content"
+                    android:layout_alignParentLeft="true"
+                    android:layout_centerInParent="true"
+                    android:layout_marginLeft="8dp"
+                    android:text="@string/share_details_add_location" />
+
+                <Switch
+                    android:id="@+id/location_switch"
+                    android:layout_height="wrap_content"
+                    android:layout_width="wrap_content"
+                    android:layout_marginRight="8dp"
+                    android:layout_centerInParent="true"
+                    android:layout_alignParentRight="true" />
+
+            </RelativeLayout>
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:visibility="gone"
+            android:id="@+id/social_share_link_layout"
+            android:orientation="vertical"
+            android:layout_margin="8dp"
+            android:background="@color/translucent_white"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <EditText
+                android:layout_gravity="center"
+                android:hint="http://www.google.com"
+                android:id="@+id/social_share_link_text"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent" />
+
+            <oak.widget.ButtonWithFont
+                android:id="@+id/social_share_link_cancel_btn"
+                android:text="Cancel"
+                android:layout_width="match_parent"
+                android:layout_height="48dp" />
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:visibility="gone"
+            android:id="@+id/social_share_photo_layout"
+            android:orientation="vertical"
+            android:layout_margin="8dp"
+            android:background="@color/translucent_white"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <ImageView
+                android:id="@+id/social_share_photo_view"
+                android:scaleType="centerCrop"
+                android:adjustViewBounds="true"
+                android:layout_width="match_parent"
+                android:layout_height="200dp" />
+
+            <oak.widget.ButtonWithFont
+                android:id="@+id/social_share_photo_cancel_btn"
+                android:text="Cancel"
+                android:layout_width="match_parent"
+                android:layout_height="48dp" />
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:visibility="gone"
+            android:id="@+id/social_share_mood_layout"
+            android:orientation="vertical"
+            android:layout_margin="8dp"
+            android:background="@color/translucent_white"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <oak.widget.TextViewWithFont
+                android:layout_marginLeft="16dp"
+                android:layout_marginBottom="8dp"
+                android:layout_marginTop="8dp"
+                android:text="Mood"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content" />
+
+            <ImageView
+                android:id="@+id/social_share_mood_view"
+                android:layout_width="match_parent"
+                android:layout_height="100dp" />
+
+            <oak.widget.ButtonWithFont
+                android:id="@+id/social_share_mood_cancel_btn"
+                android:text="Cancel"
+                android:layout_width="match_parent"
+                android:layout_height="48dp" />
+
+        </LinearLayout>
+
+        <RelativeLayout
+            android:background="@color/translucent_white"
+            android:layout_gravity="center_horizontal"
+            android:layout_margin="8dp"
+            android:layout_width="match_parent"
+            android:layout_height="100dp">
+
+            <LinearLayout
+                android:layout_alignParentLeft="true"
+                android:id="@+id/photo_share_btn"
+                android:orientation="vertical"
+                android:layout_margin="16dp"
+                android:layout_centerVertical="true"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content">
+
+                <ImageView
+                    android:id="@+id/photo_share_icon"
+                    android:layout_gravity="center"
+                    android:src="@drawable/camera_"
+                    android:layout_width="24dp"
+                    android:layout_height="24dp" />
+
+                <oak.widget.TextViewWithFont
+                    android:id="@+id/text"
+                    android:text="Photo"
+                    android:layout_marginTop="12dp"
+                    android:textSize="18sp"
+                    android:layout_gravity="center"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    oak:font="Roboto-Thin.ttf"/>
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/link_share_btn"
+                android:layout_centerInParent="true"
+                android:orientation="vertical"
+                android:layout_margin="16dp"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content">
+
+                <ImageView
+                    android:id="@+id/link_share_icon"
+                    android:layout_gravity="center"
+                    android:src="@drawable/loopback"
+                    android:layout_width="24dp"
+                    android:layout_height="24dp" />
+
+                <oak.widget.TextViewWithFont
+                    android:id="@+id/text"
+                    android:text="Link"
+                    android:layout_marginTop="12dp"
+                    android:textSize="18sp"
+                    android:layout_gravity="center"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    oak:font="Roboto-Thin.ttf"/>
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_alignParentRight="true"
+                android:id="@+id/mood_share_btn"
+                android:orientation="vertical"
+                android:layout_margin="16dp"
+                android:layout_centerVertical="true"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content">
+
+                <ImageView
+                    android:id="@+id/mood_share_icon"
+                    android:layout_gravity="center"
+                    android:src="@drawable/ekg"
+                    android:layout_width="24dp"
+                    android:layout_height="24dp" />
+
+                <oak.widget.TextViewWithFont
+                    android:id="@+id/text"
+                    android:text="Mood"
+                    android:layout_marginTop="12dp"
+                    android:textSize="18sp"
+                    android:layout_gravity="center"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    oak:font="Roboto-Thin.ttf"/>
+
+            </LinearLayout>
+
+        </RelativeLayout>
+    </LinearLayout>
+</ScrollView>

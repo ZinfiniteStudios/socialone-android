@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.v4.widget.DrawerLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:Amazon="http://schemas.android.com/apk/lib/com.amazon.device.ads"
+    android:id="@+id/drawer_root"
+    android:layout_height="match_parent"
+    android:layout_width="match_parent">
+
+    <FrameLayout
+        android:id="@+id/fragment_container"
+        android:layout_height="match_parent"
+        android:layout_width="match_parent" />
+
+    <!--<com.amazon.device.ads.AdLayout-->
+        <!--android:id="@+id/ad_view"-->
+        <!--android:layout_alignParentBottom="true"-->
+        <!--android:layout_width="match_parent"-->
+        <!--android:layout_height="40dp"/>-->
+
+    <include
+        layout="@layout/navigation_drawer"
+        android:id="@+id/drawer"
+        android:layout_width="200dp"/>
+
+    <include
+        layout="@layout/nav_drawer_notifications"
+        android:id="@+id/drawer"
+        android:layout_width="200dp"/>
+
+</android.support.v4.widget.DrawerLayout>

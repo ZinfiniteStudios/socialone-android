@@ -1,0 +1,126 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+<LinearLayout
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <TextView
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:textSize="28sp"
+        android:gravity="center_horizontal"
+        android:layout_marginTop="8dp"
+        android:text="@string/connect_accounts_header" />
+
+    <TextView
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center_horizontal"
+        android:layout_marginLeft="36dp"
+        android:layout_marginRight="36dp"
+        android:textSize="18sp"
+        android:layout_marginTop="4dp"
+        android:text="@string/connect_accounts_info" />
+
+    <com.facebook.widget.LoginButton
+        android:id="@+id/social_connect_facebook_btn"
+        android:layout_width="fill_parent"
+        android:layout_height="56dp"
+        android:layout_marginLeft="36dp"
+        android:layout_marginRight="36dp"
+        android:layout_marginTop="12dp"
+        android:layout_marginBottom="12dp"
+        android:text="@string/facebook" />
+
+    <Button
+        android:id="@+id/social_connect_twitter_btn"
+        android:layout_width="fill_parent"
+        android:layout_height="56dp"
+        android:layout_marginLeft="36dp"
+        android:layout_marginRight="36dp"
+        android:text="@string/twitter" />
+
+    <Button
+        android:id="@+id/social_connect_plus_btn"
+        android:layout_width="fill_parent"
+        android:layout_height="56dp"
+        android:layout_marginLeft="36dp"
+        android:layout_marginRight="36dp"
+        android:layout_marginTop="12dp"
+        android:layout_marginBottom="12dp"
+        android:text="@string/google_plus" />
+
+    <Button
+        android:id="@+id/social_connect_foursquare_btn"
+        android:layout_width="fill_parent"
+        android:layout_height="56dp"
+        android:layout_marginLeft="36dp"
+        android:layout_marginRight="36dp"
+        android:text="@string/four_square" />
+
+    <Button
+        android:id="@+id/social_connect_appnet_btn"
+        android:layout_width="fill_parent"
+        android:layout_height="56dp"
+        android:layout_marginLeft="36dp"
+        android:layout_marginRight="36dp"
+        android:layout_marginTop="12dp"
+        android:layout_marginBottom="12dp"
+        android:text="@string/app_net" />
+
+    <Button
+        android:id="@+id/social_connect_myspace_btn"
+        android:layout_width="fill_parent"
+        android:layout_height="56dp"
+        android:layout_marginLeft="36dp"
+        android:layout_marginRight="36dp"
+        android:text="@string/myspace" />
+
+    <Button
+        android:id="@+id/social_connect_instagram_btn"
+        android:layout_width="fill_parent"
+        android:layout_height="56dp"
+        android:layout_marginLeft="36dp"
+        android:layout_marginRight="36dp"
+        android:layout_marginTop="12dp"
+        android:layout_marginBottom="12dp"
+        android:text="@string/instagram" />
+
+    <Button
+        android:id="@+id/social_connect_tumblr_btn"
+        android:layout_width="fill_parent"
+        android:layout_height="56dp"
+        android:layout_marginLeft="36dp"
+        android:layout_marginRight="36dp"
+        android:layout_marginBottom="12dp"
+        android:text="@string/tumblr" />
+
+    <Button
+        android:id="@+id/social_connect_linkdin_btn"
+        android:layout_width="fill_parent"
+        android:layout_height="56dp"
+        android:layout_marginLeft="36dp"
+        android:layout_marginRight="36dp"
+        android:layout_marginBottom="12dp"
+        android:text="@string/linkedin" />
+
+
+    <TextView
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center_horizontal"
+        android:layout_marginLeft="36dp"
+        android:layout_marginRight="36dp"
+        android:textSize="18sp"
+        android:layout_marginTop="4dp"
+        android:layout_marginBottom="8dp"
+        android:text="@string/connect_accounts_finish" />
+
+</LinearLayout>
+</ScrollView>

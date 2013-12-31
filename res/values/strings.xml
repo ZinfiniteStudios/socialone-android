@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="hello">Hello socialone-android!</string>
+    <string name="app_name">SocialOne</string>
+    <string name="app_id">1395812680657016</string>
+    <string name="critter_id">5276171197c8f2351e000001</string>
+    <string name="furry_id">XKDQSB8WT6DX8QG373WM</string>
+    <string name="quantcast_id">03ez3rc2lmzis9aw-yac9begxah8mxb0z</string>
+    <string name="bugsense_id">775dd938</string>
+    <string name="amazon_key">e1d631df30894e94a2d6894228b5198c</string>
+    <string name="amazon_private_key">1CPLfjD5xGff6xJsd8uwHOb4P++3va8lOeQvEEaBg0U=</string>
+    <string name="mixpanel_key">38af33940057c9b49fcdeda17a3ad860</string>
+    <string name="appnet_id"></string>
+    <string name="appnet_secret"></string>
+
+    <string name="navigation_drawer_open">Open navigation drawer</string>
+    <string name="drawer_open">Open navigation drawer</string>
+    <string name="drawer_close">Close navigation drawer</string>
+
+    <string name="facebook">Facebook</string>
+    <string name="twitter">Twitter</string>
+    <string name="google_plus">Google+</string>
+    <string name="four_square">Foursquare</string>
+    <string name="app_net">App.net</string>
+    <string name="myspace">Myspace</string>
+    <string name="instagram">Instagram</string>
+    <string name="tumblr">Tumblr</string>
+    <string name="linkedin">Linkedin</string>
+
+    <string name="fragment_share">Share</string>
+    <string name="fragment_check">Check-In</string>
+
+    <string name="connect_accounts_header">Welcome to SocialOne!</string>
+    <string name="connect_accounts_info">Connect your social accounts to get started!</string>
+    <string name="connect_accounts_finish">Tap done at the top to complete connecting your accounts!</string>
+    <string name="share_networks_header">Where to Share</string>
+    <string name="share_details_header">Sharing Details</string>
+    <string name="share_details_text_hint">What\'s on your mind?</string>
+    <string name="share_details_add_link_text">Add link</string>
+    <string name="share_details_add_image_text">Add image</string>
+    <string name="share_details_add_location">Add Location</string>
+
+    <string name="settings_header_text">Connected Social Networks</string>
+
+    <string name="app_net_coming_soon_message">App.net support is coming soon! If you\'d like to see support quicker, make sure to vote for it!</string>
+    <string name="dialog_alright">Not right now</string>
+    <string name="dialog_vote">Take me there!</string>
+</resources>
