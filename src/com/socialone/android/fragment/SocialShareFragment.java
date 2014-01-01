@@ -52,7 +52,6 @@ import com.socialone.android.appnet.adnlib.data.Post;
 import com.socialone.android.appnet.adnlib.response.PostResponseHandler;
 import com.socialone.android.utils.Constants;
 import com.socialone.android.utils.Datastore;
-import com.socialone.android.utils.Utils;
 
 import org.brickred.socialauth.android.DialogListener;
 import org.brickred.socialauth.android.SocialAuthAdapter;
@@ -290,7 +289,7 @@ public class SocialShareFragment extends SherlockFragment {
     private void facebookShare(String string){
         //For facebook sharing
 //        String userShareText = shareField.getText().toString();
-        Session session = Utils.ensureFacebookSession(getSherlockActivity());
+        session = ensureFacebookSessionFromCache(mContext);
 
         if (session != null) {
 //            Check for publish permissions
@@ -751,5 +750,13 @@ public class SocialShareFragment extends SherlockFragment {
             }
         }
         return true;
+    }
+
+    public static Session ensureFacebookSessionFromCache(Context context){
+        Session activeSession = Session.getActiveSession();
+        if (activeSession == null || !activeSession.getState().isOpened()) {
+            activeSession = Session.openActiveSessionFromCache(context);
+        }
+        return activeSession;
     }
 }
