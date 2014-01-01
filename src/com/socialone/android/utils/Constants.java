@@ -25,4 +25,6 @@ public class Constants {
 
     public static final String APP_NET_ID = "zza9bRtZ63UGNAxG965a3Kr2uUkmXAqr";
     public static final String APP_NET_SECRET = "LV6NbFgtJpCmhh6VADnkcWXGHF4tj5eq";
+
+    public static final String FACEBOOK_GRAPH = "http://graph.facebook.com/";
 }

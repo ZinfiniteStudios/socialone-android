@@ -47,8 +47,7 @@
                     android:layout_height="wrap_content"
                     android:layout_alignParentBottom="true"
                     android:layout_marginBottom="24dp"
-                    android:layout_marginLeft="85dp"
-                    android:text="David Hodge" />
+                    android:layout_marginLeft="85dp" />
 
                 <oak.widget.TextViewWithFont
                     style="@style/ShadowText"
@@ -58,8 +57,7 @@
                     android:layout_alignParentBottom="true"
                     android:layout_marginBottom="4dp"
                     android:layout_marginLeft="85dp"
-                    oak:font="Roboto-Thin.ttf"
-                    android:text="Charlottesville, VA" />
+                    oak:font="Roboto-Thin.ttf" />
 
             </RelativeLayout>
 

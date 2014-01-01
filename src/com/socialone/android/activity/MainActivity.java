@@ -4,7 +4,6 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.res.Configuration;
 import android.graphics.drawable.Drawable;
-import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.v4.app.ActionBarDrawerToggle;
@@ -13,31 +12,36 @@ import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
+import android.util.Log;
 import android.view.ActionProvider;
 import android.view.ContextMenu;
 import android.view.SubMenu;
 import android.view.View;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
+import android.widget.TextView;
+import android.widget.Toast;
 
 import com.actionbarsherlock.app.ActionBar;
 import com.actionbarsherlock.view.MenuItem;
-//import com.amazon.device.ads.AdLayout;
-//import com.amazon.device.ads.AdTargetingOptions;
 import com.amazon.insights.AmazonInsights;
 import com.amazon.insights.InsightsCredentials;
 import com.amazon.insights.InsightsOptions;
-import com.crashlytics.android.Crashlytics;
-import com.crittercism.app.Crittercism;
+import com.facebook.Request;
+import com.facebook.Response;
+import com.facebook.Session;
+import com.facebook.SessionState;
+import com.facebook.UiLifecycleHelper;
+import com.facebook.model.GraphUser;
 import com.flurry.android.FlurryAgent;
 import com.github.rtyley.android.sherlock.roboguice.activity.RoboSherlockFragmentActivity;
 import com.google.analytics.tracking.android.EasyTracker;
-import com.parse.ParseObject;
 import com.socialone.android.R;
 import com.socialone.android.fragment.SocialCheckInFragment;
 import com.socialone.android.fragment.SocialFragment;
 import com.socialone.android.fragment.SocialShareFragment;
 import com.socialone.android.utils.BlurTransformation;
+import com.socialone.android.utils.Constants;
 import com.socialone.android.utils.OldBlurTransformation;
 import com.socialone.android.utils.RoundTransformation;
 import com.socialone.android.viewcomponents.NavDrawerItem;
@@ -45,6 +49,9 @@ import com.squareup.picasso.Picasso;
 
 import roboguice.RoboGuice;
 import roboguice.inject.RoboInjector;
+
+//import com.amazon.device.ads.AdLayout;
+//import com.amazon.device.ads.AdTargetingOptions;
 
 /**
  * Created by david.hodge on 12/18/13.
@@ -55,6 +62,9 @@ public class MainActivity extends RoboSherlockFragmentActivity implements Drawer
     FrameLayout mContent;
     ImageView userImage;
     ImageView userBackground;
+    TextView userNameText;
+    TextView userLocationText;
+
 
     ActionBarDrawerToggle mActionBarDrawerToggle;
     FragmentManager mfragmentManager;
@@ -67,6 +77,13 @@ public class MainActivity extends RoboSherlockFragmentActivity implements Drawer
 //    AdTargetingOptions adTargetingOptions;
 
     String userShareExtra;
+
+    private UiLifecycleHelper uiHelper;
+    Session session;
+    String userProfileImageLink;
+    String userHeaderImageLink;
+    String userName;
+    String userLocation;
 
     public static final int NAV_SHARE = R.id.nav_item_share;
     public static final int NAV_ID_TEST = R.id.nav_item_facebook;
@@ -87,6 +104,8 @@ public class MainActivity extends RoboSherlockFragmentActivity implements Drawer
 
         userImage = (ImageView) findViewById(R.id.user_profile_image);
         userBackground = (ImageView) findViewById(R.id.user_background_image);
+        userNameText = (TextView) findViewById(R.id.user_name);
+        userLocationText = (TextView) findViewById(R.id.user_location);
 
 //        ParseObject testObject = new ParseObject("TestObject");
 //        testObject.put("Park", "BGW");
@@ -112,17 +131,25 @@ public class MainActivity extends RoboSherlockFragmentActivity implements Drawer
 //            userShareExtra = data.getUserInfo();
 //        }
 
+        uiHelper = new UiLifecycleHelper(this, new Session.StatusCallback() {
+            @Override
+            public void call(Session session, SessionState state, Exception exception) {
+                onSessionStateChange(session, state, exception);
+            }
+        });
+        uiHelper.onCreate(savedInstanceState);
+
         initDrawerLayout();
         getUserInfo();
         if (savedInstanceState == null) {
             setContentFragment(NAV_SHARE);
         }
-
     }
 
     @Override
     public void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
+        uiHelper.onSaveInstanceState(outState);
     }
 
     private void initDrawerLayout() {
@@ -134,28 +161,80 @@ public class MainActivity extends RoboSherlockFragmentActivity implements Drawer
     }
 
     private void getUserInfo() {
-        Picasso.with(mContext)
-                .load("http://scontent-a-iad.xx.fbcdn.net/hphotos-prn1/549518_1404352919783769_1484587627_n.jpg")
-                .resize(200, 200)
-                .centerCrop()
-                .transform(new RoundTransformation())
-                .into(userImage);
 
-        if (Build.VERSION.SDK_INT >= 14) {
-            Picasso.with(mContext)
-                    .load("https://scontent-b-iad.xx.fbcdn.net/hphotos-ash3/1001714_1403689593183435_988938356_n.jpg")
-                    .resize(400, 400)
-                    .centerCrop()
-                    .transform(new BlurTransformation(mContext))
-                    .into(userBackground);
-        } else {
-            Picasso.with(mContext)
-                    .load("https://scontent-b-iad.xx.fbcdn.net/hphotos-ash3/1001714_1403689593183435_988938356_n.jpg")
-                    .resize(400, 400)
-                    .centerCrop()
-                    .transform(new OldBlurTransformation())
-                    .into(userBackground);
-        }
+        Log.d("image", "getting info");
+
+        session = ensureFacebookSessionFromCache(mContext);
+        Request meRequest = Request.newMeRequest(session, new Request.GraphUserCallback() {
+            @Override
+            public void onCompleted(GraphUser user, Response response) {
+                if (user != null) {
+                    userProfileImageLink = Constants.FACEBOOK_GRAPH + user.getId() + "/picture?type=large";
+                    userHeaderImageLink = Constants.FACEBOOK_GRAPH + user.getId() + "/picture?type=large";
+                    userName = user.getName();
+                    if(user.getLocation() != null){
+                        userLocation = user.getLocation().getCity() + " " + user.getLocation().getState();
+                    }else{
+                        userLocation = "Location Unavail";
+                    }
+
+                    //sets user information
+                    userNameText.setText(userName);
+                    userLocationText.setText(userLocation);
+
+                    //displays user's profile image
+                    Picasso.with(mContext)
+                            .load(userProfileImageLink)
+                            .resize(200, 200)
+                            .centerCrop()
+                            .transform(new RoundTransformation())
+                            .into(userImage);
+
+                    //use large banner image if available
+                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.ICE_CREAM_SANDWICH) {
+                        Picasso.with(mContext)
+                                .load(userHeaderImageLink)
+                                .resize(400, 400)
+                                .centerCrop()
+                                .transform(new BlurTransformation(mContext))
+                                .into(userBackground);
+                    } else {
+                        Picasso.with(mContext)
+                                .load(userHeaderImageLink)
+                                .resize(400, 400)
+                                .centerCrop()
+                                .transform(new OldBlurTransformation())
+                                .into(userBackground);
+                    }
+                }
+            }
+        });
+        meRequest.executeAsync();
+
+//        //displays user's profile image
+//        Picasso.with(mContext)
+//                .load(userProfileImageLink)
+//                .resize(200, 200)
+//                .centerCrop()
+//                .transform(new RoundTransformation())
+//                .into(userImage);
+//
+//        //use large banner image if available
+//        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.ICE_CREAM_SANDWICH) {
+//            Picasso.with(mContext)
+//                    .load(userHeaderImageLink)
+//                    .resize(400, 400)
+//                    .centerCrop()
+//                    .transform(new BlurTransformation(mContext))
+//                    .into(userBackground);
+//        } else {
+//            Picasso.with(mContext)
+//                    .load(userHeaderImageLink)
+//                    .resize(400, 400)
+//                    .centerCrop()
+//                    .transform(new OldBlurTransformation())
+//                    .into(userBackground);
+//        }
     }
 
 
@@ -206,6 +285,7 @@ public class MainActivity extends RoboSherlockFragmentActivity implements Drawer
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        uiHelper.onActivityResult(requestCode, resultCode, data);
         Fragment fragment = getSupportFragmentManager().findFragmentById(R.id.fragment_container);
         fragment.onActivityResult(requestCode, resultCode, data);
     }
@@ -491,6 +571,7 @@ public class MainActivity extends RoboSherlockFragmentActivity implements Drawer
     @Override
     protected void onDestroy() {
         super.onDestroy();
+        uiHelper.onDestroy();
     }
 
     @Override
@@ -510,14 +591,25 @@ public class MainActivity extends RoboSherlockFragmentActivity implements Drawer
     @Override
     public void onResume() {
         super.onResume();
+        uiHelper.onResume();
         this.insights.getSessionClient().resumeSession();
     }
 
     @Override
     public void onPause() {
         super.onPause();
+        uiHelper.onPause();
         this.insights.getSessionClient().pauseSession();
         this.insights.getEventClient().submitEvents();
+    }
+
+    private void onSessionStateChange(Session session, SessionState state, Exception exception) {
+        if (state.isOpened()) {
+//            Toast.makeText(this, "connected", Toast.LENGTH_SHORT).show();
+//            getUserInfo();
+        } else if (state.isClosed()) {
+            Toast.makeText(this, "error", Toast.LENGTH_SHORT).show();
+        }
     }
 
     @Override
@@ -538,5 +630,13 @@ public class MainActivity extends RoboSherlockFragmentActivity implements Drawer
     @Override
     public void onDrawerStateChanged(int i) {
         //To change body of implemented methods use File | Settings | File Templates.
+    }
+
+    public static Session ensureFacebookSessionFromCache(Context context){
+        Session activeSession = Session.getActiveSession();
+        if (activeSession == null || !activeSession.getState().isOpened()) {
+            activeSession = Session.openActiveSessionFromCache(context);
+        }
+        return activeSession;
     }
 }

@@ -77,6 +77,7 @@ public class SocialConnectFragment extends RoboSherlockFragmentActivity {
     LoginAdapter linkedinAdapter;
 //    JumblrClient jumblrClient;
     AppDotNetClient client;
+
     public static final String CONSUMER_KEY = "Get this from your Tumblr application settings page";
     public static final String CONSUMER_SECRET = "Get this from your Tumblr application settings page";
     private static CommonsHttpOAuthConsumer consumer = new CommonsHttpOAuthConsumer(CONSUMER_KEY, CONSUMER_SECRET);
@@ -128,7 +129,7 @@ public class SocialConnectFragment extends RoboSherlockFragmentActivity {
                 }
             }
         });
-        meRequest.executeAndWait();
+        meRequest.executeAsync();
 
     }
 

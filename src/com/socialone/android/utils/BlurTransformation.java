@@ -16,6 +16,7 @@ import com.squareup.picasso.Transformation;
  * Time: 5:58 AM
  * To change this template use File | Settings | File Templates.
  */
+
 public class BlurTransformation implements Transformation {
 
     RenderScript rs;
