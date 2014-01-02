@@ -1,0 +1,98 @@
+apply plugin: 'java'
+apply plugin: 'maven'
+apply plugin: 'android'
+
+group = 'com.socialone.android'
+version = '1.0-SNAPSHOT'
+
+description = """socialone-android"""
+
+sourceCompatibility = 1.6
+targetCompatibility = 1.6
+
+android {
+    sourceSets {
+        main {
+            manifest.srcFile 'AndroidManifest.xml'
+            java.srcDirs = ['src']
+            resources.srcDirs = ['src']
+            aidl.srcDirs = ['src']
+            renderscript.srcDirs = ['src']
+            res.srcDirs = ['res']
+            assets.srcDirs = ['assets']
+        }
+
+    }
+}
+
+android {
+    defaultConfig {
+        versionCode 20
+        versionName getVersionName()
+
+        minSdkVersion 15
+        targetSdkVersion 17
+    }
+
+    compileSdkVersion 'Google Inc.:Google APIs:17'
+    buildToolsVersion "17.0.0"
+
+    signingConfigs {
+        release {
+            storeFile file('my.keystore')
+            storePassword 'storepassword'
+            keyAlias 'keyalias'
+            keyPassword 'keypassword'
+        }
+    }
+
+    buildTypes {
+        release {
+            signingConfig signingConfigs.release
+        }
+    }
+
+
+repositories {
+        
+     maven { url "http://maven.willowtreeapps.com/repository/snapshots/" }
+     maven { url "http://maven.willowtreeapps.com/repository/internal/" }
+     maven { url "https://oss.sonatype.org/content/repositories/snapshots/" }
+     maven { url "http://repo.maven.apache.org/maven2" }
+}
+dependencies {
+    compile group: 'com.willowtreeapps', name: 'oak-library', version:'1.1.9'
+    compile group: 'com.google.android', name: 'renderscript-v8', version:'18.1.1'
+    compile group: 'com.viewpagerindicator', name: 'library', version:'2.4.1'
+    compile group: 'com.google.android', name: 'support-v4', version:'18'
+    compile group: 'com.google.android.analytics', name: 'analytics', version:'3'
+    compile group: 'com.google.android.gms', name: 'google-play-services', version:'13'
+    compile group: 'com.google.android.gms', name: 'google-play-services', version:'13'
+    compile group: 'com.flurry.android', name: 'FlurryAgent', version:'3.2.0'
+    compile group: 'com.crittercism', name: 'crittercism', version:'4.0.7'
+    compile group: 'com.crashlytics', name: 'crashlytics-jar', version:'1.0'
+    compile(group: 'org.brickred.socialauth.android', name: 'socialauth-android', version:'3.0-WILLOWTREE') {
+exclude(module: 'socialauth')
+    }
+    compile group: 'org.brickred.socialauth.android', name: 'socialauth-willowtree', version:'4.3'
+    compile group: 'com.facebook.android', name: 'facebook-sdk-android', version:'3.5'
+    compile group: 'com.squareup.picasso', name: 'picasso', version:'2.0.2'
+    compile group: 'com.google.code.gson', name: 'gson', version:'2.1'
+    compile group: 'org.roboguice', name: 'roboguice', version:'2.0'
+    compile group: 'com.google.guava', name: 'guava', version:'13.0.1'
+    compile group: 'com.github.rtyley', name: 'roboguice-sherlock', version:'1.4'
+    compile group: 'com.actionbarsherlock', name: 'actionbarsherlock', version:'4.2.0'
+    testCompile group: 'com.google.android', name: 'android-test', version:'4.1.1.4'
+    testCompile group: 'com.pivotallabs', name: 'robolectric', version:'1.1'
+    testCompile group: 'junit', name: 'junit', version:'4.8.2'
+    compile(group: 'com.google.android', name: 'android', version:'4.1.1.4') {
+       /* This dependency was originally in the Maven provided scope, but the project was not of type war.
+       This behavior is not yet supported by Gradle, so this dependency has been converted to a compile dependency.
+       Please review and delete this closure when resolved. */
+    }
+    compile(group: 'com.actionbarsherlock', name: 'actionbarsherlock', version:'4.2.0') {
+       /* This dependency was originally in the Maven provided scope, but the project was not of type war.
+       This behavior is not yet supported by Gradle, so this dependency has been converted to a compile dependency.
+       Please review and delete this closure when resolved. */
+    }
+}
