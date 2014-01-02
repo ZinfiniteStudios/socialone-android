@@ -26,6 +26,7 @@
     <string name="instagram">Instagram</string>
     <string name="tumblr">Tumblr</string>
     <string name="linkedin">Linkedin</string>
+    <string name="flickr">Flickr</string>
 
     <string name="fragment_share">Share</string>
     <string name="fragment_check">Check-In</string>

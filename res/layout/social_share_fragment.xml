@@ -268,6 +268,42 @@
             <View style="@style/ItemDivider" />
 
             <RelativeLayout
+                android:id="@+id/flickr_share_layout"
+                android:layout_width="fill_parent"
+                android:layout_height="48dp"
+                android:layout_margin="4dp"
+                android:orientation="horizontal">
+
+                <ImageView
+                    android:src="@drawable/flickr"
+                    android:layout_alignParentLeft="true"
+                    android:layout_centerInParent="true"
+                    android:layout_marginLeft="16dp"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content" />
+
+                <oak.widget.TextViewWithFont
+                    oak:font="Roboto-Light.ttf"
+                    android:layout_height="wrap_content"
+                    android:layout_width="wrap_content"
+                    android:layout_alignParentLeft="true"
+                    android:layout_centerInParent="true"
+                    android:layout_marginLeft="56dp"
+                    android:text="@string/flickr" />
+
+                <Switch
+                    android:id="@+id/flickr_switch"
+                    android:layout_height="wrap_content"
+                    android:layout_width="wrap_content"
+                    android:layout_marginRight="16dp"
+                    android:layout_centerInParent="true"
+                    android:layout_alignParentRight="true" />
+
+            </RelativeLayout>
+
+            <View style="@style/ItemDivider" />
+
+            <RelativeLayout
                 android:id="@+id/linkedin_share_layout"
                 android:layout_width="fill_parent"
                 android:layout_height="48dp"

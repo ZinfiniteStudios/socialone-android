@@ -89,6 +89,7 @@ public class SocialShareFragment extends SherlockFragment {
     Switch appNetSwitch;
     Switch myspaceSwitch;
     Switch linkedinSwitch;
+    Switch flickrSwitch;
 
     LinearLayout photoShareBtn;
     LinearLayout linkShareBtn;
@@ -119,6 +120,7 @@ public class SocialShareFragment extends SherlockFragment {
     private static final List<String> PERMISSIONS = Arrays.asList("publish_actions");
     SocialAuthAdapter mAuthAdapter;
     SocialAuthAdapter linkAuthAdapter;
+    SocialAuthAdapter flickrAuthAdapter;
     AppDotNetClient client;
 
     String picturePath;
@@ -177,6 +179,7 @@ public class SocialShareFragment extends SherlockFragment {
         appNetSwitch = (Switch) view.findViewById(R.id.app_net_switch);
         myspaceSwitch = (Switch) view.findViewById(R.id.myspace_switch);
         linkedinSwitch = (Switch) view.findViewById(R.id.linkedin_switch);
+        flickrSwitch = (Switch) view.findViewById(R.id.flickr_switch);
 
         photoShareBtn = (LinearLayout) view.findViewById(R.id.photo_share_btn);
         linkShareBtn = (LinearLayout) view.findViewById(R.id.link_share_btn);
@@ -235,6 +238,12 @@ public class SocialShareFragment extends SherlockFragment {
                 linkedinSetup();
             }
         });
+        flickrSwitch.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                flickrSetup();
+            }
+        });
         return view;
     }
 
@@ -290,7 +299,7 @@ public class SocialShareFragment extends SherlockFragment {
     private void facebookShare(String string){
         //For facebook sharing
 //        String userShareText = shareField.getText().toString();
-        Session session = Utils.ensureFacebookSession(getSherlockActivity());
+        session = ensureFacebookSessionFromCache(mContext);
 
         if (session != null) {
 //            Check for publish permissions
@@ -578,6 +587,64 @@ public class SocialShareFragment extends SherlockFragment {
         }, false);
     }
 
+    private void flickrSetup(){
+        flickrAuthAdapter = new SocialAuthAdapter(new DialogListener() {
+            @Override
+            public void onComplete(Bundle bundle) {
+
+            }
+
+            @Override
+            public void onError(SocialAuthError socialAuthError) {
+
+            }
+
+            @Override
+            public void onCancel() {
+
+            }
+
+            @Override
+            public void onBack() {
+
+            }
+        });
+        flickrAuthAdapter.addCallBack(SocialAuthAdapter.Provider.FLICKR, Constants.FLICKR_CALLBACK);
+        flickrAuthAdapter.authorize(mContext, SocialAuthAdapter.Provider.FLICKR);
+    }
+
+    private void flickrShare(String string){
+        byte[] data = null;
+
+        Log.d("photo", picturePath);
+        Bitmap bi = BitmapFactory.decodeFile(picturePath);
+        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+        bi.compress(Bitmap.CompressFormat.JPEG, 100, baos);
+        data = baos.toByteArray();
+        try{
+            flickrAuthAdapter.uploadImageAsync(string, "userImage.jpg", bi, 30, new SocialAuthListener<Integer>() {
+                @Override
+                public void onExecute(String s, Integer status) {
+                    if (status == 200 || status == 201 || status == 204) {
+                        Toast.makeText(getSherlockActivity(),
+                                "flickr Share completed",
+                                Toast.LENGTH_LONG).show();
+                    } else {
+                        Log.e("flickr", "Error updating flickr status=" + status);
+                    }
+
+                }
+
+                @Override
+                public void onError(SocialAuthError socialAuthError) {
+
+                }
+            });
+        }catch (Exception e){
+            e.printStackTrace();
+        }
+    }
+
     public void shareAllThings(){
         String userShareText = shareField.getText().toString();
 
@@ -624,6 +691,10 @@ public class SocialShareFragment extends SherlockFragment {
 
         if(linkedinSwitch.isChecked()){
             linkedinShare(userShareText);
+        }
+
+        if(flickrSwitch.isChecked()){
+            flickrShare(userShareText);
         }
 
 //        shareField.getText().clear();
@@ -752,4 +823,12 @@ public class SocialShareFragment extends SherlockFragment {
         }
         return true;
     }
+
+    public static Session ensureFacebookSessionFromCache(Context context){
+                Session activeSession = Session.getActiveSession();
+                if (activeSession == null || !activeSession.getState().isOpened()) {
+                        activeSession = Session.openActiveSessionFromCache(context);
+                    }
+                return activeSession;
+            }
 }

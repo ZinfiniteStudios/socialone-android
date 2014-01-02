@@ -33,6 +33,10 @@ import com.socialone.android.appnet.adnlib.data.Token;
 import com.socialone.android.appnet.adnlib.data.User;
 import com.socialone.android.appnet.adnlib.response.LoginResponseHandler;
 import com.socialone.android.appnet.adnlib.response.UserResponseHandler;
+import com.socialone.android.condesales.EasyFoursquareAsync;
+import com.socialone.android.condesales.listeners.AccessTokenRequestListener;
+import com.socialone.android.condesales.listeners.UserInfoRequestListener;
+import com.socialone.android.socialauth.FlickrAuth;
 import com.socialone.android.socialauth.FourSquareAuth;
 import com.socialone.android.socialauth.GooglePlusAuth;
 import com.socialone.android.socialauth.InstagramAuth;
@@ -62,6 +66,7 @@ public class SocialConnectFragment extends RoboSherlockFragmentActivity {
     Button instagramBtn;
     Button tumblrBtn;
     Button linkedinBtn;
+    Button flickrBtn;
     Context mContext;
 
     private UiLifecycleHelper uiHelper;
@@ -75,8 +80,10 @@ public class SocialConnectFragment extends RoboSherlockFragmentActivity {
     LoginAdapter myspaceLoginAdapter;
     LoginAdapter instagramAdapter;
     LoginAdapter linkedinAdapter;
+    LoginAdapter flickrAdapter;
 //    JumblrClient jumblrClient;
     AppDotNetClient client;
+    EasyFoursquareAsync easyFoursquareAsync;
 
     public static final String CONSUMER_KEY = "Get this from your Tumblr application settings page";
     public static final String CONSUMER_SECRET = "Get this from your Tumblr application settings page";
@@ -95,12 +102,43 @@ public class SocialConnectFragment extends RoboSherlockFragmentActivity {
         setUpFacebook();
         setUpTwitter();
         setUpPlus();
-        setUpFourSquare();
+//        setUpFourSquare();
         setUpMyspace();
         setUpAppNet();
         setUpInstagram();
         setUpTumblr();
         setUpLinkedin();
+        setUpFlickr();
+
+        fourSquareBtn = (Button) findViewById(R.id.social_connect_foursquare_btn);
+        fourSquareBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                easyFoursquareAsync = new EasyFoursquareAsync(SocialConnectFragment.this);
+                easyFoursquareAsync.requestAccess(new AccessTokenRequestListener() {
+                    @Override
+                    public void onAccessGrant(String accessToken) {
+                        Log.d("4sq", "welcome to 4sq");
+                        easyFoursquareAsync.getUserInfo(new UserInfoRequestListener() {
+                            @Override
+                            public void onUserInfoFetched(com.socialone.android.condesales.models.User user) {
+                                Log.d("4sq", user.getFirstName());
+                            }
+
+                            @Override
+                            public void onError(String errorMsg) {
+
+                            }
+                        });
+                    }
+
+                    @Override
+                    public void onError(String errorMsg) {
+                        Log.d("4sq", errorMsg);
+                    }
+                });
+            }
+        });
 
         uiHelper = new UiLifecycleHelper(this, new Session.StatusCallback() {
             @Override
@@ -397,6 +435,38 @@ public class SocialConnectFragment extends RoboSherlockFragmentActivity {
             }
         });
 
+    }
+
+    private void setUpFlickr(){
+        flickrBtn = (Button) findViewById(R.id.social_connect_flickr_btn);
+        flickrAdapter = new FlickrAuth(mContext);
+        flickrAdapter.setListener(new LoginListener() {
+            @Override
+            public void onComplete(Bundle bundle) {
+
+            }
+
+            @Override
+            public void onError(Throwable error) {
+
+            }
+
+            @Override
+            public void onCancel() {
+
+            }
+
+            @Override
+            public void onBack() {
+
+            }
+        });
+        flickrBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                flickrAdapter.authorize();
+            }
+        });
     }
 
 

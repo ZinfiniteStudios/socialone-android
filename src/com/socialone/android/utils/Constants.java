@@ -11,6 +11,7 @@ public class Constants {
     public static final String TUMBLR_CALLBACK = "http://social.zinfinitestudios.com/v1/callback/";
     public static final String APPNET_CALLBACK = "http://social.zinfinitestudios.com/v1/callback/";
     public static final String LINKEDIN_CALLBACK = "http://social.zinfinitestudios.com/v1/callback/";
+    public static final String FLICKR_CALLBACK = "http://www.flickr.com/auth-72157639298400395";
 
     public static final String TUMBLR_CONSUMER_KEY = "oXkVuOgUZZJ4FK68vEPXk7kH8zhhnZiUIAQJ8p94jO3GUCG6Sg";
     public static final String TUMBLR_CONSUMER_SECRET = "pWRZdsQPlSm9vVTFiDXCKJTtA2VCiZTpjypThAsmXyNWMERV9O";
@@ -27,4 +28,51 @@ public class Constants {
     public static final String APP_NET_SECRET = "LV6NbFgtJpCmhh6VADnkcWXGHF4tj5eq";
 
     public static final String FACEBOOK_GRAPH = "http://graph.facebook.com/";
+
+
+    String permissions[] = {
+            "user_about_me",
+            "user_activities",
+            "user_birthday",
+            "user_checkins",
+            "user_education_history",
+            "user_events",
+            "user_groups",
+            "user_hometown",
+            "user_interests",
+            "user_likes",
+            "user_location",
+            "user_notes",
+            "user_online_presence",
+            "user_photo_video_tags",
+            "user_photos",
+            "user_relationships",
+            "user_relationship_details",
+            "user_religion_politics",
+            "user_status",
+            "user_videos",
+            "user_website",
+            "user_work_history",
+            "email",
+
+            "read_friendlists",
+            "read_insights",
+            "read_mailbox",
+            "read_requests",
+            "read_stream",
+            "xmpp_login",
+            "ads_management",
+            "create_event",
+            "manage_friendlists",
+            "manage_notifications",
+            "offline_access",
+            "publish_checkins",
+            "publish_stream",
+            "rsvp_event",
+            "sms",
+            //"publish_actions",
+
+            "manage_pages"
+
+    };
 }

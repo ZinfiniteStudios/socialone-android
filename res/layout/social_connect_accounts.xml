@@ -110,6 +110,15 @@
         android:layout_marginBottom="12dp"
         android:text="@string/linkedin" />
 
+    <Button
+        android:id="@+id/social_connect_flickr_btn"
+        android:layout_width="fill_parent"
+        android:layout_height="56dp"
+        android:layout_marginLeft="36dp"
+        android:layout_marginRight="36dp"
+        android:layout_marginBottom="12dp"
+        android:text="@string/flickr" />
+
 
     <TextView
         android:layout_width="fill_parent"

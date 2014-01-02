@@ -1,19 +1,27 @@
 package com.socialone.android.fragment;
 
+import android.content.Context;
 import android.content.SharedPreferences;
+import android.graphics.Bitmap;
 import android.location.Criteria;
 import android.location.Location;
 import android.location.LocationManager;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.util.Log;
+import android.util.LruCache;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.BaseAdapter;
+import android.widget.CheckBox;
+import android.widget.ListView;
+import android.widget.TextView;
 
 import com.actionbarsherlock.app.SherlockFragment;
 import com.crashlytics.android.Crashlytics;
 import com.crittercism.app.Crittercism;
+import com.haarman.listviewanimations.swinginadapters.prepared.SwingBottomInAnimationAdapter;
 import com.parse.signpost.OAuth;
 import com.socialone.android.R;
 import com.socialone.android.appnet.adnlib.AppDotNetClient;
@@ -22,6 +30,7 @@ import com.socialone.android.appnet.adnlib.data.Place;
 import com.socialone.android.appnet.adnlib.data.PlaceList;
 import com.socialone.android.appnet.adnlib.response.PlaceListResponseHandler;
 
+import java.util.ArrayList;
 import java.util.Iterator;
 
 /**
@@ -30,11 +39,13 @@ import java.util.Iterator;
 public class AppNetCheckInFragment extends SherlockFragment {
 
     View view;
+    ListView listView;
     AppDotNetClient client;
     LocationManager locationManager;
     Location location;
     String lat;
     String lon;
+    GoogleCardsAdapter googleCardsAdapter;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -44,9 +55,16 @@ public class AppNetCheckInFragment extends SherlockFragment {
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        view = inflater.inflate(R.layout.about_fragment, container, false);
-        getUserLocation();
+        view = inflater.inflate(R.layout.social_checkin_list, container, false);
+        listView = (ListView) view.findViewById(R.id.activity_googlecards_listview);
+
         return view;
+    }
+
+    @Override
+    public void onViewCreated(View view, Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
+        getUserLocation();
     }
 
     private void getUserLocation() {
@@ -62,6 +80,26 @@ public class AppNetCheckInFragment extends SherlockFragment {
             client.retrievePlacesWithSearchQuery(placeSearchQueryParameters, new PlaceListResponseHandler() {
                 @Override
                 public void onSuccess(PlaceList responseData) {
+                    final ArrayList<Place> places = responseData;
+                    getSherlockActivity().runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            googleCardsAdapter = new GoogleCardsAdapter(getSherlockActivity(), places);
+                            SwingBottomInAnimationAdapter swingBottomInAnimationAdapter =  new SwingBottomInAnimationAdapter(googleCardsAdapter);
+                            swingBottomInAnimationAdapter.setInitialDelayMillis(300);
+                            swingBottomInAnimationAdapter.setAbsListView(listView);
+                            listView.setAdapter(swingBottomInAnimationAdapter);
+                            googleCardsAdapter.setData(places);
+                        }
+                    });
+
+//                    googleCardsAdapter = new GoogleCardsAdapter(getSherlockActivity(), responseData);
+//                    SwingBottomInAnimationAdapter swingBottomInAnimationAdapter =  new SwingBottomInAnimationAdapter(googleCardsAdapter);
+//                    swingBottomInAnimationAdapter.setInitialDelayMillis(300);
+//                    swingBottomInAnimationAdapter.setAbsListView(listView);
+//                    listView.setAdapter(swingBottomInAnimationAdapter);
+//                    googleCardsAdapter.setData(responseData);
+
                     Log.d("places", "response " + responseData.toString());
                     Iterator<Place> itr = responseData.listIterator();
                     int z=0,x=0,increment=0;
@@ -76,6 +114,108 @@ public class AppNetCheckInFragment extends SherlockFragment {
             e.printStackTrace();
             Crittercism.logHandledException(e);
             Crashlytics.logException(e);
+        }
+    }
+
+    public class GoogleCardsAdapter extends BaseAdapter {
+
+        private Context mContext;
+        private ArrayList<Place> mAppPlace;
+        private LruCache<Integer, Bitmap> mMemoryCache;
+        private boolean mShouldReturnEmpty = true;
+
+        public GoogleCardsAdapter(Context context, ArrayList<Place> appPlace) {
+            mContext = context;
+            mAppPlace = appPlace;
+        }
+
+        public void setData(ArrayList<Place> appPlace){
+            mAppPlace = appPlace;
+        }
+
+        @Override
+        public boolean isEmpty() {
+            return mShouldReturnEmpty && super.isEmpty();
+        }
+
+        @Override
+        public int getCount() {
+            return mAppPlace.size();
+        }
+
+        @Override
+        public Place getItem(int position) {
+            return mAppPlace.get(position);
+        }
+
+        public long getItemId(int position) {
+            return position;
+        }
+
+        @Override
+        public View getView(int position, View convertView, ViewGroup parent) {
+            ViewHolder viewHolder;
+            View view = convertView;
+            if (view == null) {
+                view = LayoutInflater.from(mContext).inflate(R.layout.social_checkin_list_item, parent, false);
+
+                viewHolder = new ViewHolder();
+                viewHolder.textView = (TextView) view.findViewById(R.id.social_checkin_name);
+                viewHolder.checkBox = (CheckBox) view.findViewById(R.id.social_checkin_checkbox);
+
+                view.setTag(viewHolder);
+
+            } else {
+                viewHolder = (ViewHolder) view.getTag();
+            }
+
+            final Place place = getItem(position);
+            viewHolder.textView.setText(place.getName());
+//            setImageView(viewHolder, position);
+
+            return view;
+        }
+
+//        private void setImageView(ViewHolder viewHolder, int position) {
+//            int imageResId;
+//            switch (getItem(position) % 5) {
+//                case 0:
+//                    imageResId = R.drawable.img_nature1;
+//                    break;
+//                case 1:
+//                    imageResId = R.drawable.img_nature2;
+//                    break;
+//                case 2:
+//                    imageResId = R.drawable.img_nature3;
+//                    break;
+//                case 3:
+//                    imageResId = R.drawable.img_nature4;
+//                    break;
+//                default:
+//                    imageResId = R.drawable.img_nature5;
+//            }
+//
+//            Bitmap bitmap = getBitmapFromMemCache(imageResId);
+//            if (bitmap == null) {
+//                bitmap = BitmapFactory.decodeResource(mContext.getResources(), imageResId);
+//                addBitmapToMemoryCache(imageResId, bitmap);
+//            }
+//            viewHolder.imageView.setImageBitmap(bitmap);
+//        }
+
+        private void addBitmapToMemoryCache(int key, Bitmap bitmap) {
+            if (getBitmapFromMemCache(key) == null) {
+                mMemoryCache.put(key, bitmap);
+            }
+        }
+
+        private Bitmap getBitmapFromMemCache(int key) {
+            return mMemoryCache.get(key);
+        }
+
+        public class ViewHolder {
+            TextView textView;
+            CheckBox checkBox;
         }
     }
 }

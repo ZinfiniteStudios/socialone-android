@@ -126,6 +126,7 @@ public class SocialCheckInFragment extends RoboSherlockFragment {
         pagerAdapter = new PagerAdapter(getSherlockActivity(), mtitles, mFragments);
 
         viewPager.setAdapter(pagerAdapter);
+        viewPager.setOffscreenPageLimit(4);
         titlePageIndicator.setViewPager(viewPager);
         titlePageIndicator.setOnPageChangeListener(socialOPCL);
         FragmentManager fm = getChildFragmentManager();
