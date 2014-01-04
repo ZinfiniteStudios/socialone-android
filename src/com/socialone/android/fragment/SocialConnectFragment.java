@@ -1,8 +1,6 @@
 package com.socialone.android.fragment;
 
-import android.app.AlertDialog;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.StrictMode;
@@ -28,10 +26,9 @@ import com.parse.signpost.commonshttp.CommonsHttpOAuthConsumer;
 import com.parse.signpost.commonshttp.CommonsHttpOAuthProvider;
 import com.socialone.android.R;
 import com.socialone.android.activity.AppNetAuthActivity;
+import com.socialone.android.activity.MainActivity;
 import com.socialone.android.appnet.adnlib.AppDotNetClient;
-import com.socialone.android.appnet.adnlib.data.Token;
 import com.socialone.android.appnet.adnlib.data.User;
-import com.socialone.android.appnet.adnlib.response.LoginResponseHandler;
 import com.socialone.android.appnet.adnlib.response.UserResponseHandler;
 import com.socialone.android.condesales.EasyFoursquareAsync;
 import com.socialone.android.condesales.listeners.AccessTokenRequestListener;
@@ -67,6 +64,7 @@ public class SocialConnectFragment extends RoboSherlockFragmentActivity {
     Button tumblrBtn;
     Button linkedinBtn;
     Button flickrBtn;
+    Button fivePxBtn;
     Context mContext;
 
     private UiLifecycleHelper uiHelper;
@@ -109,6 +107,7 @@ public class SocialConnectFragment extends RoboSherlockFragmentActivity {
         setUpTumblr();
         setUpLinkedin();
         setUpFlickr();
+        setUpFivePx();
 
         fourSquareBtn = (Button) findViewById(R.id.social_connect_foursquare_btn);
         fourSquareBtn.setOnClickListener(new View.OnClickListener() {
@@ -469,6 +468,16 @@ public class SocialConnectFragment extends RoboSherlockFragmentActivity {
         });
     }
 
+    private void setUpFivePx(){
+        fivePxBtn = (Button) findViewById(R.id.social_connect_500px_btn);
+        fivePxBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                //TODO auth things
+            }
+        });
+    }
+
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -481,6 +490,7 @@ public class SocialConnectFragment extends RoboSherlockFragmentActivity {
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()){
             case R.id.connect_done:
+                startActivity(new Intent(mContext, MainActivity.class));
                 finish();
                 overridePendingTransition(R.anim.fade_in, R.anim.fade_out);
                 break;

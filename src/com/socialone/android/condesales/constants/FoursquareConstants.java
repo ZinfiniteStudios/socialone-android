@@ -1,13 +1,15 @@
 package com.socialone.android.condesales.constants;
 
+import com.socialone.android.utils.Constants;
+
 public class FoursquareConstants {
 	/**
 	 * Change this!!! Generate yours at https://foursquare.com/developers/register
 	 */
-	public static final String CLIENT_ID = "QWAKGDMDTKSCNFFDQXWDWBSMLYGBVER3C0YZP0JZLPGR5F40";
-	public static final String CLIENT_SECRET = "EOUK1SBXNBWLAWADF0VJOUQO52XGIJS51TOGD1LCQWFIGQMX";
+	public static final String CLIENT_ID = "JMBNIXEYRDAZGF0VTMOTSK4XL4IXNOFW4E1DGGRCDLSGCNUB";
+	public static final String CLIENT_SECRET = "XEOOEA5PMTU4OTVT3CO1PAZTZZAGZDN32LRNVNFRNJZTIGQI";
 	
-	public static final String CALLBACK_URL = "http://localhost:8888";
+	public static final String CALLBACK_URL = Constants.FOURSQUARE_CALLBACK;
 	public static final String TOKEN_URL = "https://foursquare.com/oauth2/access_token?grant_type=authorization_code";
 	public static final String SHARED_PREF_FILE = "shared_pref";
 	public static final String ACCESS_TOKEN = "access_token";

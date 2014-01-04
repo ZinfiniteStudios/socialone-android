@@ -10,13 +10,13 @@ import android.support.v4.view.ViewPager;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Toast;
 
 import com.actionbarsherlock.view.Menu;
 import com.actionbarsherlock.view.MenuInflater;
 import com.actionbarsherlock.view.MenuItem;
 import com.github.rtyley.android.sherlock.roboguice.fragment.RoboSherlockFragment;
 import com.socialone.android.R;
-import com.viewpagerindicator.TabPageIndicator;
 import com.viewpagerindicator.TitlePageIndicator;
 
 import java.util.ArrayList;
@@ -64,6 +64,12 @@ public class SocialFragment extends RoboSherlockFragment {
         viewPager.setAdapter(pagerAdapter);
         titlePageIndicator.setViewPager(viewPager);
         titlePageIndicator.setOnPageChangeListener(socialOPCL);
+        titlePageIndicator.setOnCenterItemClickListener(new TitlePageIndicator.OnCenterItemClickListener() {
+            @Override
+            public void onCenterItemClick(int position) {
+                Toast.makeText(getSherlockActivity(), "Center item " + Integer.toString(position), Toast.LENGTH_LONG).show();
+            }
+        });
         fm = getChildFragmentManager();
 
         return view;

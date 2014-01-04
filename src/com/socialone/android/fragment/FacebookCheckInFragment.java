@@ -11,13 +11,15 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
-import android.widget.CheckBox;
+import android.widget.Button;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.facebook.FacebookRequestError;
 import com.facebook.HttpMethod;
 import com.facebook.Request;
+import com.facebook.RequestAsyncTask;
 import com.facebook.Response;
 import com.facebook.Session;
 import com.facebook.SessionState;
@@ -85,8 +87,6 @@ public class FacebookCheckInFragment extends RoboSherlockFragment {
         Request.GraphPlaceListCallback graphPlaceListCallback = new Request.GraphPlaceListCallback() {
             @Override
             public void onCompleted(List<GraphPlace> places, Response response) {
-                Log.d("places", response.toString());
-                Log.d("places", places.get(1).getName());
                 googleCardsAdapter = new GoogleCardsAdapter(getSherlockActivity(), places);
                 SwingBottomInAnimationAdapter swingBottomInAnimationAdapter =  new SwingBottomInAnimationAdapter(googleCardsAdapter);
                 swingBottomInAnimationAdapter.setInitialDelayMillis(300);
@@ -214,7 +214,7 @@ public class FacebookCheckInFragment extends RoboSherlockFragment {
 
                 viewHolder = new ViewHolder();
                 viewHolder.textView = (TextView) view.findViewById(R.id.social_checkin_name);
-                viewHolder.checkBox = (CheckBox) view.findViewById(R.id.social_checkin_checkbox);
+                viewHolder.checkBox = (Button) view.findViewById(R.id.social_checkin_checkbox);
 
                 view.setTag(viewHolder);
 
@@ -224,6 +224,36 @@ public class FacebookCheckInFragment extends RoboSherlockFragment {
 
             final GraphPlace place = getItem(position);
             viewHolder.textView.setText(place.getName());
+            viewHolder.checkBox.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    //just text post
+                    Bundle postParams = new Bundle();
+                    postParams.putString("type", "checkin");
+                    postParams.putString("message", "test");
+                    postParams.putString("place", place.getId());
+                    Request.Callback callback = new Request.Callback() {
+                        public void onCompleted(Response response) {
+
+                            FacebookRequestError error = response.getError();
+                            if (error != null) {
+                                Toast.makeText(getSherlockActivity(),
+                                        error.getErrorMessage(),
+                                        Toast.LENGTH_SHORT).show();
+                            } else {
+                                Toast.makeText(getSherlockActivity(),
+                                        "Facebook Share completed",
+                                        Toast.LENGTH_LONG).show();
+                            }
+                        }
+                    };
+                    Request request = new Request(session, "me/feed", postParams,
+                            HttpMethod.POST, callback);
+
+                    RequestAsyncTask task = new RequestAsyncTask(request);
+                    task.execute();
+                }
+            });
 //            setImageView(viewHolder, position);
 
             return view;
@@ -231,7 +261,7 @@ public class FacebookCheckInFragment extends RoboSherlockFragment {
 
         public class ViewHolder {
             TextView textView;
-            CheckBox checkBox;
+            Button checkBox;
         }
     }
 }

@@ -52,7 +52,7 @@
             android:name="com.facebook.sdk.ApplicationId"
             android:value="@string/app_id"/>
 
-    <activity android:name=".activity.MainActivity"
+    <activity android:name=".fragment.SocialConnectFragment"
         android:windowSoftInputMode="adjustResize" >
       <intent-filter>
         <action android:name="android.intent.action.MAIN" />
@@ -92,7 +92,7 @@
           android:screenOrientation="portrait"/>
       <meta-data android:name="ubertesters_project_id" android:value="508801d2-45b5-11e3-b89c-123141017889"/>
 
-        <activity android:name="com.socialone.android.fragment.SocialConnectFragment" />
+        <activity android:name="com.socialone.android.activity.MainActivity" />
   </application>
 
 </manifest>

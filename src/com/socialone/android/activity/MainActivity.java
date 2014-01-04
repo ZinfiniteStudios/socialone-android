@@ -37,9 +37,9 @@ import com.flurry.android.FlurryAgent;
 import com.github.rtyley.android.sherlock.roboguice.activity.RoboSherlockFragmentActivity;
 import com.google.analytics.tracking.android.EasyTracker;
 import com.socialone.android.R;
+import com.socialone.android.fragment.AppNetFeedFragment;
 import com.socialone.android.fragment.SocialCheckInFragment;
 import com.socialone.android.fragment.SocialFragment;
-import com.socialone.android.fragment.SocialShareFragment;
 import com.socialone.android.utils.BlurTransformation;
 import com.socialone.android.utils.Constants;
 import com.socialone.android.utils.OldBlurTransformation;
@@ -89,6 +89,7 @@ public class MainActivity extends RoboSherlockFragmentActivity implements Drawer
     public static final int NAV_ID_TEST = R.id.nav_item_facebook;
     public static final int NAV_ID_TEST_2 = R.id.nav_item_twitter;
     public static final int NAV_ID_TEST_3 = R.id.nav_item_myspace;
+    public static final int NAV_APP_NET = R.id.nav_item_appnet;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -258,13 +259,16 @@ public class MainActivity extends RoboSherlockFragmentActivity implements Drawer
                 fragment = injector.getInstance(SocialFragment.class);
                 break;
             case NAV_ID_TEST:
-                fragment = injector.getInstance(SocialShareFragment.class);
+                fragment = injector.getInstance(AppNetFeedFragment.class);
                 break;
             case NAV_ID_TEST_2:
                 fragment = injector.getInstance(SocialCheckInFragment.class);
                 break;
             case NAV_ID_TEST_3:
                 fragment = injector.getInstance(SocialFragment.class);
+                break;
+            case NAV_APP_NET:
+                fragment = injector.getInstance(AppNetFeedFragment.class);
                 break;
             default:
                 return;

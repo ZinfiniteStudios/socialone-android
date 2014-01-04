@@ -44,4 +44,8 @@
         <attr name="spb_mirror_mode" format="boolean"/>
         <attr name="spb_colors" format="reference" />
     </declare-styleable>
+
+    <declare-styleable name="RelativeTimeTextView">
+        <attr name="reference_time" format="string" />
+    </declare-styleable>
 </resources>

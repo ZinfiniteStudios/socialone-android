@@ -12,7 +12,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
-import android.widget.CheckBox;
+import android.widget.Button;
 import android.widget.ListView;
 import android.widget.TextView;
 
@@ -20,9 +20,12 @@ import com.github.rtyley.android.sherlock.roboguice.fragment.RoboSherlockFragmen
 import com.haarman.listviewanimations.swinginadapters.prepared.SwingBottomInAnimationAdapter;
 import com.socialone.android.R;
 import com.socialone.android.condesales.EasyFoursquareAsync;
+import com.socialone.android.condesales.criterias.CheckInCriteria;
 import com.socialone.android.condesales.criterias.VenuesCriteria;
 import com.socialone.android.condesales.listeners.AccessTokenRequestListener;
+import com.socialone.android.condesales.listeners.CheckInListener;
 import com.socialone.android.condesales.listeners.FoursquareVenuesResquestListener;
+import com.socialone.android.condesales.models.Checkin;
 import com.socialone.android.condesales.models.Venue;
 
 import org.brickred.socialauth.android.SocialAuthAdapter;
@@ -167,7 +170,7 @@ public class FourSquareCheckInFragment extends RoboSherlockFragment {
 
                 viewHolder = new ViewHolder();
                 viewHolder.textView = (TextView) view.findViewById(R.id.social_checkin_name);
-                viewHolder.checkBox = (CheckBox) view.findViewById(R.id.social_checkin_checkbox);
+                viewHolder.checkBox = (Button) view.findViewById(R.id.social_checkin_checkbox);
 
                 view.setTag(viewHolder);
 
@@ -177,51 +180,33 @@ public class FourSquareCheckInFragment extends RoboSherlockFragment {
 
             final Venue place = getItem(position);
             viewHolder.textView.setText(place.getName());
+
+            viewHolder.checkBox.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    CheckInCriteria checkInCriteria = new CheckInCriteria();
+                    checkInCriteria.setVenueId(place.getId());
+                    easyFoursquareAsync.checkIn(new CheckInListener() {
+                        @Override
+                        public void onCheckInDone(Checkin checkin) {
+
+                        }
+
+                        @Override
+                        public void onError(String errorMsg) {
+
+                        }
+                    }, checkInCriteria);
+                }
+            });
 //            setImageView(viewHolder, position);
 
             return view;
         }
 
-//        private void setImageView(ViewHolder viewHolder, int position) {
-//            int imageResId;
-//            switch (getItem(position) % 5) {
-//                case 0:
-//                    imageResId = R.drawable.img_nature1;
-//                    break;
-//                case 1:
-//                    imageResId = R.drawable.img_nature2;
-//                    break;
-//                case 2:
-//                    imageResId = R.drawable.img_nature3;
-//                    break;
-//                case 3:
-//                    imageResId = R.drawable.img_nature4;
-//                    break;
-//                default:
-//                    imageResId = R.drawable.img_nature5;
-//            }
-//
-//            Bitmap bitmap = getBitmapFromMemCache(imageResId);
-//            if (bitmap == null) {
-//                bitmap = BitmapFactory.decodeResource(mContext.getResources(), imageResId);
-//                addBitmapToMemoryCache(imageResId, bitmap);
-//            }
-//            viewHolder.imageView.setImageBitmap(bitmap);
-//        }
-
-        private void addBitmapToMemoryCache(int key, Bitmap bitmap) {
-            if (getBitmapFromMemCache(key) == null) {
-                mMemoryCache.put(key, bitmap);
-            }
-        }
-
-        private Bitmap getBitmapFromMemCache(int key) {
-            return mMemoryCache.get(key);
-        }
-
         public class ViewHolder {
             TextView textView;
-            CheckBox checkBox;
+            Button checkBox;
         }
     }
 }

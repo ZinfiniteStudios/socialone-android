@@ -27,6 +27,7 @@
     <string name="tumblr">Tumblr</string>
     <string name="linkedin">Linkedin</string>
     <string name="flickr">Flickr</string>
+    <string name="five_px">500px</string>
 
     <string name="fragment_share">Share</string>
     <string name="fragment_check">Check-In</string>
@@ -46,4 +47,6 @@
     <string name="app_net_coming_soon_message">App.net support is coming soon! If you\'d like to see support quicker, make sure to vote for it!</string>
     <string name="dialog_alright">Not right now</string>
     <string name="dialog_vote">Take me there!</string>
+
+    <string name="just_now">Just now!</string>
 </resources>

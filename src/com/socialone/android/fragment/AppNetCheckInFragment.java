@@ -2,19 +2,17 @@ package com.socialone.android.fragment;
 
 import android.content.Context;
 import android.content.SharedPreferences;
-import android.graphics.Bitmap;
 import android.location.Criteria;
 import android.location.Location;
 import android.location.LocationManager;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.util.Log;
-import android.util.LruCache;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
-import android.widget.CheckBox;
+import android.widget.Button;
 import android.widget.ListView;
 import android.widget.TextView;
 
@@ -24,13 +22,20 @@ import com.crittercism.app.Crittercism;
 import com.haarman.listviewanimations.swinginadapters.prepared.SwingBottomInAnimationAdapter;
 import com.parse.signpost.OAuth;
 import com.socialone.android.R;
+import com.socialone.android.appnet.adnlib.Annotations;
 import com.socialone.android.appnet.adnlib.AppDotNetClient;
 import com.socialone.android.appnet.adnlib.PlaceSearchQueryParameters;
+import com.socialone.android.appnet.adnlib.data.Annotation;
 import com.socialone.android.appnet.adnlib.data.Place;
 import com.socialone.android.appnet.adnlib.data.PlaceList;
+import com.socialone.android.appnet.adnlib.data.Post;
 import com.socialone.android.appnet.adnlib.response.PlaceListResponseHandler;
+import com.socialone.android.appnet.adnlib.response.PostResponseHandler;
+
+import org.json.JSONObject;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Iterator;
 
 /**
@@ -121,7 +126,6 @@ public class AppNetCheckInFragment extends SherlockFragment {
 
         private Context mContext;
         private ArrayList<Place> mAppPlace;
-        private LruCache<Integer, Bitmap> mMemoryCache;
         private boolean mShouldReturnEmpty = true;
 
         public GoogleCardsAdapter(Context context, ArrayList<Place> appPlace) {
@@ -161,7 +165,7 @@ public class AppNetCheckInFragment extends SherlockFragment {
 
                 viewHolder = new ViewHolder();
                 viewHolder.textView = (TextView) view.findViewById(R.id.social_checkin_name);
-                viewHolder.checkBox = (CheckBox) view.findViewById(R.id.social_checkin_checkbox);
+                viewHolder.checkBox = (Button) view.findViewById(R.id.social_checkin_checkbox);
 
                 view.setTag(viewHolder);
 
@@ -171,51 +175,79 @@ public class AppNetCheckInFragment extends SherlockFragment {
 
             final Place place = getItem(position);
             viewHolder.textView.setText(place.getName());
+            viewHolder.checkBox.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    Log.d("checkin", "posting");
+//                    HashMap<String, Object> list2 = new HashMap<String, Object>();
+//                    list2.put("+net.app.core.place", place.getFactualId());
+//                    Log.d("checkin", list2.toString());
+
+                    try{
+                    JSONObject json1 = new JSONObject();
+                    json1.put("factual_id", place.getFactualId());
+                    JSONObject json2 = new JSONObject();
+                    json2.put("+net.app.core.place", json1);
+
+                        Object obj = new Object();
+//                            obj = place.getFactualId();
+                        obj = "appdotnet";
+
+                        String i = json2.toString();
+
+                        i = i.substring(1, i.length() - 1);
+
+                        Log.d("checkin", "json1 " + json1.toString());
+                        Log.d("checkin", "json2 " + json2.toString());
+
+                    HashMap<String, Object> list2 = new HashMap<String, Object>();
+                        //TODO fill out all info as needed here
+                       list2.put("id", place.getFactualId());
+                        list2.put("address", place.getAddress());
+                        list2.put("name", place.getName());
+//                        list2.put("latitude", location.getLatitude());
+//                        list2.put("longitude", location.getLongitude());
+//                    list2.put("+net.app.core.place", json1);
+//                    list2.put("+net.app.core.place", );
+
+                    Post post = new Post();
+                    Annotation annotation = new Annotation();
+//                    annotation.setType(Annotations.CHECKIN);
+//                    annotation.setValue(list2);
+//                        annotation.setType(Annotations.GEOLOCATION);
+                        annotation.setType(Annotations.OHAI_LOCATION);
+                        annotation.setValue(list2);
+
+                    post.setText("testing checkins");
+                        post.addAnnotation(annotation);
+                        Log.d("checkin", "type " + annotation.getType());
+                        Log.d("checkin", "value " + annotation.getValue().toString());
+                    Log.d("checkin", post.toString());
+                    client.createPost(post, new PostResponseHandler() {
+                        @Override
+                        public void onSuccess(Post responseData) {
+                            Log.d("checkin", "posted!");
+                        }
+
+                        @Override
+                        public void onError(Exception error) {
+                            super.onError(error);
+                            Log.d("checkin", error.getLocalizedMessage());
+                        }
+                    });
+                    }catch (Exception e){
+                        Log.d("checkin", e.getMessage());
+                    }
+                }
+            });
 //            setImageView(viewHolder, position);
 
             return view;
         }
 
-//        private void setImageView(ViewHolder viewHolder, int position) {
-//            int imageResId;
-//            switch (getItem(position) % 5) {
-//                case 0:
-//                    imageResId = R.drawable.img_nature1;
-//                    break;
-//                case 1:
-//                    imageResId = R.drawable.img_nature2;
-//                    break;
-//                case 2:
-//                    imageResId = R.drawable.img_nature3;
-//                    break;
-//                case 3:
-//                    imageResId = R.drawable.img_nature4;
-//                    break;
-//                default:
-//                    imageResId = R.drawable.img_nature5;
-//            }
-//
-//            Bitmap bitmap = getBitmapFromMemCache(imageResId);
-//            if (bitmap == null) {
-//                bitmap = BitmapFactory.decodeResource(mContext.getResources(), imageResId);
-//                addBitmapToMemoryCache(imageResId, bitmap);
-//            }
-//            viewHolder.imageView.setImageBitmap(bitmap);
-//        }
-
-        private void addBitmapToMemoryCache(int key, Bitmap bitmap) {
-            if (getBitmapFromMemCache(key) == null) {
-                mMemoryCache.put(key, bitmap);
-            }
-        }
-
-        private Bitmap getBitmapFromMemCache(int key) {
-            return mMemoryCache.get(key);
-        }
-
         public class ViewHolder {
             TextView textView;
-            CheckBox checkBox;
+            Button checkBox;
         }
     }
 }

@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:background="@color/translucent_white"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content">
+
+    <LinearLayout
+        android:orientation="horizontal"
+        android:layout_marginTop="8dp"
+        android:layout_marginLeft="8dp"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content">
+
+    <ImageView
+        android:id="@+id/user_image"
+        android:src="@drawable/appnet"
+        android:layout_width="48dp"
+        android:layout_height="48dp" />
+
+    <oak.widget.TextViewWithFont
+        android:id="@+id/social_checkin_name"
+        android:text="test"
+        android:layout_weight="1"
+        android:layout_marginLeft="16dp"
+        android:layout_marginRight="16dp"
+        android:layout_marginBottom="8dp"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" />
+
+    <LinearLayout
+        android:orientation="vertical"
+        android:layout_gravity="center_vertical"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content">
+
+        <ImageView
+            android:id="@+id/star_post"
+            android:src="@drawable/appnet"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" />
+
+        <ImageView
+            android:id="@+id/repost_post"
+            android:src="@drawable/appnet"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" />
+    </LinearLayout>
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_marginTop="20dp"
+        android:layout_marginBottom="4dp"
+        android:layout_marginLeft="8dp"
+        android:orientation="horizontal"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content">
+
+        <com.socialone.android.viewcomponents.RelativeTimeTextView
+            android:id="@+id/post_time"
+            android:text="5hrs"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" />
+
+        <oak.widget.TextViewWithFont
+            android:id="@+id/post_info_client"
+            android:layout_marginLeft="16dp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" />
+
+        <oak.widget.TextViewWithFont
+            android:id="@+id/post_info_user"
+            android:layout_marginLeft="4dp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" />
+
+
+    </LinearLayout>
+
+</LinearLayout>

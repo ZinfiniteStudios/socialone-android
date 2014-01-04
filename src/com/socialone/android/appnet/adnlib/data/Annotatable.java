@@ -6,7 +6,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public abstract class Annotatable implements IAppDotNetObject {
-    @Expose(serialize = false)
+    @Expose(serialize = true)
     protected String id;
     protected ArrayList<Annotation> annotations;
 
