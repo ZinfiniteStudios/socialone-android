@@ -183,7 +183,7 @@ public class SocialConnectFragment extends RoboSherlockFragmentActivity
         facebookBtn = (LoginButton) findViewById(R.id.social_connect_facebook_btn);
         facebookBtn.setReadPermissions(
                 Arrays.asList("user_photos", "read_stream", "user_status", "friends_photos",
-                        "friends_status", "friends_birthday", "basic_info", "user_location"));
+                        "friends_status", "friends_birthday", "basic_info", "user_location", "manage_notifications"));
 
 //        Session session = Utils.ensureFacebookSessionFromCache(getBaseContext());
         session = Session.getActiveSession();

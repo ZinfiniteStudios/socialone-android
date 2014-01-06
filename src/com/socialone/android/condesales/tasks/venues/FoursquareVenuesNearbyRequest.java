@@ -84,7 +84,8 @@ public class FoursquareVenuesNearbyRequest extends
 					.getString("code"));
 			// 200 = OK
 			if (returnCode == 200) {
-				Gson gson = new Gson();
+                android.util.Log.d("foursquare", venuesJson.toString());
+                Gson gson = new Gson();
 				JSONArray json = venuesJson.getJSONObject("response")
 						.getJSONArray("venues");
 				for (int i = 0; i < json.length(); i++) {

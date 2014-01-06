@@ -87,15 +87,6 @@ public class FacebookMainFeedFragment extends SherlockFragment {
 
         if (session != null) {
 
-            Request meRequest = Request.newMeRequest(session, new Request.GraphUserCallback() {
-                @Override
-                public void onCompleted(GraphUser user, Response response) {
-                    if (user != null) {
-                    }
-                }
-            });
-            meRequest.executeAsync();
-
             Request.Callback callback = new Request.Callback() {
                 @Override
                 public void onCompleted(Response response) {

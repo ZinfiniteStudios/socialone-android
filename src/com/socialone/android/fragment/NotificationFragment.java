@@ -1,6 +1,7 @@
 package com.socialone.android.fragment;
 
 import android.content.Context;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
@@ -13,8 +14,17 @@ import android.widget.BaseAdapter;
 import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.actionbarsherlock.app.SherlockFragment;
+import com.facebook.HttpMethod;
+import com.facebook.Request;
+import com.facebook.Response;
+import com.facebook.Session;
+import com.facebook.SessionState;
+import com.facebook.UiLifecycleHelper;
+import com.facebook.model.GraphUser;
+import com.google.analytics.tracking.android.EasyTracker;
 import com.haarman.listviewanimations.swinginadapters.prepared.SwingBottomInAnimationAdapter;
 import com.parse.signpost.OAuth;
 import com.socialone.android.R;
@@ -25,6 +35,10 @@ import com.socialone.android.appnet.adnlib.data.Post;
 import com.socialone.android.appnet.adnlib.data.PostList;
 import com.socialone.android.appnet.adnlib.response.InteractionListResponseHandler;
 import com.socialone.android.appnet.adnlib.response.PostListResponseHandler;
+import com.socialone.android.condesales.EasyFoursquareAsync;
+import com.socialone.android.condesales.listeners.AccessTokenRequestListener;
+import com.socialone.android.condesales.listeners.GetNotificationsListener;
+import com.socialone.android.condesales.models.Notifications;
 import com.socialone.android.utils.Constants;
 import com.socialone.android.viewcomponents.RelativeTimeTextView;
 import com.squareup.picasso.Picasso;
@@ -51,11 +65,20 @@ public class NotificationFragment extends SherlockFragment {
     GoogleCardsAdapter googleCardsAdapter;
     AppDotNetClient client;
     SocialAuthAdapter mAuthAdapter;
+    private UiLifecycleHelper uiHelper;
+    Session session;
+    EasyFoursquareAsync easyFoursquareAsync;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
+        uiHelper = new UiLifecycleHelper(getSherlockActivity(), new Session.StatusCallback() {
+            @Override
+            public void call(Session session, SessionState state, Exception exception) {
+                onSessionStateChange(session, state, exception);
+            }
+        });
+        uiHelper.onCreate(savedInstanceState);
     }
 
     @Override
@@ -70,6 +93,8 @@ public class NotificationFragment extends SherlockFragment {
     public void onViewCreated(View view, Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
         twitterSetup();
+        getFacebookFeed();
+        fourSquareNotifications();
     }
 
     private void setUpTwit4j(){
@@ -93,6 +118,31 @@ public class NotificationFragment extends SherlockFragment {
         }catch (Exception e){
             e.printStackTrace();
         }
+    }
+
+    private void fourSquareNotifications(){
+        easyFoursquareAsync = new EasyFoursquareAsync(getSherlockActivity());
+        easyFoursquareAsync.requestAccess(new AccessTokenRequestListener() {
+            @Override
+            public void onAccessGrant(String accessToken) {
+                easyFoursquareAsync.getUserNotifications(new GetNotificationsListener() {
+                    @Override
+                    public void onGotNotifications(ArrayList<Notifications> list) {
+                        Log.d("foursquare", "notification response " + list.toString());
+                    }
+
+                    @Override
+                    public void onError(String errorMsg) {
+                        Log.d("foursquare", "notification error " + errorMsg.toString());
+                    }
+                });
+            }
+
+            @Override
+            public void onError(String errorMsg) {
+
+            }
+        });
     }
 
     private void twitterSetup(){
@@ -161,6 +211,29 @@ public class NotificationFragment extends SherlockFragment {
 //                }
             }
         });
+    }
+
+    private void getFacebookFeed(){
+        session = ensureFacebookSessionFromCache(getSherlockActivity());
+
+        if (session != null) {
+
+            Request.Callback callback = new Request.Callback() {
+                @Override
+                public void onCompleted(Response response) {
+                    Log.d("faceboook", response.toString());
+                }
+            };
+
+            Bundle bundle = new Bundle();
+            bundle.putString("include_read", "true");
+//            bundle.putString("fields", "id,from,name,message,caption,description,created_time,updated_time,type,status_type,via,source,picture, application");
+
+            Request request = new Request(session, "/me/notifications", bundle, HttpMethod.GET, callback);
+            request.executeAsync();
+
+        }
+
     }
 
     public class GoogleCardsAdapter extends BaseAdapter {
@@ -269,5 +342,73 @@ public class NotificationFragment extends SherlockFragment {
         public String stripHtml(String html) {
             return Html.fromHtml(html).toString();
         }
+    }
+
+    private void onSessionStateChange(Session session, SessionState state, Exception exception) {
+        if (state.isOpened()) {
+//            Toast.makeText(getSherlockActivity(), "connected", Toast.LENGTH_SHORT).show();
+//            getUserInfo();
+            Request meRequest = Request.newMeRequest(session, new Request.GraphUserCallback() {
+                @Override
+                public void onCompleted(GraphUser user, Response response) {
+                    if (user != null) {
+                        Toast.makeText(getSherlockActivity(), "Welcome back " + user.getName(), Toast.LENGTH_SHORT).show();
+                    }
+                }
+            });
+            meRequest.executeAndWait();
+        } else if (state.isClosed()) {
+            Toast.makeText(getSherlockActivity(), "error",Toast.LENGTH_SHORT).show();
+        }
+    }
+
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        uiHelper.onActivityResult(requestCode, resultCode, data);
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        uiHelper.onResume();
+    }
+
+    @Override
+    public void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+        uiHelper.onSaveInstanceState(outState);
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+        uiHelper.onPause();
+    }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        uiHelper.onDestroy();
+    }
+
+    @Override
+    public void onStart() {
+        super.onStart();
+        EasyTracker.getInstance().activityStart(getSherlockActivity());
+    }
+
+    @Override
+    public void onStop() {
+        super.onStop();
+        EasyTracker.getInstance().activityStop(getSherlockActivity());
+    }
+
+    public static Session ensureFacebookSessionFromCache(Context context){
+        Session activeSession = Session.getActiveSession();
+        if (activeSession == null || !activeSession.getState().isOpened()) {
+            activeSession = Session.openActiveSessionFromCache(context);
+        }
+        return activeSession;
     }
 }

@@ -116,6 +116,7 @@ public class GetUserVenuesHistoryRequest extends
 				Gson gson = new Gson();
 				JSONArray json = venuesJson.getJSONObject("response")
 						.getJSONObject("venues").getJSONArray("items");
+
 				for (int i = 0; i < json.length(); i++) {
 					venue = gson.fromJson(json.get(i).toString(),
 							Venues.class);

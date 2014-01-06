@@ -16,10 +16,12 @@ import com.socialone.android.condesales.listeners.FoursquareVenueDetailsResquest
 import com.socialone.android.condesales.listeners.FoursquareVenuesResquestListener;
 import com.socialone.android.condesales.listeners.FriendsListener;
 import com.socialone.android.condesales.listeners.GetCheckInsListener;
+import com.socialone.android.condesales.listeners.GetNotificationsListener;
 import com.socialone.android.condesales.listeners.TipsResquestListener;
 import com.socialone.android.condesales.listeners.UserInfoRequestListener;
 import com.socialone.android.condesales.listeners.VenuesHistoryListener;
 import com.socialone.android.condesales.tasks.checkins.CheckInRequest;
+import com.socialone.android.condesales.tasks.notifications.GetUserNotificationsRequest;
 import com.socialone.android.condesales.tasks.tips.TipsNearbyRequest;
 import com.socialone.android.condesales.tasks.users.GetCheckInsRequest;
 import com.socialone.android.condesales.tasks.users.GetFriendsRequest;
@@ -169,6 +171,11 @@ public class EasyFoursquareAsync {
 				mActivity, listener, userID);
 		request.execute(getAccessToken());
 	}
+
+    public void getUserNotifications(GetNotificationsListener listener){
+        GetUserNotificationsRequest request = new GetUserNotificationsRequest(mActivity, listener);
+        request.execute(getAccessToken());
+    }
 
 	private boolean hasAccessToken() {
 		String token = getAccessToken();
