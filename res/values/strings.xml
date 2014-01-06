@@ -14,6 +14,7 @@
     <string name="px_consumer_secret">A7UzErJdSOo99IQuTJhhYZbFEZn6KbySaF9RbUF7</string>
     <string name="appnet_id"></string>
     <string name="appnet_secret"></string>
+    <string name="version_dynamic">Version %1$s</string>
 
     <string name="navigation_drawer_open">Open navigation drawer</string>
     <string name="drawer_open">Open navigation drawer</string>

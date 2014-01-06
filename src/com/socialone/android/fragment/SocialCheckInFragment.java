@@ -15,12 +15,12 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Toast;
 
+import com.actionbarsherlock.app.SherlockFragment;
 import com.crashlytics.android.Crashlytics;
 import com.crittercism.app.Crittercism;
 import com.facebook.Session;
 import com.facebook.SessionState;
 import com.facebook.UiLifecycleHelper;
-import com.github.rtyley.android.sherlock.roboguice.fragment.RoboSherlockFragment;
 import com.google.analytics.tracking.android.EasyTracker;
 import com.google.analytics.tracking.android.GoogleAnalytics;
 import com.google.analytics.tracking.android.Tracker;
@@ -30,7 +30,6 @@ import com.google.android.gms.maps.MapView;
 import com.google.android.gms.maps.MapsInitializer;
 import com.google.android.gms.maps.model.CameraPosition;
 import com.google.android.gms.maps.model.LatLng;
-import com.google.inject.Inject;
 import com.socialone.android.R;
 import com.socialone.android.utils.Datastore;
 import com.viewpagerindicator.TitlePageIndicator;
@@ -44,11 +43,10 @@ import java.util.ArrayList;
  * Time: 1:15 AM
  * To change this template use File | Settings | File Templates.
  */
-public class SocialCheckInFragment extends RoboSherlockFragment {
+public class SocialCheckInFragment extends SherlockFragment {
 
     Context mContext;
     View view;
-    @Inject
     Datastore mDatastore;
     //    @InjectView(R.id.checkin_list)
 //    ListView checkInList;

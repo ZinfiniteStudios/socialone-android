@@ -16,7 +16,7 @@ import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.TextView;
 
-import com.github.rtyley.android.sherlock.roboguice.fragment.RoboSherlockFragment;
+import com.actionbarsherlock.app.SherlockFragment;
 import com.haarman.listviewanimations.swinginadapters.prepared.SwingBottomInAnimationAdapter;
 import com.socialone.android.R;
 import com.socialone.android.condesales.EasyFoursquareAsync;
@@ -36,7 +36,7 @@ import java.util.Iterator;
 /**
  * Created by david.hodge on 12/25/13.
  */
-public class FourSquareCheckInFragment extends RoboSherlockFragment {
+public class FourSquareCheckInFragment extends SherlockFragment {
 
     View view;
     ListView listView;
@@ -73,7 +73,6 @@ public class FourSquareCheckInFragment extends RoboSherlockFragment {
     }
 
     private void getUserLocation() {
-//        try {
             locationManager = (LocationManager) getSherlockActivity().getSystemService(getSherlockActivity().LOCATION_SERVICE);
             String bestProvider = locationManager.getBestProvider(new Criteria(), false);
             location = locationManager.getLastKnownLocation(bestProvider);
@@ -123,12 +122,6 @@ public class FourSquareCheckInFragment extends RoboSherlockFragment {
 
                 }
             });
-
-//        } catch (Exception e) {
-//            Log.e("places", e.toString());
-//            Crittercism.logHandledException(e);
-//            Crashlytics.logException(e);
-//        }
     }
 
     public void checkinDialog(Venue place){

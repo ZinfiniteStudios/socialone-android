@@ -23,6 +23,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.actionbarsherlock.app.ActionBar;
+import com.actionbarsherlock.app.SherlockFragmentActivity;
 import com.actionbarsherlock.view.MenuItem;
 import com.amazon.insights.AmazonInsights;
 import com.amazon.insights.InsightsCredentials;
@@ -33,9 +34,9 @@ import com.facebook.Session;
 import com.facebook.SessionState;
 import com.facebook.UiLifecycleHelper;
 import com.facebook.model.GraphUser;
-import com.github.rtyley.android.sherlock.roboguice.activity.RoboSherlockFragmentActivity;
 import com.google.analytics.tracking.android.EasyTracker;
 import com.socialone.android.R;
+import com.socialone.android.fragment.AboutFragment;
 import com.socialone.android.fragment.AppNetFeedFragment;
 import com.socialone.android.fragment.FacebookMainFeedFragment;
 import com.socialone.android.fragment.FourSquareFeedFragment;
@@ -57,7 +58,7 @@ import roboguice.inject.RoboInjector;
 /**
  * Created by david.hodge on 12/18/13.
  */
-public class MainActivity extends RoboSherlockFragmentActivity implements DrawerLayout.DrawerListener {
+public class MainActivity extends SherlockFragmentActivity implements DrawerLayout.DrawerListener {
 
     DrawerLayout mDrawerLayout;
     FrameLayout mContent;
@@ -93,6 +94,7 @@ public class MainActivity extends RoboSherlockFragmentActivity implements Drawer
     public static final int NAV_APP_NET = R.id.nav_item_appnet;
     public static final int NAV_TWITTER = R.id.nav_item_twitter;
     public static final int NAV_FOURSQUARE = R.id.nav_item_foursquare;
+    public static final int NAV_ABOUT = R.id.nav_item_about;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -259,22 +261,31 @@ public class MainActivity extends RoboSherlockFragmentActivity implements Drawer
         Bundle args = new Bundle();
         switch (fragID) {
             case NAV_SHARE:
-                fragment = injector.getInstance(SocialFragment.class);
+                fragment = new SocialFragment();
                 break;
             case NAV_FACEBOOK:
-                fragment = injector.getInstance(FacebookMainFeedFragment.class);
+//                fragment = injector.getInstance(FacebookMainFeedFragment.class);
+                fragment = new FacebookMainFeedFragment();
                 break;
             case NAV_ID_TEST_3:
-                fragment = injector.getInstance(SocialFragment.class);
+//                fragment = injector.getInstance(SocialFragment.class);
+                fragment = new SocialFragment();
                 break;
             case NAV_APP_NET:
-                fragment = injector.getInstance(AppNetFeedFragment.class);
+//                fragment = injector.getInstance(AppNetFeedFragment.class);
+                fragment = new AppNetFeedFragment();
                 break;
             case NAV_TWITTER:
-                fragment = injector.getInstance(TwitterMainFeedFragment.class);
+//                fragment = injector.getInstance(TwitterMainFeedFragment.class);
+                fragment = new TwitterMainFeedFragment();
                 break;
             case NAV_FOURSQUARE:
-                fragment = injector.getInstance(FourSquareFeedFragment.class);
+//                fragment = injector.getInstance(FourSquareFeedFragment.class);
+                fragment = new FourSquareFeedFragment();
+                break;
+            case NAV_ABOUT:
+//                fragment = injector.getInstance(AboutFragment.class);
+                fragment = new AboutFragment();
                 break;
             default:
                 return;

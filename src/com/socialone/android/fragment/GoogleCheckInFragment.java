@@ -5,13 +5,13 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
-import com.github.rtyley.android.sherlock.roboguice.fragment.RoboSherlockFragment;
+import com.actionbarsherlock.app.SherlockFragment;
 import com.socialone.android.R;
 
 /**
  * Created by david.hodge on 12/25/13.
  */
-public class GoogleCheckInFragment extends RoboSherlockFragment {
+public class GoogleCheckInFragment extends SherlockFragment {
 
     View view;
     @Override

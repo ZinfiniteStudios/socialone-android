@@ -18,6 +18,7 @@ import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.actionbarsherlock.app.SherlockFragment;
 import com.facebook.FacebookRequestError;
 import com.facebook.HttpMethod;
 import com.facebook.Request;
@@ -27,7 +28,6 @@ import com.facebook.Session;
 import com.facebook.SessionState;
 import com.facebook.UiLifecycleHelper;
 import com.facebook.model.GraphPlace;
-import com.github.rtyley.android.sherlock.roboguice.fragment.RoboSherlockFragment;
 import com.google.analytics.tracking.android.EasyTracker;
 import com.haarman.listviewanimations.swinginadapters.prepared.SwingBottomInAnimationAdapter;
 import com.socialone.android.R;
@@ -37,7 +37,7 @@ import java.util.List;
 /**
  * Created by david.hodge on 12/25/13.
  */
-public class FacebookCheckInFragment extends RoboSherlockFragment {
+public class FacebookCheckInFragment extends SherlockFragment{
 
     View view;
     ListView listView;

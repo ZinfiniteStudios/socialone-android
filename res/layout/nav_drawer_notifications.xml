@@ -4,20 +4,13 @@
     android:orientation="vertical"
     android:background="@color/black_overlay"
     android:layout_gravity="end"
-    android:layout_width="240dp"
+    android:layout_width="350dp"
     android:layout_height="match_parent">
 
-    <ImageView
-        android:layout_gravity="center_horizontal"
-        android:layout_margin="16dp"
-        android:src="@drawable/google_plus"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content" />
-
-    <TextView
-        android:layout_margin="24dp"
-        android:text="User notifications will go here"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content" />
+    <fragment
+        android:id="@+id/noti_frag"
+        android:name="com.socialone.android.fragment.NotificationFragment"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent" />
 
 </LinearLayout>

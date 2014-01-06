@@ -25,7 +25,16 @@
         android:layout_marginRight="36dp"
         android:text="David Hodge" />
  </LinearLayout>
+
+    <oak.widget.TextViewWithFont
+        android:layout_margin="8dp"
+        android:gravity="center_horizontal"
+        android:id="@+id/build_version_text"
+        android:layout_above="@+id/bottom_btns"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" />
  <LinearLayout
+     android:id="@+id/bottom_btns"
      android:orientation="horizontal"
      android:layout_width="fill_parent"
      android:layout_height="wrap_content"
