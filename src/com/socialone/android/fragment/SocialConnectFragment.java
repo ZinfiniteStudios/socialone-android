@@ -2,6 +2,8 @@ package com.socialone.android.fragment;
 
 import android.content.Context;
 import android.content.Intent;
+import android.content.IntentSender;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.os.StrictMode;
 import android.util.Log;
@@ -21,6 +23,10 @@ import com.facebook.model.GraphUser;
 import com.facebook.widget.LoginButton;
 import com.github.rtyley.android.sherlock.roboguice.activity.RoboSherlockFragmentActivity;
 import com.google.analytics.tracking.android.EasyTracker;
+import com.google.android.gms.common.ConnectionResult;
+import com.google.android.gms.common.GooglePlayServicesClient;
+import com.google.android.gms.common.SignInButton;
+import com.google.android.gms.plus.PlusClient;
 import com.google.inject.Inject;
 import com.parse.signpost.commonshttp.CommonsHttpOAuthConsumer;
 import com.parse.signpost.commonshttp.CommonsHttpOAuthProvider;
@@ -33,6 +39,11 @@ import com.socialone.android.appnet.adnlib.response.UserResponseHandler;
 import com.socialone.android.condesales.EasyFoursquareAsync;
 import com.socialone.android.condesales.listeners.AccessTokenRequestListener;
 import com.socialone.android.condesales.listeners.UserInfoRequestListener;
+import com.socialone.android.fivehundredpx.api.FiveHundredException;
+import com.socialone.android.fivehundredpx.api.PxApi;
+import com.socialone.android.fivehundredpx.api.auth.AccessToken;
+import com.socialone.android.fivehundredpx.api.tasks.UserDetailTask;
+import com.socialone.android.fivehundredpx.api.tasks.XAuth500pxTask;
 import com.socialone.android.socialauth.FlickrAuth;
 import com.socialone.android.socialauth.FourSquareAuth;
 import com.socialone.android.socialauth.GooglePlusAuth;
@@ -45,6 +56,8 @@ import com.socialone.android.socialauth.TwitterAuth;
 import com.socialone.android.utils.Constants;
 import com.socialone.android.utils.Datastore;
 
+import org.json.JSONObject;
+
 import java.util.Arrays;
 
 
@@ -52,11 +65,14 @@ import java.util.Arrays;
 /**
  * Created by david.hodge on 11/4/13.
  */
-public class SocialConnectFragment extends RoboSherlockFragmentActivity {
+public class SocialConnectFragment extends RoboSherlockFragmentActivity
+        implements XAuth500pxTask.Delegate,
+            UserDetailTask.Delegate,
+            GooglePlayServicesClient.ConnectionCallbacks, GooglePlayServicesClient.OnConnectionFailedListener {
 
     LoginButton facebookBtn;
     Button twitterBtn;
-    Button plusBtn;
+    SignInButton plusBtn;
     Button fourSquareBtn;
     Button myspaceBtn;
     Button appNetBtn;
@@ -82,6 +98,12 @@ public class SocialConnectFragment extends RoboSherlockFragmentActivity {
 //    JumblrClient jumblrClient;
     AppDotNetClient client;
     EasyFoursquareAsync easyFoursquareAsync;
+    XAuth500pxTask loginTask;
+
+    com.socialone.android.fivehundredpx.api.auth.User fiveUser;
+
+    PlusClient plusClient;
+    ConnectionResult connectionResult;
 
     public static final String CONSUMER_KEY = "Get this from your Tumblr application settings page";
     public static final String CONSUMER_SECRET = "Get this from your Tumblr application settings page";
@@ -204,7 +226,8 @@ public class SocialConnectFragment extends RoboSherlockFragmentActivity {
     }
 
     private void setUpPlus(){
-        plusBtn = (Button) findViewById(R.id.social_connect_plus_btn);
+        plusBtn = (SignInButton) findViewById(R.id.social_connect_plus_btn);
+
         plusLoginAdapter = new GooglePlusAuth(mContext);
         plusLoginAdapter.setListener(new LoginListener() {
             @Override
@@ -230,9 +253,37 @@ public class SocialConnectFragment extends RoboSherlockFragmentActivity {
         plusBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                plusClient = new PlusClient.Builder(mContext, SocialConnectFragment.this, SocialConnectFragment.this)
+                        .setActions("http://schemas.google.com/AddActivity", "http://schemas.google.com/BuyActivity")
+                        .build();
+                if (connectionResult == null) {
+//                    connectionProgressDialog.show();..........................
+                } else {
+                try {
+                    connectionResult.startResolutionForResult(SocialConnectFragment.this, 900);
+                } catch (IntentSender.SendIntentException e) {
+                    // Try connecting again.
+                    plusClient.connect();
+                }
+                }
                 plusLoginAdapter.authorize();
             }
         });
+    }
+
+    @Override
+    public void onConnected(Bundle connectionHint) {
+        Toast.makeText(this, "User is connected!", Toast.LENGTH_LONG).show();
+    }
+
+    @Override
+    public void onDisconnected() {
+
+    }
+
+    @Override
+    public void onConnectionFailed(ConnectionResult connectionResult) {
+            Log.d("googleplus", connectionResult.getErrorCode() +  " " + connectionResult.toString());
     }
 
     private void setUpFourSquare(){
@@ -469,11 +520,14 @@ public class SocialConnectFragment extends RoboSherlockFragmentActivity {
     }
 
     private void setUpFivePx(){
+        fiveUser = new com.socialone.android.fivehundredpx.api.auth.User();
+        loginTask = new XAuth500pxTask(this);
         fivePxBtn = (Button) findViewById(R.id.social_connect_500px_btn);
         fivePxBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 //TODO auth things
+                loginTask.execute(getString(R.string.px_consumer_key), getString(R.string.px_consumer_secret), "dhodge", "d121091d");
             }
         });
     }
@@ -549,4 +603,51 @@ public class SocialConnectFragment extends RoboSherlockFragmentActivity {
         EasyTracker.getInstance().activityStop(this);
     }
 
+    public void onFail() {
+        runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                Toast.makeText(SocialConnectFragment.this,
+                        "Login Failed, please try again.", Toast.LENGTH_LONG)
+                        .show();
+            }
+        });
+
+    }
+
+    @Override
+    public void onSuccess(JSONObject user) {
+        try{
+            String userName = user.getString("fullname");
+            Toast.makeText(mContext, "Welcome " + userName, Toast.LENGTH_LONG).show();
+        }catch (Exception e){
+
+        }
+    }
+
+    @Override
+    public void onSuccess(AccessToken result) {
+        Log.d("500px", "logged in!");
+
+        fiveUser.accessToken = result;
+
+        SharedPreferences preferences = getSharedPreferences(Constants.SHARED_PREFERENCES, Context.MODE_PRIVATE);
+        SharedPreferences.Editor editor = preferences.edit();
+        editor.putString(Constants.PREF_ACCES_TOKEN, result.getToken());
+        editor.putString(Constants.PREF_TOKEN_SECRET, result.getTokenSecret());
+        editor.commit();
+
+
+        final PxApi api = new PxApi(fiveUser.accessToken,
+                getString(R.string.px_consumer_key),
+                getString(R.string.px_consumer_secret));
+
+        new UserDetailTask(SocialConnectFragment.this).execute(api);
+    }
+
+    @Override
+    public void onFail(FiveHundredException e) {
+        Log.d("500px", Integer.toString(e.getStatusCode()));
+        onFail();
+    }
 }

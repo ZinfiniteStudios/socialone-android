@@ -10,6 +10,8 @@
     <string name="amazon_key">e1d631df30894e94a2d6894228b5198c</string>
     <string name="amazon_private_key">1CPLfjD5xGff6xJsd8uwHOb4P++3va8lOeQvEEaBg0U=</string>
     <string name="mixpanel_key">38af33940057c9b49fcdeda17a3ad860</string>
+    <string name="px_consumer_key">kSzNAalzN2gYE0FYXam2Q4i2rCHEoEzdNlQlE8PD</string>
+    <string name="px_consumer_secret">A7UzErJdSOo99IQuTJhhYZbFEZn6KbySaF9RbUF7</string>
     <string name="appnet_id"></string>
     <string name="appnet_secret"></string>
 

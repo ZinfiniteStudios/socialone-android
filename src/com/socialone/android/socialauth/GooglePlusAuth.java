@@ -4,6 +4,7 @@ import android.content.Context;
 import android.os.Bundle;
 import android.os.Handler;
 
+import com.socialone.android.utils.Constants;
 import com.socialone.android.utils.Datastore;
 
 import org.brickred.socialauth.android.DialogListener;
@@ -85,7 +86,7 @@ public class GooglePlusAuth extends LoginAdapter {
                 }
             }
         });
-        mAuthAdapter.addCallBack(SocialAuthAdapter.Provider.GOOGLEPLUS, "http://google.com");
+        mAuthAdapter.addCallBack(SocialAuthAdapter.Provider.GOOGLEPLUS, Constants.PLUS_CALLBACK);
     }
 
     @Override

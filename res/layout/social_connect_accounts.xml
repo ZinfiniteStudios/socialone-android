@@ -46,7 +46,7 @@
         android:layout_marginRight="36dp"
         android:text="@string/twitter" />
 
-    <Button
+    <com.google.android.gms.common.SignInButton
         android:id="@+id/social_connect_plus_btn"
         android:layout_width="fill_parent"
         android:layout_height="56dp"

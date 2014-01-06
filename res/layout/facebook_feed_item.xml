@@ -13,40 +13,43 @@
         android:layout_width="fill_parent"
         android:layout_height="wrap_content">
 
-    <ImageView
-        android:id="@+id/user_image"
-        android:src="@drawable/appnet"
-        android:layout_width="48dp"
-        android:layout_height="48dp" />
-
-    <oak.widget.TextViewWithFont
-        android:id="@+id/social_checkin_name"
-        android:text="test"
-        android:layout_weight="1"
-        android:layout_marginLeft="16dp"
-        android:layout_marginRight="16dp"
-        android:layout_marginBottom="8dp"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content" />
-
-    <LinearLayout
-        android:orientation="vertical"
-        android:layout_gravity="center_vertical"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content">
-
         <ImageView
-            android:id="@+id/star_post"
-            android:src="@drawable/star"
-            android:layout_width="wrap_content"
+            android:id="@+id/user_image"
+            android:src="@drawable/appnet"
+            android:layout_width="48dp"
+            android:layout_height="48dp" />
+
+        <oak.widget.TextViewWithFont
+            android:id="@+id/social_checkin_name"
+            android:text="test"
+            android:layout_weight="1"
+            android:layout_marginLeft="16dp"
+            android:layout_marginRight="16dp"
+            android:layout_marginBottom="8dp"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content" />
 
-        <ImageView
-            android:id="@+id/repost_post"
-            android:src="@drawable/repost"
+        <LinearLayout
+            android:layout_margin="4dp"
+            android:orientation="vertical"
+            android:layout_gravity="center_vertical"
+            android:gravity="center_vertical"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content" />
-    </LinearLayout>
+            android:layout_height="wrap_content">
+
+            <ImageView
+                android:id="@+id/like_post"
+                android:src="@drawable/fb_like"
+                android:layout_marginBottom="8dp"
+                android:layout_width="36dp"
+                android:layout_height="36dp" />
+
+            <ImageView
+                android:id="@+id/repost_post"
+                android:src="@drawable/repost"
+                android:layout_width="36dp"
+                android:layout_height="36dp" />
+        </LinearLayout>
 
     </LinearLayout>
 

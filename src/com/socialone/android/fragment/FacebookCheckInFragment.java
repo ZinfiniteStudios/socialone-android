@@ -1,5 +1,6 @@
 package com.socialone.android.fragment;
 
+import android.app.Dialog;
 import android.content.Context;
 import android.content.Intent;
 import android.location.Criteria;
@@ -12,6 +13,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -44,6 +46,11 @@ public class FacebookCheckInFragment extends RoboSherlockFragment {
     Location location;
     LocationManager locationManager;
     GoogleCardsAdapter googleCardsAdapter;
+
+    Dialog dialog;
+    EditText checkinMessge;
+    Button cancelCheckinBtn;
+    Button checkinBtn;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -171,6 +178,61 @@ public class FacebookCheckInFragment extends RoboSherlockFragment {
         return activeSession;
     }
 
+    public void checkinDialog(GraphPlace place){
+        final String placeName = place.getName();
+        final String placeId = place.getId();
+
+        dialog = new Dialog(getSherlockActivity());
+        dialog.setContentView(R.layout.checkin_dialog);
+        checkinMessge =  (EditText) dialog.findViewById(R.id.checkin_message);
+        cancelCheckinBtn = (Button) dialog.findViewById(R.id.checkin_message_cancel);
+        checkinBtn = (Button) dialog.findViewById(R.id.checkin_message_checkin);
+
+        cancelCheckinBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                dialog.dismiss();
+            }
+        });
+
+        checkinBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                //just text post
+                Bundle postParams = new Bundle();
+                postParams.putString("type", "checkin");
+                postParams.putString("message", checkinMessge.getText().toString());
+                postParams.putString("place", placeId);
+                Request.Callback callback = new Request.Callback() {
+                    public void onCompleted(Response response) {
+
+                        FacebookRequestError error = response.getError();
+                        if (error != null) {
+                            dialog.dismiss();
+                            Toast.makeText(getSherlockActivity(),
+                                    error.getErrorMessage(),
+                                    Toast.LENGTH_SHORT).show();
+                        } else {
+                            dialog.dismiss();
+                            Toast.makeText(getSherlockActivity(),
+                                    "Facebook Share completed",
+                                    Toast.LENGTH_LONG).show();
+                        }
+                    }
+                };
+                Request request = new Request(session, "me/feed", postParams,
+                        HttpMethod.POST, callback);
+
+                RequestAsyncTask task = new RequestAsyncTask(request);
+                task.execute();
+
+            }
+        });
+
+        dialog.setTitle(placeName);
+        dialog.show();
+    }
+
     public class GoogleCardsAdapter extends BaseAdapter {
 
         private Context mContext;
@@ -227,31 +289,7 @@ public class FacebookCheckInFragment extends RoboSherlockFragment {
             viewHolder.checkBox.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    //just text post
-                    Bundle postParams = new Bundle();
-                    postParams.putString("type", "checkin");
-                    postParams.putString("message", "test");
-                    postParams.putString("place", place.getId());
-                    Request.Callback callback = new Request.Callback() {
-                        public void onCompleted(Response response) {
-
-                            FacebookRequestError error = response.getError();
-                            if (error != null) {
-                                Toast.makeText(getSherlockActivity(),
-                                        error.getErrorMessage(),
-                                        Toast.LENGTH_SHORT).show();
-                            } else {
-                                Toast.makeText(getSherlockActivity(),
-                                        "Facebook Share completed",
-                                        Toast.LENGTH_LONG).show();
-                            }
-                        }
-                    };
-                    Request request = new Request(session, "me/feed", postParams,
-                            HttpMethod.POST, callback);
-
-                    RequestAsyncTask task = new RequestAsyncTask(request);
-                    task.execute();
+                    checkinDialog(place);
                 }
             });
 //            setImageView(viewHolder, position);

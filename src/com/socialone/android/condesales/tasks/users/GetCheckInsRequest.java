@@ -3,6 +3,7 @@ package com.socialone.android.condesales.tasks.users;
 import android.app.Activity;
 import android.app.ProgressDialog;
 import android.os.AsyncTask;
+import android.util.Log;
 
 import com.google.gson.Gson;
 import com.socialone.android.condesales.constants.FoursquareConstants;
@@ -117,7 +118,8 @@ public class GetCheckInsRequest extends
 				Gson gson = new Gson();
 				JSONArray json = venuesJson.getJSONObject("response")
 						.getJSONObject("checkins").getJSONArray("items");
-				for (int i = 0; i < json.length(); i++) {
+                Log.d("foursquare", "json "+ json.toString());
+                for (int i = 0; i < json.length(); i++) {
 					checkin = gson.fromJson(json.get(i).toString(),
 							Checkin.class);
 					list.add(checkin);

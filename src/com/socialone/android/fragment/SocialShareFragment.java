@@ -41,18 +41,15 @@ import com.facebook.SessionState;
 import com.facebook.UiLifecycleHelper;
 import com.facebook.model.GraphUser;
 import com.google.analytics.tracking.android.EasyTracker;
+import com.google.android.gms.plus.PlusShare;
 import com.google.inject.Inject;
 import com.parse.signpost.OAuth;
 import com.socialone.android.R;
 import com.socialone.android.appnet.adnlib.AppDotNetClient;
-import com.socialone.android.appnet.adnlib.IQueryParameter;
-import com.socialone.android.appnet.adnlib.PlaceSearchQueryParameters;
-import com.socialone.android.appnet.adnlib.QueryParameters;
 import com.socialone.android.appnet.adnlib.data.Post;
 import com.socialone.android.appnet.adnlib.response.PostResponseHandler;
 import com.socialone.android.utils.Constants;
 import com.socialone.android.utils.Datastore;
-import com.socialone.android.utils.Utils;
 
 import org.brickred.socialauth.android.DialogListener;
 import org.brickred.socialauth.android.SocialAuthAdapter;
@@ -121,6 +118,7 @@ public class SocialShareFragment extends SherlockFragment {
     SocialAuthAdapter mAuthAdapter;
     SocialAuthAdapter linkAuthAdapter;
     SocialAuthAdapter flickrAuthAdapter;
+    SocialAuthAdapter plusAuthAdapter;
     AppDotNetClient client;
 
     String picturePath;
@@ -242,6 +240,12 @@ public class SocialShareFragment extends SherlockFragment {
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
                 flickrSetup();
+            }
+        });
+        plusSwitch.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                plusSetup();
             }
         });
         return view;
@@ -508,8 +512,52 @@ public class SocialShareFragment extends SherlockFragment {
         }
     }
 
+    private void plusSetup(){
+        plusAuthAdapter = new SocialAuthAdapter(new DialogListener() {
+            @Override
+            public void onComplete(Bundle bundle) {
+                Log.d("twitter", "auth adapter completed");
+            }
+
+            @Override
+            public void onError(SocialAuthError socialAuthError) {
+                Log.e("twitter", "auth adapter " + socialAuthError.getMessage());
+            }
+
+            @Override
+            public void onCancel() {
+                //stub
+            }
+
+            @Override
+            public void onBack() {
+                //stub
+            }
+        });
+        plusAuthAdapter.addCallBack(SocialAuthAdapter.Provider.GOOGLEPLUS, Constants.PLUS_CALLBACK);
+        plusAuthAdapter.authorize(mContext, SocialAuthAdapter.Provider.GOOGLEPLUS);
+
+    }
+
     private void plusShare(String string){
-        //TODO
+        plusAuthAdapter.updateStatus(string, new SocialAuthListener<Integer>() {
+            @Override
+            public void onExecute(String s, Integer status) {
+                if (status == 200 || status == 201 || status == 204) {
+                    Toast.makeText(getSherlockActivity(),
+                            "Twitter Share completed",
+                            Toast.LENGTH_LONG).show();
+                    shareField.getText().clear();
+                } else {
+                    Log.e("googleplus", "Error updating google plus status=" + status);
+                }
+            }
+
+            @Override
+            public void onError(SocialAuthError socialAuthError) {
+                Log.e("googleplus", "Error updating google plus", socialAuthError);
+            }
+        }, false);
     }
 
     private void appNetShare(String string){
@@ -669,6 +717,11 @@ public class SocialShareFragment extends SherlockFragment {
         }
 
         if(plusSwitch.isChecked()){
+            Intent shareIntent = new PlusShare.Builder(mContext)
+                    .setType("text/plain")
+                    .setText(userShareText)
+                    .getIntent();
+            startActivityForResult(shareIntent, 0);
             plusShare(userShareText);
         }
 

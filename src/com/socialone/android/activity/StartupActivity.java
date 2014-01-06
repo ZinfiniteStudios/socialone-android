@@ -16,7 +16,6 @@ import com.amazon.insights.InsightsCredentials;
 import com.amazon.insights.InsightsOptions;
 import com.crashlytics.android.Crashlytics;
 import com.crittercism.app.Crittercism;
-import com.flurry.android.FlurryAgent;
 import com.github.rtyley.android.sherlock.roboguice.activity.RoboSherlockFragmentActivity;
 import com.google.analytics.tracking.android.EasyTracker;
 import com.parse.ParseAnalytics;
@@ -117,7 +116,6 @@ public class StartupActivity extends RoboSherlockFragmentActivity implements Act
     public void onStart() {
         super.onStart();
         EasyTracker.getInstance().activityStart(this); // Add this method.
-        FlurryAgent.onStartSession(this, getString(R.string.furry_id));
 //        BugSenseHandler.startSession(this);
     }
 
@@ -125,7 +123,6 @@ public class StartupActivity extends RoboSherlockFragmentActivity implements Act
     public void onStop() {
         super.onStop();
         EasyTracker.getInstance().activityStop(this); // Add this method.
-        FlurryAgent.onEndSession(this);
 //        BugSenseHandler.closeSession(this);
     }
 

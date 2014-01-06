@@ -33,13 +33,14 @@ import com.facebook.Session;
 import com.facebook.SessionState;
 import com.facebook.UiLifecycleHelper;
 import com.facebook.model.GraphUser;
-import com.flurry.android.FlurryAgent;
 import com.github.rtyley.android.sherlock.roboguice.activity.RoboSherlockFragmentActivity;
 import com.google.analytics.tracking.android.EasyTracker;
 import com.socialone.android.R;
 import com.socialone.android.fragment.AppNetFeedFragment;
-import com.socialone.android.fragment.SocialCheckInFragment;
+import com.socialone.android.fragment.FacebookMainFeedFragment;
+import com.socialone.android.fragment.FourSquareFeedFragment;
 import com.socialone.android.fragment.SocialFragment;
+import com.socialone.android.fragment.TwitterMainFeedFragment;
 import com.socialone.android.utils.BlurTransformation;
 import com.socialone.android.utils.Constants;
 import com.socialone.android.utils.OldBlurTransformation;
@@ -86,10 +87,12 @@ public class MainActivity extends RoboSherlockFragmentActivity implements Drawer
     String userLocation;
 
     public static final int NAV_SHARE = R.id.nav_item_share;
-    public static final int NAV_ID_TEST = R.id.nav_item_facebook;
+    public static final int NAV_FACEBOOK = R.id.nav_item_facebook;
     public static final int NAV_ID_TEST_2 = R.id.nav_item_twitter;
     public static final int NAV_ID_TEST_3 = R.id.nav_item_myspace;
     public static final int NAV_APP_NET = R.id.nav_item_appnet;
+    public static final int NAV_TWITTER = R.id.nav_item_twitter;
+    public static final int NAV_FOURSQUARE = R.id.nav_item_foursquare;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -258,17 +261,20 @@ public class MainActivity extends RoboSherlockFragmentActivity implements Drawer
             case NAV_SHARE:
                 fragment = injector.getInstance(SocialFragment.class);
                 break;
-            case NAV_ID_TEST:
-                fragment = injector.getInstance(AppNetFeedFragment.class);
-                break;
-            case NAV_ID_TEST_2:
-                fragment = injector.getInstance(SocialCheckInFragment.class);
+            case NAV_FACEBOOK:
+                fragment = injector.getInstance(FacebookMainFeedFragment.class);
                 break;
             case NAV_ID_TEST_3:
                 fragment = injector.getInstance(SocialFragment.class);
                 break;
             case NAV_APP_NET:
                 fragment = injector.getInstance(AppNetFeedFragment.class);
+                break;
+            case NAV_TWITTER:
+                fragment = injector.getInstance(TwitterMainFeedFragment.class);
+                break;
+            case NAV_FOURSQUARE:
+                fragment = injector.getInstance(FourSquareFeedFragment.class);
                 break;
             default:
                 return;
@@ -582,14 +588,12 @@ public class MainActivity extends RoboSherlockFragmentActivity implements Drawer
     public void onStart() {
         super.onStart();
         EasyTracker.getInstance().activityStart(this); // Add this method.
-        FlurryAgent.onStartSession(this, getString(R.string.furry_id));
     }
 
     @Override
     public void onStop() {
         super.onStop();
         EasyTracker.getInstance().activityStop(this); // Add this method.
-        FlurryAgent.onEndSession(this);
     }
 
     @Override

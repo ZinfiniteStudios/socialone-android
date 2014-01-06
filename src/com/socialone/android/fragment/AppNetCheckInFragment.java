@@ -1,5 +1,6 @@
 package com.socialone.android.fragment;
 
+import android.app.Dialog;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.location.Criteria;
@@ -13,6 +14,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.TextView;
 
@@ -32,8 +34,6 @@ import com.socialone.android.appnet.adnlib.data.Post;
 import com.socialone.android.appnet.adnlib.response.PlaceListResponseHandler;
 import com.socialone.android.appnet.adnlib.response.PostResponseHandler;
 
-import org.json.JSONObject;
-
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -51,6 +51,11 @@ public class AppNetCheckInFragment extends SherlockFragment {
     String lat;
     String lon;
     GoogleCardsAdapter googleCardsAdapter;
+
+    Dialog dialog;
+    EditText checkinMessge;
+    Button cancelCheckinBtn;
+    Button checkinBtn;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -122,6 +127,61 @@ public class AppNetCheckInFragment extends SherlockFragment {
         }
     }
 
+    public void checkinDialog(Place place){
+        final String placeName = place.getName();
+        final String placeId = place.getFactualId();
+        final String placeAdd = place.getAddress();
+
+        dialog = new Dialog(getSherlockActivity());
+        dialog.setContentView(R.layout.checkin_dialog);
+        checkinMessge =  (EditText) dialog.findViewById(R.id.checkin_message);
+        cancelCheckinBtn = (Button) dialog.findViewById(R.id.checkin_message_cancel);
+        checkinBtn = (Button) dialog.findViewById(R.id.checkin_message_checkin);
+
+        cancelCheckinBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                dialog.dismiss();
+            }
+        });
+
+        checkinBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                HashMap<String, Object> list2 = new HashMap<String, Object>();
+                //TODO fill out all info as needed here
+                list2.put("id", placeId);
+                list2.put("address", placeAdd);
+                list2.put("name", placeName);
+
+                Post post = new Post();
+                Annotation annotation = new Annotation();
+                annotation.setType(Annotations.OHAI_LOCATION);
+                annotation.setValue(list2);
+
+                post.setText(checkinMessge.getText().toString());
+                post.addAnnotation(annotation);
+                client.createPost(post, new PostResponseHandler() {
+                    @Override
+                    public void onSuccess(Post responseData) {
+                        dialog.dismiss();
+                    }
+
+                    @Override
+                    public void onError(Exception error) {
+                        super.onError(error);
+                        Log.d("checkin", error.getLocalizedMessage());
+                    }
+                });
+
+            };
+        });
+
+        dialog.setTitle(placeName);
+        dialog.show();
+    }
+
+
     public class GoogleCardsAdapter extends BaseAdapter {
 
         private Context mContext;
@@ -178,66 +238,7 @@ public class AppNetCheckInFragment extends SherlockFragment {
             viewHolder.checkBox.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    Log.d("checkin", "posting");
-//                    HashMap<String, Object> list2 = new HashMap<String, Object>();
-//                    list2.put("+net.app.core.place", place.getFactualId());
-//                    Log.d("checkin", list2.toString());
-
-                    try{
-                    JSONObject json1 = new JSONObject();
-                    json1.put("factual_id", place.getFactualId());
-                    JSONObject json2 = new JSONObject();
-                    json2.put("+net.app.core.place", json1);
-
-                        Object obj = new Object();
-//                            obj = place.getFactualId();
-                        obj = "appdotnet";
-
-                        String i = json2.toString();
-
-                        i = i.substring(1, i.length() - 1);
-
-                        Log.d("checkin", "json1 " + json1.toString());
-                        Log.d("checkin", "json2 " + json2.toString());
-
-                    HashMap<String, Object> list2 = new HashMap<String, Object>();
-                        //TODO fill out all info as needed here
-                       list2.put("id", place.getFactualId());
-                        list2.put("address", place.getAddress());
-                        list2.put("name", place.getName());
-//                        list2.put("latitude", location.getLatitude());
-//                        list2.put("longitude", location.getLongitude());
-//                    list2.put("+net.app.core.place", json1);
-//                    list2.put("+net.app.core.place", );
-
-                    Post post = new Post();
-                    Annotation annotation = new Annotation();
-//                    annotation.setType(Annotations.CHECKIN);
-//                    annotation.setValue(list2);
-//                        annotation.setType(Annotations.GEOLOCATION);
-                        annotation.setType(Annotations.OHAI_LOCATION);
-                        annotation.setValue(list2);
-
-                    post.setText("testing checkins");
-                        post.addAnnotation(annotation);
-                        Log.d("checkin", "type " + annotation.getType());
-                        Log.d("checkin", "value " + annotation.getValue().toString());
-                    Log.d("checkin", post.toString());
-                    client.createPost(post, new PostResponseHandler() {
-                        @Override
-                        public void onSuccess(Post responseData) {
-                            Log.d("checkin", "posted!");
-                        }
-
-                        @Override
-                        public void onError(Exception error) {
-                            super.onError(error);
-                            Log.d("checkin", error.getLocalizedMessage());
-                        }
-                    });
-                    }catch (Exception e){
-                        Log.d("checkin", e.getMessage());
-                    }
+                    checkinDialog(place);
                 }
             });
 //            setImageView(viewHolder, position);

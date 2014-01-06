@@ -1,18 +1,18 @@
 package com.socialone.android.fragment;
 
+import android.app.Dialog;
 import android.content.Context;
-import android.graphics.Bitmap;
 import android.location.Criteria;
 import android.location.Location;
 import android.location.LocationManager;
 import android.os.Bundle;
 import android.util.Log;
-import android.util.LruCache;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.TextView;
 
@@ -45,6 +45,11 @@ public class FourSquareCheckInFragment extends RoboSherlockFragment {
     SocialAuthAdapter linkAuthAdapter;
     EasyFoursquareAsync easyFoursquareAsync;
     GoogleCardsAdapter googleCardsAdapter;
+
+    Dialog dialog;
+    EditText checkinMessge;
+    Button cancelCheckinBtn;
+    Button checkinBtn;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -125,12 +130,54 @@ public class FourSquareCheckInFragment extends RoboSherlockFragment {
 //        }
     }
 
+    public void checkinDialog(Venue place){
+        final String placeName = place.getName();
+        final String placeId = place.getId();
+
+        dialog = new Dialog(getSherlockActivity());
+        dialog.setContentView(R.layout.checkin_dialog);
+        checkinMessge =  (EditText) dialog.findViewById(R.id.checkin_message);
+        cancelCheckinBtn = (Button) dialog.findViewById(R.id.checkin_message_cancel);
+        checkinBtn = (Button) dialog.findViewById(R.id.checkin_message_checkin);
+
+        cancelCheckinBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                dialog.dismiss();
+            }
+        });
+
+        checkinBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                CheckInCriteria checkInCriteria = new CheckInCriteria();
+                checkInCriteria.setShout(checkinMessge.getText().toString());
+                checkInCriteria.setVenueId(placeId);
+                easyFoursquareAsync.checkIn(new CheckInListener() {
+                    @Override
+                    public void onCheckInDone(Checkin checkin) {
+                        dialog.dismiss();
+                    }
+
+                    @Override
+                    public void onError(String errorMsg) {
+                        dialog.dismiss();
+
+                    }
+                }, checkInCriteria);
+
+            }
+        });
+
+        dialog.setTitle(placeName);
+        dialog.show();
+    }
+
 
     public class GoogleCardsAdapter extends BaseAdapter {
 
         private Context mContext;
         private ArrayList<Venue> mAppPlace;
-        private LruCache<Integer, Bitmap> mMemoryCache;
         private boolean mShouldReturnEmpty = true;
 
         public GoogleCardsAdapter(Context context, ArrayList<Venue> appPlace) {
@@ -184,19 +231,7 @@ public class FourSquareCheckInFragment extends RoboSherlockFragment {
             viewHolder.checkBox.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    CheckInCriteria checkInCriteria = new CheckInCriteria();
-                    checkInCriteria.setVenueId(place.getId());
-                    easyFoursquareAsync.checkIn(new CheckInListener() {
-                        @Override
-                        public void onCheckInDone(Checkin checkin) {
-
-                        }
-
-                        @Override
-                        public void onError(String errorMsg) {
-
-                        }
-                    }, checkInCriteria);
+                    checkinDialog(place);
                 }
             });
 //            setImageView(viewHolder, position);

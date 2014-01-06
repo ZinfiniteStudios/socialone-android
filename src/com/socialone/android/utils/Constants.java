@@ -12,6 +12,8 @@ public class Constants {
     public static final String APPNET_CALLBACK = "http://social.zinfinitestudios.com/v1/callback/";
     public static final String LINKEDIN_CALLBACK = "http://social.zinfinitestudios.com/v1/callback/";
     public static final String FLICKR_CALLBACK = "http://www.flickr.com/auth-72157639298400395";
+    public static final String FIVEHUNDRED_CALLBACK = "http://social.zinfinitestudios.com/v1/callback/";
+    public static final String PLUS_CALLBACK = "http://social.zinfinitestudios.com/v1/callback/";
 
     public static final String TUMBLR_CONSUMER_KEY = "oXkVuOgUZZJ4FK68vEPXk7kH8zhhnZiUIAQJ8p94jO3GUCG6Sg";
     public static final String TUMBLR_CONSUMER_SECRET = "pWRZdsQPlSm9vVTFiDXCKJTtA2VCiZTpjypThAsmXyNWMERV9O";
@@ -29,6 +31,15 @@ public class Constants {
 
     public static final String FACEBOOK_GRAPH = "http://graph.facebook.com/";
 
+    //500px shit
+    public static final String PREF_TOKEN_SECRET = "Troubled.tokenSecret";
+    public static final String PREF_ACCES_TOKEN = "Troubled.accesToken";
+    public static final String SHARED_PREFERENCES = "TroubledSharedPreferences";
+
+    public static final String TWIT_CONSUMER_KEY = "ifls6s19VWz7xJjtlILo0Q";
+    public static final String TWIT_CONSUMER_SECRET = "AXiyrJ2oB6iKTO2zYIHkAhkKUtsNzJbO5kEAJjcwoSc";
+    public static final String TWIT_ACCESS_TOKEN = "twit.token";
+    public static final String TWIT_ACCESS_SECRET = "twit.secret";
 
     String permissions[] = {
             "user_about_me",
