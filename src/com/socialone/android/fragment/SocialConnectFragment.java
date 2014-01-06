@@ -1,5 +1,6 @@
 package com.socialone.android.fragment;
 
+import android.app.Dialog;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentSender;
@@ -9,6 +10,7 @@ import android.os.StrictMode;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.Toast;
 
 import com.actionbarsherlock.view.Menu;
@@ -82,6 +84,12 @@ public class SocialConnectFragment extends RoboSherlockFragmentActivity
     Button flickrBtn;
     Button fivePxBtn;
     Context mContext;
+
+    Dialog dialog;
+    EditText userName;
+    EditText password;
+    Button cancelSignBtn;
+    Button signinBtn;
 
     private UiLifecycleHelper uiHelper;
     Session session;
@@ -526,10 +534,36 @@ public class SocialConnectFragment extends RoboSherlockFragmentActivity
         fivePxBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                //TODO auth things
-                loginTask.execute(getString(R.string.px_consumer_key), getString(R.string.px_consumer_secret), "dhodge", "d121091d");
+                checkinDialog();
             }
         });
+    }
+
+    public void checkinDialog(){
+
+        dialog = new Dialog(mContext);
+        dialog.setContentView(R.layout.five_hund_signin);
+        userName =  (EditText) dialog.findViewById(R.id.five_username);
+        password = (EditText) dialog.findViewById(R.id.five_password);
+        cancelSignBtn = (Button) dialog.findViewById(R.id.checkin_message_cancel);
+        signinBtn = (Button) dialog.findViewById(R.id.checkin_message_checkin);
+
+        cancelSignBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                dialog.dismiss();
+            }
+        });
+
+        signinBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                loginTask.execute(getString(R.string.px_consumer_key), getString(R.string.px_consumer_secret), userName.getText().toString(), password.getText().toString());
+            }
+        });
+
+        dialog.setTitle(getString(R.string.five_px));
+        dialog.show();
     }
 
 

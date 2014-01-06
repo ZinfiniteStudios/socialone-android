@@ -85,6 +85,7 @@ public class FourSquareCheckInFragment extends RoboSherlockFragment {
                 public void onAccessGrant(String accessToken) {
                     VenuesCriteria criteria = new VenuesCriteria();
                     criteria.setLocation(location);
+                    criteria.setQuantity(40);
                     easyFoursquareAsync.getVenuesNearby(new FoursquareVenuesResquestListener() {
                         @Override
                         public void onVenuesFetched(ArrayList<Venue> venues) {
