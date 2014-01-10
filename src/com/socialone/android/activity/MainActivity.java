@@ -12,7 +12,6 @@ import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
-import android.util.Log;
 import android.view.ActionProvider;
 import android.view.ContextMenu;
 import android.view.SubMenu;
@@ -44,15 +43,13 @@ import com.socialone.android.fragment.FourSquareFeedFragment;
 import com.socialone.android.fragment.OptiFeedFragment;
 import com.socialone.android.fragment.SocialFragment;
 import com.socialone.android.fragment.TwitterMainFeedFragment;
+import com.socialone.android.fragment.UserProfileFragment;
 import com.socialone.android.utils.BlurTransformation;
 import com.socialone.android.utils.Constants;
 import com.socialone.android.utils.OldBlurTransformation;
 import com.socialone.android.utils.RoundTransformation;
 import com.socialone.android.viewcomponents.NavDrawerItem;
 import com.squareup.picasso.Picasso;
-
-import roboguice.RoboGuice;
-import roboguice.inject.RoboInjector;
 
 //import com.amazon.device.ads.AdLayout;
 //import com.amazon.device.ads.AdTargetingOptions;
@@ -99,6 +96,7 @@ public class MainActivity extends SherlockFragmentActivity implements DrawerLayo
     public static final int NAV_FOURSQUARE = R.id.nav_item_foursquare;
     public static final int NAV_FLICKR = R.id.nav_item_flickr;
     public static final int NAV_ABOUT = R.id.nav_item_about;
+    public static final int NAV_PROFILE = R.id.drawer_user_profile;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -116,10 +114,6 @@ public class MainActivity extends SherlockFragmentActivity implements DrawerLayo
         userBackground = (ImageView) findViewById(R.id.user_background_image);
         userNameText = (TextView) findViewById(R.id.user_name);
         userLocationText = (TextView) findViewById(R.id.user_location);
-
-//        ParseObject testObject = new ParseObject("TestObject");
-//        testObject.put("Park", "BGW");
-//        testObject.saveInBackground();
 
         mContext = this;
         mfragmentManager = getSupportFragmentManager();
@@ -171,8 +165,6 @@ public class MainActivity extends SherlockFragmentActivity implements DrawerLayo
     }
 
     private void getUserInfo() {
-
-        Log.d("image", "getting info");
 
         session = ensureFacebookSessionFromCache(mContext);
         Request meRequest = Request.newMeRequest(session, new Request.GraphUserCallback() {
@@ -260,10 +252,12 @@ public class MainActivity extends SherlockFragmentActivity implements DrawerLayo
     }
 
     private void setContentFragment(int fragID) {
-        RoboInjector injector = RoboGuice.getInjector(this);
         Fragment fragment;
         Bundle args = new Bundle();
         switch (fragID) {
+            case NAV_PROFILE:
+                fragment = new UserProfileFragment();
+                break;
             case NAV_SHARE:
                 fragment = new SocialFragment();
                 break;

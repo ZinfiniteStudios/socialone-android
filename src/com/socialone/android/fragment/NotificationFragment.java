@@ -26,6 +26,9 @@ import com.facebook.SessionState;
 import com.facebook.UiLifecycleHelper;
 import com.facebook.model.GraphUser;
 import com.google.analytics.tracking.android.EasyTracker;
+import com.googlecode.flickrjandroid.Flickr;
+import com.googlecode.flickrjandroid.activity.Item;
+import com.googlecode.flickrjandroid.people.User;
 import com.haarman.listviewanimations.swinginadapters.prepared.SwingBottomInAnimationAdapter;
 import com.parse.signpost.OAuth;
 import com.socialone.android.R;
@@ -38,6 +41,7 @@ import com.socialone.android.condesales.listeners.AccessTokenRequestListener;
 import com.socialone.android.condesales.listeners.GetNotificationsListener;
 import com.socialone.android.condesales.models.Notifications;
 import com.socialone.android.utils.Constants;
+import com.socialone.android.utils.FlickrHelper;
 import com.socialone.android.viewcomponents.RelativeTimeTextView;
 import com.squareup.picasso.Picasso;
 
@@ -46,6 +50,7 @@ import org.brickred.socialauth.android.SocialAuthAdapter;
 import org.brickred.socialauth.android.SocialAuthError;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 import twitter4j.Status;
@@ -63,16 +68,21 @@ public class NotificationFragment extends SherlockFragment {
     GoogleCardsAdapter googleCardsAdapter;
     AppCardsAdapter appCardsAdapter;
     FourCardsAdapter fourCardsAdapter;
+    FlickrCardsAdapter flickrCardsAdapter;
     AppDotNetClient client;
     SocialAuthAdapter mAuthAdapter;
+    SocialAuthAdapter mFlickrAdapter;
     private UiLifecycleHelper uiHelper;
     Session session;
     EasyFoursquareAsync easyFoursquareAsync;
     MergeAdapter mergeAdapter;
+    Flickr f;
+    User user;
 
     SwingBottomInAnimationAdapter swingBottomInAnimationAdapter;
     SwingBottomInAnimationAdapter swingBottomInAnimationAdapterApp;
     SwingBottomInAnimationAdapter swingBottomInAnimationAdapterFour;
+    SwingBottomInAnimationAdapter swingBottomInAnimationAdapterFlickr;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -98,11 +108,79 @@ public class NotificationFragment extends SherlockFragment {
     public void onViewCreated(View view, Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
         mergeAdapter = new MergeAdapter();
+//        flickrCardsAdapter = new FlickrCardsAdapter(getSherlockActivity());
+//        swingBottomInAnimationAdapterFlickr = new SwingBottomInAnimationAdapter(flickrCardsAdapter);
+//        googleCardsAdapter = new GoogleCardsAdapter(getSherlockActivity());
+//        swingBottomInAnimationAdapter = new SwingBottomInAnimationAdapter(googleCardsAdapter);
+//        fourCardsAdapter = new FourCardsAdapter(getSherlockActivity());
+//        swingBottomInAnimationAdapterFour = new SwingBottomInAnimationAdapter(fourCardsAdapter);
+//        appCardsAdapter = new AppCardsAdapter(getSherlockActivity());
+//        swingBottomInAnimationAdapterApp = new SwingBottomInAnimationAdapter(appCardsAdapter);
         twitterSetup();
 //        getAppNetFeed();
 //        getFacebookFeed();
 //        fourSquareNotifications();
+//        flickrSetup();
+//        mergeAdapter.addAdapter(swingBottomInAnimationAdapter);
+//        mergeAdapter.addAdapter(swingBottomInAnimationAdapterFlickr);
+//        mergeAdapter.addAdapter(swingBottomInAnimationAdapterApp);
+//        mergeAdapter.addAdapter(swingBottomInAnimationAdapterFour);
 //        listView.setAdapter(mergeAdapter);
+    }
+
+    private void flickrSetup(){
+        mFlickrAdapter = new SocialAuthAdapter(new DialogListener() {
+            @Override
+            public void onComplete(Bundle bundle) {
+                Log.d("flickr", "flickr complete");
+                f = FlickrHelper.getInstance().getFlickrAuthed(
+                        mAuthAdapter.getCurrentProvider().getAccessGrant().getKey(),
+                        mAuthAdapter.getCurrentProvider().getAccessGrant().getSecret());
+                Log.d("flickr", "flickr helper complete");
+//                f = new Flickr();
+//                auth = new OAuth();
+//                auth.setToken(new OAuthToken(mAuthAdapter.getCurrentProvider().getAccessGrant().getKey(), mAuthAdapter.getCurrentProvider().getAccessGrant().getSecret()));
+                try{
+                    Log.d("flickr", "setting feed");
+                    setUpFeed();
+                }catch (Exception e){
+                    Log.d("flickr", e.toString());
+                }
+            }
+
+            @Override
+            public void onError(SocialAuthError socialAuthError) {
+                Log.e("twitter", "auth adapter " + socialAuthError.getMessage());
+            }
+
+            @Override
+            public void onCancel() {
+                //stub
+            }
+
+            @Override
+            public void onBack() {
+                //stub
+            }
+        });
+        mFlickrAdapter.addCallBack(SocialAuthAdapter.Provider.FLICKR, Constants.FLICKR_CALLBACK);
+        mFlickrAdapter.authorize(getSherlockActivity(), SocialAuthAdapter.Provider.FLICKR);
+    }
+
+    private void setUpFeed() throws Exception{
+        user = new User();
+        String userName = user.getRealName();
+//        Log.d("flickr", userName);
+        Date day = null;
+//        List<Photo> photos = f.getInterestingnessInterface().getList(day, Constants.EXTRAS, Constants.FETCH_PER_PAGE, 1);
+        List<Item> photos = f.getActivityInterface().userPhotos(30, 1, "100d");
+        swingBottomInAnimationAdapterFlickr.setInitialDelayMillis(300);
+        swingBottomInAnimationAdapterFlickr.setAbsListView(listView);
+        mergeAdapter.addAdapter(swingBottomInAnimationAdapterFlickr);
+        Log.d("adapter", "flickr added");
+        flickrCardsAdapter.setData(photos);
+        mergeAdapter.notifyDataSetChanged();
+        swingBottomInAnimationAdapterFlickr.notifyDataSetChanged();
     }
 
     private void setUpTwit4j(){
@@ -116,14 +194,16 @@ public class NotificationFragment extends SherlockFragment {
             TwitterFactory tf = new TwitterFactory(cb.build());
             Twitter twitter = tf.getInstance();
             List<Status> statuses = twitter.getMentionsTimeline();
-            googleCardsAdapter = new GoogleCardsAdapter(getSherlockActivity(), statuses);
+            googleCardsAdapter = new GoogleCardsAdapter(getSherlockActivity());
             swingBottomInAnimationAdapter = new SwingBottomInAnimationAdapter(googleCardsAdapter);
             swingBottomInAnimationAdapter.setInitialDelayMillis(300);
             swingBottomInAnimationAdapter.setAbsListView(listView);
-            mergeAdapter.addAdapter(swingBottomInAnimationAdapter);
-//            listView.setAdapter(mergeAdapter);
+            Log.d("adapter", "twitter added");
             googleCardsAdapter.setData(statuses);
-            getAppNetFeed();
+//            mergeAdapter.addAdapter(swingBottomInAnimationAdapter);
+            listView.setAdapter(swingBottomInAnimationAdapter);
+            mergeAdapter.notifyDataSetChanged();
+            swingBottomInAnimationAdapter.notifyDataSetChanged();
         }catch (Exception e){
             e.printStackTrace();
         }
@@ -142,13 +222,12 @@ public class NotificationFragment extends SherlockFragment {
                         getSherlockActivity().runOnUiThread(new Runnable() {
                             @Override
                             public void run() {
-                        fourCardsAdapter = new FourCardsAdapter(getSherlockActivity(), list1);
-                        swingBottomInAnimationAdapterFour = new SwingBottomInAnimationAdapter(fourCardsAdapter);
                         swingBottomInAnimationAdapterFour.setInitialDelayMillis(300);
                         swingBottomInAnimationAdapterFour.setAbsListView(listView);
-                        mergeAdapter.addAdapter(swingBottomInAnimationAdapterFour);
-                        listView.setAdapter(mergeAdapter);
+                        Log.d("adapter", "4sq added");
                         fourCardsAdapter.setData(list1);
+                                mergeAdapter.notifyDataSetChanged();
+                                swingBottomInAnimationAdapterFour.notifyDataSetChanged();
                             }
                       });
                     }
@@ -203,14 +282,13 @@ public class NotificationFragment extends SherlockFragment {
                 getSherlockActivity().runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
-                        appCardsAdapter = new AppCardsAdapter(getSherlockActivity(), interactions);
-                        swingBottomInAnimationAdapterApp = new SwingBottomInAnimationAdapter(appCardsAdapter);
                         swingBottomInAnimationAdapterApp.setInitialDelayMillis(300);
                         swingBottomInAnimationAdapterApp.setAbsListView(listView);
-                        mergeAdapter.addAdapter(swingBottomInAnimationAdapterApp);
+                        Log.d("adapter", "app.net added");
 //                        listView.setAdapter(mergeAdapter);
                         appCardsAdapter.setData(interactions);
-                        fourSquareNotifications();
+                        mergeAdapter.notifyDataSetChanged();
+                        swingBottomInAnimationAdapterApp.notifyDataSetChanged();
                     }
                 });
             }
@@ -244,9 +322,8 @@ public class NotificationFragment extends SherlockFragment {
         private List<Status> mFeed;
         private boolean mShouldReturnEmpty = true;
 
-        public GoogleCardsAdapter(Context context, List<Status> feed) {
+        public GoogleCardsAdapter(Context context) {
             mContext = context;
-            mFeed = feed;
         }
 
         public void setData(List<Status> feed){
@@ -352,9 +429,8 @@ public class NotificationFragment extends SherlockFragment {
         private ArrayList<Interaction> mFeed;
         private boolean mShouldReturnEmpty = true;
 
-        public AppCardsAdapter(Context context, ArrayList<Interaction> feed) {
+        public AppCardsAdapter(Context context) {
             mContext = context;
-            mFeed = feed;
         }
 
         public void setData(ArrayList<Interaction> feed){
@@ -460,9 +536,8 @@ public class NotificationFragment extends SherlockFragment {
         private ArrayList<Notifications> mFeed;
         private boolean mShouldReturnEmpty = true;
 
-        public FourCardsAdapter(Context context, ArrayList<Notifications> feed) {
+        public FourCardsAdapter(Context context) {
             mContext = context;
-            mFeed = feed;
         }
 
         public void setData(ArrayList<Notifications> feed){
@@ -555,6 +630,85 @@ public class NotificationFragment extends SherlockFragment {
             ImageView userImg;
             ImageView starPost;
             ImageView repostPost;
+        }
+
+        public String stripHtml(String html) {
+            return Html.fromHtml(html).toString();
+        }
+    }
+
+    public class FlickrCardsAdapter extends BaseAdapter {
+
+        private Context mContext;
+        private List<Item> mFeed;
+        private boolean mShouldReturnEmpty = true;
+
+        public FlickrCardsAdapter(Context context) {
+            mContext = context;
+        }
+
+        public void setData(List<Item> feed){
+            mFeed = feed;
+        }
+
+        @Override
+        public boolean isEmpty() {
+            return mShouldReturnEmpty && super.isEmpty();
+        }
+
+        @Override
+        public int getCount() {
+            return mFeed.size();
+        }
+
+        @Override
+        public Item getItem(int position) {
+            return mFeed.get(position);
+        }
+
+        public long getItemId(int position) {
+            return position;
+        }
+
+        @Override
+        public View getView(int position, View convertView, ViewGroup parent) {
+            ViewHolder viewHolder;
+            View view = convertView;
+            if (view == null) {
+                view = LayoutInflater.from(mContext).inflate(R.layout.flickr_feed_item, parent, false);
+
+                viewHolder = new ViewHolder();
+                viewHolder.flickrName = (TextView) view.findViewById(R.id.flickr_name);
+                viewHolder.flickrExtra = (RelativeTimeTextView) view.findViewById(R.id.flickr_extra);
+                viewHolder.flickrImage = (ImageView) view.findViewById(R.id.flickr_imageview);
+
+                view.setTag(viewHolder);
+
+            } else {
+                viewHolder = (ViewHolder) view.getTag();
+            }
+
+            final Item feed = getItem(position);
+            viewHolder.flickrName.setText(feed.getTitle());
+            viewHolder.flickrExtra.setText(Integer.toString(feed.getViews()));
+//            viewHolder.flickrExtra.setReferenceTime(feed.getDateAdded().getTime());
+            try{
+                Log.d("flickr", Integer.toString(feed.getViews()));
+            }catch (Exception e){
+                Log.d("flickr", e.toString());
+            }
+//            viewHolder.flickrExtra.setText(feed.getId());
+            Picasso.with(mContext)
+                    .load(feed.getType())
+                    .into(viewHolder.flickrImage);
+
+            return view;
+        }
+
+        public class ViewHolder {
+            TextView flickrName;
+            RelativeTimeTextView flickrExtra;
+            ImageView flickrImage;
         }
 
         public String stripHtml(String html) {
