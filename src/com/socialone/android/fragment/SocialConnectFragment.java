@@ -7,6 +7,8 @@ import android.content.IntentSender;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.os.StrictMode;
+import android.preference.PreferenceManager;
+import android.text.InputType;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
@@ -29,12 +31,12 @@ import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GooglePlayServicesClient;
 import com.google.android.gms.common.SignInButton;
 import com.google.android.gms.plus.PlusClient;
-import com.google.inject.Inject;
 import com.parse.signpost.commonshttp.CommonsHttpOAuthConsumer;
 import com.parse.signpost.commonshttp.CommonsHttpOAuthProvider;
 import com.socialone.android.R;
 import com.socialone.android.activity.AppNetAuthActivity;
 import com.socialone.android.activity.MainActivity;
+import com.socialone.android.activity.TumblrAuthActivity;
 import com.socialone.android.appnet.adnlib.AppDotNetClient;
 import com.socialone.android.appnet.adnlib.data.User;
 import com.socialone.android.appnet.adnlib.response.UserResponseHandler;
@@ -56,8 +58,8 @@ import com.socialone.android.socialauth.LoginListener;
 import com.socialone.android.socialauth.MyspaceAuth;
 import com.socialone.android.socialauth.TwitterAuth;
 import com.socialone.android.utils.Constants;
-import com.socialone.android.utils.Datastore;
 
+import com.socialone.android.viewcomponents.FloatLabel;
 import org.json.JSONObject;
 
 import java.util.Arrays;
@@ -86,14 +88,14 @@ public class SocialConnectFragment extends RoboSherlockFragmentActivity
     Context mContext;
 
     Dialog dialog;
-    EditText userName;
-    EditText password;
+    FloatLabel userName;
+    FloatLabel password;
     Button cancelSignBtn;
     Button signinBtn;
 
     private UiLifecycleHelper uiHelper;
     Session session;
-    @Inject Datastore mDatastore;
+//    Datastore mDatastore;
 
     LoginAdapter facebookLoginAdapter;
     LoginAdapter twitterLoginAdapter;
@@ -112,6 +114,8 @@ public class SocialConnectFragment extends RoboSherlockFragmentActivity
 
     PlusClient plusClient;
     ConnectionResult connectionResult;
+    SharedPreferences prefs;
+    SharedPreferences.Editor edit;
 
     public static final String CONSUMER_KEY = "Get this from your Tumblr application settings page";
     public static final String CONSUMER_SECRET = "Get this from your Tumblr application settings page";
@@ -126,6 +130,8 @@ public class SocialConnectFragment extends RoboSherlockFragmentActivity
         StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder().permitAll().build();
         StrictMode.setThreadPolicy(policy);
 
+        prefs = PreferenceManager.getDefaultSharedPreferences(SocialConnectFragment.this);
+        edit = prefs.edit();
         mContext = this;
         setUpFacebook();
         setUpTwitter();
@@ -147,6 +153,8 @@ public class SocialConnectFragment extends RoboSherlockFragmentActivity
                 easyFoursquareAsync.requestAccess(new AccessTokenRequestListener() {
                     @Override
                     public void onAccessGrant(String accessToken) {
+                        edit.putBoolean("foursquare", true);
+                        edit.commit();
                         Log.d("4sq", "welcome to 4sq");
                         easyFoursquareAsync.getUserInfo(new UserInfoRequestListener() {
                             @Override
@@ -183,7 +191,7 @@ public class SocialConnectFragment extends RoboSherlockFragmentActivity
         facebookBtn = (LoginButton) findViewById(R.id.social_connect_facebook_btn);
         facebookBtn.setReadPermissions(
                 Arrays.asList("user_photos", "read_stream", "user_status", "friends_photos",
-                        "friends_status", "friends_birthday", "basic_info", "user_location", "manage_notifications"));
+                        "friends_status", "friends_birthday", "basic_info", "user_location"));
 
 //        Session session = Utils.ensureFacebookSessionFromCache(getBaseContext());
         session = Session.getActiveSession();
@@ -191,7 +199,8 @@ public class SocialConnectFragment extends RoboSherlockFragmentActivity
             @Override
             public void onCompleted(GraphUser user, Response response) {
                 if (user != null) {
-                    mDatastore.setUserLoggedInToFacebook(true);
+                    edit.putBoolean("facebook", true);
+                    edit.commit();
                     Toast.makeText(SocialConnectFragment.this, "Welcome " + user.getName(), Toast.LENGTH_SHORT).show();
                 }
             }
@@ -206,6 +215,8 @@ public class SocialConnectFragment extends RoboSherlockFragmentActivity
         twitterLoginAdapter.setListener(new LoginListener() {
             @Override
             public void onComplete(Bundle bundle) {
+                edit.putBoolean("twitter", true);
+                edit.commit();
                 Toast.makeText(SocialConnectFragment.this, "twitter connected", Toast.LENGTH_LONG).show();
             }
 
@@ -240,7 +251,8 @@ public class SocialConnectFragment extends RoboSherlockFragmentActivity
         plusLoginAdapter.setListener(new LoginListener() {
             @Override
             public void onComplete(Bundle bundle) {
-
+                edit.putBoolean("googleplus", true);
+                edit.commit();
             }
 
             @Override
@@ -261,6 +273,7 @@ public class SocialConnectFragment extends RoboSherlockFragmentActivity
         plusBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                plusLoginAdapter.authorize();
                 plusClient = new PlusClient.Builder(mContext, SocialConnectFragment.this, SocialConnectFragment.this)
                         .setActions("http://schemas.google.com/AddActivity", "http://schemas.google.com/BuyActivity")
                         .build();
@@ -274,7 +287,6 @@ public class SocialConnectFragment extends RoboSherlockFragmentActivity
                     plusClient.connect();
                 }
                 }
-                plusLoginAdapter.authorize();
             }
         });
     }
@@ -332,7 +344,8 @@ public class SocialConnectFragment extends RoboSherlockFragmentActivity
         myspaceLoginAdapter.setListener(new LoginListener() {
             @Override
             public void onComplete(Bundle bundle) {
-
+                edit.putBoolean("myspace", true);
+                edit.commit();
             }
 
             @Override
@@ -397,7 +410,8 @@ public class SocialConnectFragment extends RoboSherlockFragmentActivity
         instagramAdapter.setListener(new LoginListener() {
             @Override
             public void onComplete(Bundle bundle) {
-
+                edit.putBoolean("instagram", true);
+                edit.commit();
             }
 
             @Override
@@ -450,8 +464,11 @@ public class SocialConnectFragment extends RoboSherlockFragmentActivity
         tumblrBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+//                jumblrClient = new JumblrClient(Constants.TUMBLR_CONSUMER_KEY, Constants.TUMBLR_CONSUMER_SECRET);
+//                jumblrClient.a
+                startActivity(new Intent(mContext, TumblrAuthActivity.class));
 //                jumblrClient.setToken(" ", " ");
-//                User user = jumblrClient.user();
+//                com.tumblr.jumblr.types.User user = jumblrClient.user();
 //                Toast.makeText(mContext, "Welcome " + user.getName(), Toast.LENGTH_LONG).show();
             }
         });
@@ -467,7 +484,8 @@ public class SocialConnectFragment extends RoboSherlockFragmentActivity
         linkedinAdapter.setListener(new LoginListener() {
             @Override
             public void onComplete(Bundle bundle) {
-
+                edit.putBoolean("linkedin", true);
+                edit.commit();
             }
 
             @Override
@@ -501,7 +519,8 @@ public class SocialConnectFragment extends RoboSherlockFragmentActivity
         flickrAdapter.setListener(new LoginListener() {
             @Override
             public void onComplete(Bundle bundle) {
-
+                edit.putBoolean("flickr", true);
+                edit.commit();
             }
 
             @Override
@@ -543,8 +562,11 @@ public class SocialConnectFragment extends RoboSherlockFragmentActivity
 
         dialog = new Dialog(mContext);
         dialog.setContentView(R.layout.five_hund_signin);
-        userName =  (EditText) dialog.findViewById(R.id.five_username);
-        password = (EditText) dialog.findViewById(R.id.five_password);
+        userName =  (FloatLabel) dialog.findViewById(R.id.five_username);
+        userName.setLabelAnimator(new CustomLabelAnimator());
+        password = (FloatLabel) dialog.findViewById(R.id.five_password);
+        password.setLabelAnimator(new CustomLabelAnimator());
+        password.getEditText().setInputType(InputType.TYPE_TEXT_VARIATION_PASSWORD);
         cancelSignBtn = (Button) dialog.findViewById(R.id.checkin_message_cancel);
         signinBtn = (Button) dialog.findViewById(R.id.checkin_message_checkin);
 
@@ -558,7 +580,8 @@ public class SocialConnectFragment extends RoboSherlockFragmentActivity
         signinBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                loginTask.execute(getString(R.string.px_consumer_key), getString(R.string.px_consumer_secret), userName.getText().toString(), password.getText().toString());
+                loginTask.execute(getString(R.string.px_consumer_key), getString(R.string.px_consumer_secret),
+                        userName.getEditText().getText().toString(), password.getEditText().getText().toString());
             }
         });
 
@@ -669,6 +692,8 @@ public class SocialConnectFragment extends RoboSherlockFragmentActivity
         SharedPreferences.Editor editor = preferences.edit();
         editor.putString(Constants.PREF_ACCES_TOKEN, result.getToken());
         editor.putString(Constants.PREF_TOKEN_SECRET, result.getTokenSecret());
+        edit.putBoolean("googleplus", true);
+        edit.commit();
         editor.commit();
 
 
@@ -683,5 +708,30 @@ public class SocialConnectFragment extends RoboSherlockFragmentActivity
     public void onFail(FiveHundredException e) {
         Log.d("500px", Integer.toString(e.getStatusCode()));
         onFail();
+    }
+
+    private static class CustomLabelAnimator implements FloatLabel.LabelAnimator {
+        /*package*/ static final float SCALE_X_SHOWN = 1f;
+        /*package*/ static final float SCALE_X_HIDDEN = 2f;
+        /*package*/ static final float SCALE_Y_SHOWN = 1f;
+        /*package*/ static final float SCALE_Y_HIDDEN = 0f;
+
+        @Override
+        public void onDisplayLabel(View label) {
+            final float shift = label.getWidth() / 2;
+            label.setScaleX(SCALE_X_HIDDEN);
+            label.setScaleY(SCALE_Y_HIDDEN);
+            label.setX(shift);
+            label.animate().alpha(1).scaleX(SCALE_X_SHOWN).scaleY(SCALE_Y_SHOWN).x(0f);
+        }
+
+        @Override
+        public void onHideLabel(View label) {
+            final float shift = label.getWidth() / 2;
+            label.setScaleX(SCALE_X_SHOWN);
+            label.setScaleY(SCALE_Y_SHOWN);
+            label.setX(0f);
+            label.animate().alpha(0).scaleX(SCALE_X_HIDDEN).scaleY(SCALE_Y_HIDDEN).x(shift);
+        }
     }
 }

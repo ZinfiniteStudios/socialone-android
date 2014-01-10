@@ -42,7 +42,6 @@ import com.facebook.UiLifecycleHelper;
 import com.facebook.model.GraphUser;
 import com.google.analytics.tracking.android.EasyTracker;
 import com.google.android.gms.plus.PlusShare;
-import com.google.inject.Inject;
 import com.parse.signpost.OAuth;
 import com.socialone.android.R;
 import com.socialone.android.appnet.adnlib.AppDotNetClient;
@@ -55,6 +54,7 @@ import org.brickred.socialauth.android.DialogListener;
 import org.brickred.socialauth.android.SocialAuthAdapter;
 import org.brickred.socialauth.android.SocialAuthError;
 import org.brickred.socialauth.android.SocialAuthListener;
+import org.json.JSONObject;
 
 import java.io.ByteArrayOutputStream;
 import java.util.Arrays;
@@ -73,7 +73,7 @@ import oak.widget.CancelEditText;
 public class SocialShareFragment extends SherlockFragment {
 
     View view;
-    @Inject Datastore mDatastore;
+    Datastore mDatastore;
     RelativeLayout facebookShare;
     RelativeLayout twitterShare;
     RelativeLayout plusShare;
@@ -339,8 +339,17 @@ public class SocialShareFragment extends SherlockFragment {
 
             if(addPhoto){
                 //text and image post
+
+                JSONObject privacy = new JSONObject();
+                try {
+                    privacy.put("value", "SELF");
+                } catch (Exception e) {
+                    Log.e("facebook", "Unknown error while preparing params", e);
+                }
+
                 Bundle postParams = new Bundle();
                 postParams.putString("message", string);
+                postParams.putString("privacy", privacy.toString());
                 byte[] data = null;
 
                 Bitmap bi = BitmapFactory.decodeFile(picturePath);

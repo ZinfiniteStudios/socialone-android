@@ -19,11 +19,9 @@ import com.socialone.android.utils.Constants;
 import com.socialone.android.viewcomponents.RelativeTimeTextView;
 import com.squareup.picasso.Picasso;
 
-import org.brickred.socialauth.Feed;
 import org.brickred.socialauth.android.DialogListener;
 import org.brickred.socialauth.android.SocialAuthAdapter;
 import org.brickred.socialauth.android.SocialAuthError;
-import org.brickred.socialauth.android.SocialAuthListener;
 
 import java.util.List;
 
@@ -91,7 +89,6 @@ public class TwitterMainFeedFragment extends SherlockFragment {
         mAuthAdapter = new SocialAuthAdapter(new DialogListener() {
             @Override
             public void onComplete(Bundle bundle) {
-                getTwitterFeed();
                 setUpTwit4j();
             }
 
@@ -113,28 +110,6 @@ public class TwitterMainFeedFragment extends SherlockFragment {
         mAuthAdapter.addCallBack(SocialAuthAdapter.Provider.TWITTER, Constants.TWITTER_CALLBACK);
         mAuthAdapter.authorize(getSherlockActivity(), SocialAuthAdapter.Provider.TWITTER);
     }
-
-    private void getTwitterFeed(){
-
-        mAuthAdapter.getFeedsAsync(new SocialAuthListener<List<Feed>>() {
-            @Override
-            public void onExecute(String s, List<Feed> feeds) {
-                Log.d("twitter", mAuthAdapter.getCurrentProvider().getAccessGrant().getSecret());
-//                googleCardsAdapter = new GoogleCardsAdapter(getSherlockActivity(), feeds);
-//                SwingBottomInAnimationAdapter swingBottomInAnimationAdapter = new SwingBottomInAnimationAdapter(googleCardsAdapter);
-//                swingBottomInAnimationAdapter.setInitialDelayMillis(300);
-//                swingBottomInAnimationAdapter.setAbsListView(listView);
-//                listView.setAdapter(swingBottomInAnimationAdapter);
-//                googleCardsAdapter.setData(feeds);
-            }
-
-            @Override
-            public void onError(SocialAuthError socialAuthError) {
-
-            }
-        });
-    }
-
 
     public class GoogleCardsAdapter extends BaseAdapter {
 

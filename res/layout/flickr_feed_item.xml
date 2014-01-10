@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+                xmlns:oak="http://oak/oak/schema"
+              android:background="@color/translucent_white"
+              android:orientation="vertical"
+              android:layout_width="match_parent"
+              android:layout_height="200dp">
+    <ImageView
+            android:id="@+id/flickr_imageview"
+            android:scaleType="centerCrop"
+            android:adjustViewBounds="true"
+            android:layout_margin="8dp"
+            android:layout_width="fill_parent"
+            android:layout_height="200dp"/>
+
+    <oak.widget.TextViewWithFont
+            oak:font="Roboto-Thin.ttf"
+            android:id="@+id/flickr_name"
+            android:layout_marginBottom="10dp"
+            android:layout_marginLeft="16dp"
+            android:layout_alignParentBottom="true"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"/>
+
+    <com.socialone.android.viewcomponents.RelativeTimeTextView
+            android:id="@+id/flickr_extra"
+            android:layout_marginBottom="10dp"
+            android:layout_marginRight="16dp"
+            android:layout_alignParentBottom="true"
+            android:layout_alignParentRight="true"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"/>
+
+</RelativeLayout>

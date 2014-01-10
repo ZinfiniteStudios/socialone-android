@@ -7,13 +7,13 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
-import com.github.rtyley.android.sherlock.roboguice.fragment.RoboSherlockFragment;
+import com.actionbarsherlock.app.SherlockFragment;
 import com.socialone.android.R;
 
 /**
  * Created by david.hodge on 1/6/14.
  */
-public class AboutFragment extends RoboSherlockFragment {
+public class AboutFragment extends SherlockFragment {
 
     View view;
     TextView buildText;

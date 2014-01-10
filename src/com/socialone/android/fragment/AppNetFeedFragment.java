@@ -2,6 +2,7 @@ package com.socialone.android.fragment;
 
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.text.Html;
@@ -25,6 +26,9 @@ import com.socialone.android.appnet.adnlib.response.PostListResponseHandler;
 import com.socialone.android.appnet.adnlib.response.PostResponseHandler;
 import com.socialone.android.viewcomponents.RelativeTimeTextView;
 import com.squareup.picasso.Picasso;
+import uk.co.senab.actionbarpulltorefresh.extras.actionbarsherlock.PullToRefreshLayout;
+import uk.co.senab.actionbarpulltorefresh.library.ActionBarPullToRefresh;
+import uk.co.senab.actionbarpulltorefresh.library.listeners.OnRefreshListener;
 
 import java.util.ArrayList;
 
@@ -32,11 +36,13 @@ import java.util.ArrayList;
  * Created by david.hodge on 1/2/14.
  */
 public class AppNetFeedFragment extends SherlockFragment {
+//    public class AppNetFeedFragment extends SherlockFragment implements OnRefreshListener{
 
     View view;
     ListView listView;
     AppDotNetClient client;
     GoogleCardsAdapter googleCardsAdapter;
+//    PullToRefreshLayout pullToRefreshLayout;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -50,6 +56,14 @@ public class AppNetFeedFragment extends SherlockFragment {
         view = inflater.inflate(R.layout.social_checkin_list, container, false);
         listView = (ListView) view.findViewById(R.id.activity_googlecards_listview);
 
+//        pullToRefreshLayout = (PullToRefreshLayout) view.findViewById(R.id.ptr_layout);
+//        ActionBarPullToRefresh.from(getActivity())
+//                // Mark All Children as pullable
+//                .allChildrenArePullable()
+//                        // Set the OnRefreshListener
+//                .listener(AppNetFeedFragment.this)
+//                        // Finally commit the setup to our PullToRefreshLayout
+//                .setup(pullToRefreshLayout);
         return view;
     }
 
@@ -77,22 +91,29 @@ public class AppNetFeedFragment extends SherlockFragment {
                         googleCardsAdapter.setData(places);
                     }
                 });
-
-//                Log.d("post", "response " + responseData.toString());
-//                Iterator<Post> itr = responseData.listIterator();
-//                int z=0,x=0,increment=0;
-//                while (itr.hasNext()){
-//                    if(itr.next().hasAnnotations()){
-//                    ArrayList<Annotation> annotationArrayList = itr.next().getAnnotations();
-//                    Log.d("post", annotationArrayList.get(z).getType());
-//                    z++;
-//                    }else {
-//                        z++;
-//                    }
-//                }
             }
         });
     }
+
+//    @Override
+//    public void onRefreshStarted(View view) {
+//        new AsyncTask<Void, Void, Void>() {
+//
+//            @Override
+//            protected Void doInBackground(Void... params) {
+//                getAppNetFeed();
+//                return null;
+//            }
+//
+//            @Override
+//            protected void onPostExecute(Void result) {
+//                super.onPostExecute(result);
+//                // Notify PullToRefreshLayout that the refresh has finished
+//                pullToRefreshLayout.setRefreshComplete();
+//            }
+//        }.execute();
+//
+//    }
 
 
     public class GoogleCardsAdapter extends BaseAdapter {

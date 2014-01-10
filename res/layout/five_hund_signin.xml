@@ -5,15 +5,16 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-    <EditText
+    <com.socialone.android.viewcomponents.FloatLabel
         android:id="@+id/five_username"
         android:hint="Username"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content" />
 
-    <EditText
+    <com.socialone.android.viewcomponents.FloatLabel
         android:id="@+id/five_password"
         android:hint="Password"
+        android:inputType="textPassword"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content" />
 

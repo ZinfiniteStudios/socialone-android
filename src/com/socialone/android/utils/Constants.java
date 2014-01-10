@@ -1,5 +1,8 @@
 package com.socialone.android.utils;
 
+import java.util.HashSet;
+import java.util.Set;
+
 /**
  * Created by david.hodge on 12/24/13.
  */
@@ -17,6 +20,9 @@ public class Constants {
 
     public static final String TUMBLR_CONSUMER_KEY = "oXkVuOgUZZJ4FK68vEPXk7kH8zhhnZiUIAQJ8p94jO3GUCG6Sg";
     public static final String TUMBLR_CONSUMER_SECRET = "pWRZdsQPlSm9vVTFiDXCKJTtA2VCiZTpjypThAsmXyNWMERV9O";
+
+    public static final String FLICKR_KEY = "87d0ccf46bf73b10709e03d78edb0d25";
+    public static final String FLICKR_SECRET = "5d1ee0b6ac5c67e9";
 
     public static final String REQUEST_URL = "http://www.tumblr.com/oauth/request_token";
     public static final String ACCESS_URL = "http://www.tumblr.com/oauth/access_token";
@@ -86,4 +92,70 @@ public class Constants {
             "manage_pages"
 
     };
+
+
+    /* Important: set to false when doing release builds */
+    public static final boolean DEBUG = false;
+
+    public static final boolean PRO_VERSION = false;
+
+    public static final String ERR_CODE_FLICKR_UNAVAILABLE = "105";
+
+    /* Global app prefs */
+    public static final String PREFS_NAME = "glimmr_prefs";
+
+    /* General use SharedPreferences keys */
+    public static final String KEY_IS_FIRST_RUN = "glimmr_is_first_run";
+    public static final String KEY_OAUTH_TOKEN = "glimmr_oauthtoken";
+    public static final String KEY_TOKEN_SECRET = "glimmr_tokensecret";
+    public static final String KEY_ACCOUNT_USER_NAME = "glimmr_acc_user_name";
+    public static final String KEY_ACCOUNT_USER_ID = "glimmr_acc_user_id";
+
+    /* Attributes to fetch for a photo */
+    public static final Set<String> EXTRAS = new HashSet<String>();
+    static {
+        EXTRAS.add("owner_name");
+        EXTRAS.add("url_q");  /* large square 150x150 */
+        EXTRAS.add("url_m");  /* small, 240 on longest side */
+        EXTRAS.add("url_l");
+        EXTRAS.add("views");
+        EXTRAS.add("description");
+        EXTRAS.add("dates");
+        EXTRAS.add("taken_dates");
+        EXTRAS.add("tags");
+    }
+
+    /* Global preferences keys */
+    public static final String KEY_INTERVALS_LIST_PREFERENCE
+            = "notificationIntervals";
+    public static final String KEY_INITIAL_TAB_LIST_PREFERENCE
+            = "initialTab";
+    public static final String KEY_ENABLE_NOTIFICATIONS
+            = "enableNotifications";
+    public static final String KEY_ENABLE_CONTACTS_NOTIFICATIONS
+            = "enableContactsNotifications";
+    public static final String KEY_ENABLE_ACTIVITY_NOTIFICATIONS
+            = "enableActivityNotifications";
+    public static final String KEY_ENABLE_USAGE_TIPS
+            = "enableUsageTips";
+    public static final String KEY_SLIDESHOW_INTERVAL
+            = "slideshowInterval";
+    public static final String KEY_HIGH_QUALITY_THUMBNAILS
+            = "highQualityThumbnails";
+
+    /* Number of items to fetch per page for calls that support pagination */
+    public static final int FETCH_PER_PAGE = 20;
+
+    /* Notification ids */
+    public static final int NOTIFICATION_NEW_CONTACTS_PHOTOS = 0;
+    public static final int NOTIFICATION_NEW_ACTIVITY = 1;
+    public static final int NOTIFICATION_PHOTOS_UPLOADING = 2;
+
+    /* Tape managed task queues */
+    public static final String PHOTOSET_QUEUE = "photoset_task_queue.json";
+    public static final String GROUP_QUEUE = "group_task_queue.json";
+    public static final String UPLOAD_QUEUE = "upload_task_queue.json";
+
+    public static final String PRO_MARKET_LINK =
+            "market://details?id=com.bourke.glimmrpro";
 }

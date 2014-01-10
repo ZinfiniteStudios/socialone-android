@@ -11,7 +11,7 @@
         android:layout_width="fill_parent"
         android:layout_height="wrap_content" />
 
-    <android.support.v4.view.ViewPager
+    <oak.widget.BeastViewPager
         android:layout_width="fill_parent"
         android:layout_height="fill_parent"
         android:id="@+id/social_view_pager" />

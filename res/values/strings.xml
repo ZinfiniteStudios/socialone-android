@@ -12,8 +12,8 @@
     <string name="mixpanel_key">38af33940057c9b49fcdeda17a3ad860</string>
     <string name="px_consumer_key">kSzNAalzN2gYE0FYXam2Q4i2rCHEoEzdNlQlE8PD</string>
     <string name="px_consumer_secret">A7UzErJdSOo99IQuTJhhYZbFEZn6KbySaF9RbUF7</string>
-    <string name="appnet_id"></string>
-    <string name="appnet_secret"></string>
+    <string name="flickr_key">87d0ccf46bf73b10709e03d78edb0d25</string>
+    <string name="flickr_secret">5d1ee0b6ac5c67e9</string>
     <string name="version_dynamic">Version %1$s</string>
 
     <string name="navigation_drawer_open">Open navigation drawer</string>

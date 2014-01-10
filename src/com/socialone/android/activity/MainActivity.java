@@ -39,7 +39,9 @@ import com.socialone.android.R;
 import com.socialone.android.fragment.AboutFragment;
 import com.socialone.android.fragment.AppNetFeedFragment;
 import com.socialone.android.fragment.FacebookMainFeedFragment;
+import com.socialone.android.fragment.FlickrMainFeed;
 import com.socialone.android.fragment.FourSquareFeedFragment;
+import com.socialone.android.fragment.OptiFeedFragment;
 import com.socialone.android.fragment.SocialFragment;
 import com.socialone.android.fragment.TwitterMainFeedFragment;
 import com.socialone.android.utils.BlurTransformation;
@@ -88,12 +90,14 @@ public class MainActivity extends SherlockFragmentActivity implements DrawerLayo
     String userLocation;
 
     public static final int NAV_SHARE = R.id.nav_item_share;
+    public static final int NAV_OPTI = R.id.nav_item_optifeed;
     public static final int NAV_FACEBOOK = R.id.nav_item_facebook;
     public static final int NAV_ID_TEST_2 = R.id.nav_item_twitter;
     public static final int NAV_ID_TEST_3 = R.id.nav_item_myspace;
     public static final int NAV_APP_NET = R.id.nav_item_appnet;
     public static final int NAV_TWITTER = R.id.nav_item_twitter;
     public static final int NAV_FOURSQUARE = R.id.nav_item_foursquare;
+    public static final int NAV_FLICKR = R.id.nav_item_flickr;
     public static final int NAV_ABOUT = R.id.nav_item_about;
 
     @Override
@@ -263,28 +267,28 @@ public class MainActivity extends SherlockFragmentActivity implements DrawerLayo
             case NAV_SHARE:
                 fragment = new SocialFragment();
                 break;
+            case NAV_OPTI:
+                fragment = new OptiFeedFragment();
+                break;
             case NAV_FACEBOOK:
-//                fragment = injector.getInstance(FacebookMainFeedFragment.class);
                 fragment = new FacebookMainFeedFragment();
                 break;
             case NAV_ID_TEST_3:
-//                fragment = injector.getInstance(SocialFragment.class);
                 fragment = new SocialFragment();
                 break;
             case NAV_APP_NET:
-//                fragment = injector.getInstance(AppNetFeedFragment.class);
                 fragment = new AppNetFeedFragment();
                 break;
             case NAV_TWITTER:
-//                fragment = injector.getInstance(TwitterMainFeedFragment.class);
                 fragment = new TwitterMainFeedFragment();
                 break;
             case NAV_FOURSQUARE:
-//                fragment = injector.getInstance(FourSquareFeedFragment.class);
                 fragment = new FourSquareFeedFragment();
                 break;
+            case NAV_FLICKR:
+                fragment = new FlickrMainFeed();
+                break;
             case NAV_ABOUT:
-//                fragment = injector.getInstance(AboutFragment.class);
                 fragment = new AboutFragment();
                 break;
             default:

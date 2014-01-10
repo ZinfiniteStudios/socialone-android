@@ -17,6 +17,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.actionbarsherlock.app.SherlockFragment;
+import com.commonsware.cwac.merge.MergeAdapter;
 import com.facebook.HttpMethod;
 import com.facebook.Request;
 import com.facebook.Response;
@@ -31,10 +32,7 @@ import com.socialone.android.R;
 import com.socialone.android.appnet.adnlib.AppDotNetClient;
 import com.socialone.android.appnet.adnlib.data.Interaction;
 import com.socialone.android.appnet.adnlib.data.InteractionList;
-import com.socialone.android.appnet.adnlib.data.Post;
-import com.socialone.android.appnet.adnlib.data.PostList;
 import com.socialone.android.appnet.adnlib.response.InteractionListResponseHandler;
-import com.socialone.android.appnet.adnlib.response.PostListResponseHandler;
 import com.socialone.android.condesales.EasyFoursquareAsync;
 import com.socialone.android.condesales.listeners.AccessTokenRequestListener;
 import com.socialone.android.condesales.listeners.GetNotificationsListener;
@@ -63,11 +61,18 @@ public class NotificationFragment extends SherlockFragment {
     View view;
     ListView listView;
     GoogleCardsAdapter googleCardsAdapter;
+    AppCardsAdapter appCardsAdapter;
+    FourCardsAdapter fourCardsAdapter;
     AppDotNetClient client;
     SocialAuthAdapter mAuthAdapter;
     private UiLifecycleHelper uiHelper;
     Session session;
     EasyFoursquareAsync easyFoursquareAsync;
+    MergeAdapter mergeAdapter;
+
+    SwingBottomInAnimationAdapter swingBottomInAnimationAdapter;
+    SwingBottomInAnimationAdapter swingBottomInAnimationAdapterApp;
+    SwingBottomInAnimationAdapter swingBottomInAnimationAdapterFour;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -92,9 +97,12 @@ public class NotificationFragment extends SherlockFragment {
     @Override
     public void onViewCreated(View view, Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
+        mergeAdapter = new MergeAdapter();
         twitterSetup();
-        getFacebookFeed();
-        fourSquareNotifications();
+//        getAppNetFeed();
+//        getFacebookFeed();
+//        fourSquareNotifications();
+//        listView.setAdapter(mergeAdapter);
     }
 
     private void setUpTwit4j(){
@@ -109,12 +117,13 @@ public class NotificationFragment extends SherlockFragment {
             Twitter twitter = tf.getInstance();
             List<Status> statuses = twitter.getMentionsTimeline();
             googleCardsAdapter = new GoogleCardsAdapter(getSherlockActivity(), statuses);
-            SwingBottomInAnimationAdapter swingBottomInAnimationAdapter = new SwingBottomInAnimationAdapter(googleCardsAdapter);
+            swingBottomInAnimationAdapter = new SwingBottomInAnimationAdapter(googleCardsAdapter);
             swingBottomInAnimationAdapter.setInitialDelayMillis(300);
             swingBottomInAnimationAdapter.setAbsListView(listView);
-            listView.setAdapter(swingBottomInAnimationAdapter);
+            mergeAdapter.addAdapter(swingBottomInAnimationAdapter);
+//            listView.setAdapter(mergeAdapter);
             googleCardsAdapter.setData(statuses);
-            Log.d("twitter", "twitter4j " + statuses.toString());
+            getAppNetFeed();
         }catch (Exception e){
             e.printStackTrace();
         }
@@ -129,6 +138,19 @@ public class NotificationFragment extends SherlockFragment {
                     @Override
                     public void onGotNotifications(ArrayList<Notifications> list) {
                         Log.d("foursquare", "notification response " + list.toString());
+                        final ArrayList<Notifications> list1 = list;
+                        getSherlockActivity().runOnUiThread(new Runnable() {
+                            @Override
+                            public void run() {
+                        fourCardsAdapter = new FourCardsAdapter(getSherlockActivity(), list1);
+                        swingBottomInAnimationAdapterFour = new SwingBottomInAnimationAdapter(fourCardsAdapter);
+                        swingBottomInAnimationAdapterFour.setInitialDelayMillis(300);
+                        swingBottomInAnimationAdapterFour.setAbsListView(listView);
+                        mergeAdapter.addAdapter(swingBottomInAnimationAdapterFour);
+                        listView.setAdapter(mergeAdapter);
+                        fourCardsAdapter.setData(list1);
+                            }
+                      });
                     }
 
                     @Override
@@ -178,37 +200,19 @@ public class NotificationFragment extends SherlockFragment {
             @Override
             public void onSuccess(InteractionList responseData) {
                 final ArrayList<Interaction> interactions = responseData;
-            }
-        });
-
-        client.retrieveUnifiedStream(new PostListResponseHandler() {
-            @Override
-            public void onSuccess(PostList responseData) {
-                final ArrayList<Post> places = responseData;
                 getSherlockActivity().runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
-//                        googleCardsAdapter = new GoogleCardsAdapter(getSherlockActivity(), places);
-//                        SwingBottomInAnimationAdapter swingBottomInAnimationAdapter = new SwingBottomInAnimationAdapter(googleCardsAdapter);
-//                        swingBottomInAnimationAdapter.setInitialDelayMillis(300);
-//                        swingBottomInAnimationAdapter.setAbsListView(listView);
-//                        listView.setAdapter(swingBottomInAnimationAdapter);
-//                        googleCardsAdapter.setData(places);
+                        appCardsAdapter = new AppCardsAdapter(getSherlockActivity(), interactions);
+                        swingBottomInAnimationAdapterApp = new SwingBottomInAnimationAdapter(appCardsAdapter);
+                        swingBottomInAnimationAdapterApp.setInitialDelayMillis(300);
+                        swingBottomInAnimationAdapterApp.setAbsListView(listView);
+                        mergeAdapter.addAdapter(swingBottomInAnimationAdapterApp);
+//                        listView.setAdapter(mergeAdapter);
+                        appCardsAdapter.setData(interactions);
+                        fourSquareNotifications();
                     }
                 });
-
-//                Log.d("post", "response " + responseData.toString());
-//                Iterator<Post> itr = responseData.listIterator();
-//                int z=0,x=0,increment=0;
-//                while (itr.hasNext()){
-//                    if(itr.next().hasAnnotations()){
-//                    ArrayList<Annotation> annotationArrayList = itr.next().getAnnotations();
-//                    Log.d("post", annotationArrayList.get(z).getType());
-//                    z++;
-//                    }else {
-//                        z++;
-//                    }
-//                }
             }
         });
     }
@@ -227,8 +231,6 @@ public class NotificationFragment extends SherlockFragment {
 
             Bundle bundle = new Bundle();
             bundle.putString("include_read", "true");
-//            bundle.putString("fields", "id,from,name,message,caption,description,created_time,updated_time,type,status_type,via,source,picture, application");
-
             Request request = new Request(session, "/me/notifications", bundle, HttpMethod.GET, callback);
             request.executeAsync();
 
@@ -308,6 +310,222 @@ public class NotificationFragment extends SherlockFragment {
                     .resize(200, 200)
                     .centerCrop()
                     .into(viewHolder.userImg);
+
+            viewHolder.starPost.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    //todo
+                }
+            });
+
+            viewHolder.repostPost.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    //TODO
+                }
+            });
+//            setImageView(viewHolder, position);
+
+            return view;
+        }
+
+        public class ViewHolder {
+            TextView textView;
+            TextView userRealName;
+            TextView userTwitName;
+            RelativeTimeTextView postTime;
+            TextView postClient;
+            TextView postUser;
+            ImageView userImg;
+            ImageView starPost;
+            ImageView repostPost;
+        }
+
+        public String stripHtml(String html) {
+            return Html.fromHtml(html).toString();
+        }
+    }
+
+    public class AppCardsAdapter extends BaseAdapter {
+
+        private Context mContext;
+        private ArrayList<Interaction> mFeed;
+        private boolean mShouldReturnEmpty = true;
+
+        public AppCardsAdapter(Context context, ArrayList<Interaction> feed) {
+            mContext = context;
+            mFeed = feed;
+        }
+
+        public void setData(ArrayList<Interaction> feed){
+            mFeed = feed;
+        }
+
+        @Override
+        public boolean isEmpty() {
+            return mShouldReturnEmpty && super.isEmpty();
+        }
+
+        @Override
+        public int getCount() {
+            return mFeed.size();
+        }
+
+        @Override
+        public Interaction getItem(int position) {
+            return mFeed.get(position);
+        }
+
+        public long getItemId(int position) {
+            return position;
+        }
+
+        @Override
+        public View getView(int position, View convertView, ViewGroup parent) {
+            ViewHolder viewHolder;
+            View view = convertView;
+            if (view == null) {
+                view = LayoutInflater.from(mContext).inflate(R.layout.twitter_feed_item, parent, false);
+
+                viewHolder = new ViewHolder();
+                viewHolder.textView = (TextView) view.findViewById(R.id.social_checkin_name);
+                viewHolder.userRealName = (TextView) view.findViewById(R.id.user_real_name);
+                viewHolder.userTwitName = (TextView) view.findViewById(R.id.user_twitter_name);
+                viewHolder.userImg = (ImageView) view.findViewById(R.id.user_image);
+                viewHolder.repostPost = (ImageView) view.findViewById(R.id.repost_post);
+                viewHolder.starPost = (ImageView) view.findViewById(R.id.star_post);
+                viewHolder.postTime = (RelativeTimeTextView) view.findViewById(R.id.post_time);
+                viewHolder.postClient = (TextView) view.findViewById(R.id.post_info_client);
+                viewHolder.postUser = (TextView) view.findViewById(R.id.post_info_user);
+
+                view.setTag(viewHolder);
+
+            } else {
+                viewHolder = (ViewHolder) view.getTag();
+            }
+
+            final Interaction feed = getItem(position);
+            viewHolder.textView.setText(feed.getAction());
+//            viewHolder.userRealName.setText(feed.getUser().getName());
+//            viewHolder.userTwitName.setText("@" + feed.getUser().getScreenName());
+            viewHolder.postTime.setReferenceTime(feed.getEventDate().getTime());
+            //TODO add on click to these to open the respective client or user profile
+//            viewHolder.postClient.setText("via " + stripHtml(feed.getSource()));
+//            viewHolder.postUser.setText("from " + feed.getUser().get);
+
+//            Picasso.with(mContext)
+//                    .load(feed.getUser().getProfileImageURL())
+//                    .resize(200, 200)
+//                    .centerCrop()
+//                    .into(viewHolder.userImg);
+
+            viewHolder.starPost.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    //todo
+                }
+            });
+
+            viewHolder.repostPost.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    //TODO
+                }
+            });
+//            setImageView(viewHolder, position);
+
+            return view;
+        }
+
+        public class ViewHolder {
+            TextView textView;
+            TextView userRealName;
+            TextView userTwitName;
+            RelativeTimeTextView postTime;
+            TextView postClient;
+            TextView postUser;
+            ImageView userImg;
+            ImageView starPost;
+            ImageView repostPost;
+        }
+
+        public String stripHtml(String html) {
+            return Html.fromHtml(html).toString();
+        }
+    }
+
+    public class FourCardsAdapter extends BaseAdapter {
+
+        private Context mContext;
+        private ArrayList<Notifications> mFeed;
+        private boolean mShouldReturnEmpty = true;
+
+        public FourCardsAdapter(Context context, ArrayList<Notifications> feed) {
+            mContext = context;
+            mFeed = feed;
+        }
+
+        public void setData(ArrayList<Notifications> feed){
+            mFeed = feed;
+        }
+
+        @Override
+        public boolean isEmpty() {
+            return mShouldReturnEmpty && super.isEmpty();
+        }
+
+        @Override
+        public int getCount() {
+            return mFeed.size();
+        }
+
+        @Override
+        public Notifications getItem(int position) {
+            return mFeed.get(position);
+        }
+
+        public long getItemId(int position) {
+            return position;
+        }
+
+        @Override
+        public View getView(int position, View convertView, ViewGroup parent) {
+            ViewHolder viewHolder;
+            View view = convertView;
+            if (view == null) {
+                view = LayoutInflater.from(mContext).inflate(R.layout.twitter_feed_item, parent, false);
+
+                viewHolder = new ViewHolder();
+                viewHolder.textView = (TextView) view.findViewById(R.id.social_checkin_name);
+                viewHolder.userRealName = (TextView) view.findViewById(R.id.user_real_name);
+                viewHolder.userTwitName = (TextView) view.findViewById(R.id.user_twitter_name);
+                viewHolder.userImg = (ImageView) view.findViewById(R.id.user_image);
+                viewHolder.repostPost = (ImageView) view.findViewById(R.id.repost_post);
+                viewHolder.starPost = (ImageView) view.findViewById(R.id.star_post);
+                viewHolder.postTime = (RelativeTimeTextView) view.findViewById(R.id.post_time);
+                viewHolder.postClient = (TextView) view.findViewById(R.id.post_info_client);
+                viewHolder.postUser = (TextView) view.findViewById(R.id.post_info_user);
+
+                view.setTag(viewHolder);
+
+            } else {
+                viewHolder = (ViewHolder) view.getTag();
+            }
+
+            final Notifications feed = getItem(position);
+            viewHolder.textView.setText(feed.getText());
+//            viewHolder.userRealName.setText(feed.getUser().getName());
+//            viewHolder.userTwitName.setText("@" + feed.getUser().getScreenName());
+//            viewHolder.postTime.setReferenceTime(feed.getEventDate().getTime());
+            //TODO add on click to these to open the respective client or user profile
+//            viewHolder.postClient.setText("via " + stripHtml(feed.getSource()));
+//            viewHolder.postUser.setText("from " + feed.getUser().get);
+
+//            Picasso.with(mContext)
+//                    .load(feed.getUser().getProfileImageURL())
+//                    .resize(200, 200)
+//                    .centerCrop()
+//                    .into(viewHolder.userImg);
 
             viewHolder.starPost.setOnClickListener(new View.OnClickListener() {
                 @Override

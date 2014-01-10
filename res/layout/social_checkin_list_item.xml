@@ -18,7 +18,7 @@
         android:layout_height="wrap_content" />
 
     <Button
-        android:text="in"
+        android:drawableLeft="@drawable/checkin"
         android:id="@+id/social_checkin_checkbox"
         android:layout_gravity="right|center_vertical"
         android:layout_marginTop="8dp"

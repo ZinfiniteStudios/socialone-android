@@ -36,7 +36,6 @@ import com.socialone.android.appnet.adnlib.response.PostResponseHandler;
 
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.Iterator;
 
 /**
  * Created by david.hodge on 12/30/13.
@@ -102,22 +101,6 @@ public class AppNetCheckInFragment extends SherlockFragment {
                             googleCardsAdapter.setData(places);
                         }
                     });
-
-//                    googleCardsAdapter = new GoogleCardsAdapter(getSherlockActivity(), responseData);
-//                    SwingBottomInAnimationAdapter swingBottomInAnimationAdapter =  new SwingBottomInAnimationAdapter(googleCardsAdapter);
-//                    swingBottomInAnimationAdapter.setInitialDelayMillis(300);
-//                    swingBottomInAnimationAdapter.setAbsListView(listView);
-//                    listView.setAdapter(swingBottomInAnimationAdapter);
-//                    googleCardsAdapter.setData(responseData);
-
-                    Log.d("places", "response " + responseData.toString());
-                    Iterator<Place> itr = responseData.listIterator();
-                    int z=0,x=0,increment=0;
-                    while (itr.hasNext()){
-                        String data = itr.next().getName();
-                        Log.d("place",z + " " + data);
-                        z++;
-                    }
                 }
             });
         } catch (Exception e) {

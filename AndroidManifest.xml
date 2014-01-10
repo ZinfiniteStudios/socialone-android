@@ -55,7 +55,7 @@
             android:name="com.facebook.sdk.ApplicationId"
             android:value="@string/app_id"/>
 
-    <activity android:name=".activity.MainActivity"
+    <activity android:name=".activity.LaunchActivity"
         android:windowSoftInputMode="adjustResize" >
       <intent-filter>
         <action android:name="android.intent.action.MAIN" />
@@ -68,6 +68,8 @@
     </activity>
 
         <activity android:name=".activity.AppNetAuthActivity"/>
+        <activity android:name=".activity.MainActivity"/>
+        <activity android:name=".activity.TumblrAuthActivity"/>
 
         <activity
             android:name="com.facebook.LoginActivity"

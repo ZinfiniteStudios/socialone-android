@@ -62,95 +62,95 @@
             </RelativeLayout>
 
             <View
-                style="@style/NavigationDrawerDivider"/>
+                    style="@style/NavigationDrawerDivider"/>
 
             <com.socialone.android.viewcomponents.NavDrawerItem
                 style="@style/NavDrawerItem"
                 android:id="@+id/nav_item_share"
                 socialone:itemText="Share" />
 
-            <View
-                style="@style/NavigationDrawerDivider"/>
+
 
             <com.socialone.android.viewcomponents.NavDrawerItem
                 style="@style/NavDrawerItem"
                 android:id="@+id/nav_item_optifeed"
                 socialone:itemText="OptiFeed" />
 
-            <View
-                style="@style/NavigationDrawerDivider"/>
+
 
             <com.socialone.android.viewcomponents.NavDrawerItem
                 style="@style/NavDrawerItem"
                 android:id="@+id/nav_item_facebook"
                 socialone:itemText="Facebook" />
 
-            <View
-                style="@style/NavigationDrawerDivider"/>
-
             <com.socialone.android.viewcomponents.NavDrawerItem
                 style="@style/NavDrawerItem"
                 android:id="@+id/nav_item_twitter"
                 socialone:itemText="Twitter" />
 
-            <View
-                style="@style/NavigationDrawerDivider"/>
 
             <com.socialone.android.viewcomponents.NavDrawerItem
                 style="@style/NavDrawerItem"
                 android:id="@+id/nav_item_gplus"
                 socialone:itemText="Google+" />
 
-            <View
-                style="@style/NavigationDrawerDivider"/>
 
             <com.socialone.android.viewcomponents.NavDrawerItem
                 style="@style/NavDrawerItem"
                 android:id="@+id/nav_item_myspace"
                 socialone:itemText="Myspace" />
 
-            <View
-                style="@style/NavigationDrawerDivider"/>
+
 
             <com.socialone.android.viewcomponents.NavDrawerItem
                 style="@style/NavDrawerItem"
                 android:id="@+id/nav_item_appnet"
                 socialone:itemText="App.net" />
 
-            <View
-                style="@style/NavigationDrawerDivider"/>
 
             <com.socialone.android.viewcomponents.NavDrawerItem
                 style="@style/NavDrawerItem"
                 android:id="@+id/nav_item_foursquare"
                 socialone:itemText="Foursquare" />
 
-            <View
-                style="@style/NavigationDrawerDivider"/>
 
             <com.socialone.android.viewcomponents.NavDrawerItem
                 style="@style/NavDrawerItem"
                 android:id="@+id/nav_item_instagram"
                 socialone:itemText="Instagram" />
 
-            <View
-                style="@style/NavigationDrawerDivider"/>
+
+            <com.socialone.android.viewcomponents.NavDrawerItem
+                    style="@style/NavDrawerItem"
+                    android:id="@+id/nav_item_fivehundred"
+                    socialone:itemText="500px" />
+
+
+            <com.socialone.android.viewcomponents.NavDrawerItem
+                    style="@style/NavDrawerItem"
+                    android:id="@+id/nav_item_flickr"
+                    socialone:itemText="Flickr" />
+
+
+
+            <com.socialone.android.viewcomponents.NavDrawerItem
+                    style="@style/NavDrawerItem"
+                    android:id="@+id/nav_item_tumblr"
+                    socialone:itemText="Tumblr" />
+
+
 
             <com.socialone.android.viewcomponents.NavDrawerItem
                 style="@style/NavDrawerItem"
                 android:id="@+id/nav_item_settings"
                 socialone:itemText="Settings" />
 
-            <View
-                style="@style/NavigationDrawerDivider"/>
+
 
             <com.socialone.android.viewcomponents.NavDrawerItem
                 style="@style/NavDrawerItem"
                 android:id="@+id/nav_item_about"
                 socialone:itemText="About" />
-
-            <View
-                style="@style/NavigationDrawerDivider"/>
 
         </LinearLayout>
     </ScrollView>

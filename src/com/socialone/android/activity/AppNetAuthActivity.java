@@ -61,6 +61,7 @@ public class AppNetAuthActivity extends SherlockActivity {
                             SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(AppNetAuthActivity.this);
                             final SharedPreferences.Editor edit = prefs.edit();
                             edit.putString(OAuth.OAUTH_TOKEN, accessToken);
+                            edit.putBoolean("appnet", true);
                             edit.commit();
                             Log.d("app.net", "Welcome " + responseData.getName());
                             finish();
