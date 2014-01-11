@@ -1,4 +1,4 @@
-package com.socialone.android.fragment;
+package com.socialone.android.fragment.twitter;
 
 import android.content.Context;
 import android.os.Bundle;
@@ -31,9 +31,9 @@ import twitter4j.TwitterFactory;
 import twitter4j.conf.ConfigurationBuilder;
 
 /**
- * Created by david.hodge on 1/3/14.
+ * Created by david.hodge on 1/11/14.
  */
-public class TwitterMainFeedFragment extends SherlockFragment {
+public class TwitterFavoritesFragment extends SherlockFragment {
 
 
     View view;
@@ -64,15 +64,15 @@ public class TwitterMainFeedFragment extends SherlockFragment {
 
     private void setUpTwit4j(){
         try{
-        ConfigurationBuilder cb = new ConfigurationBuilder();
-        cb.setDebugEnabled(true)
-                .setOAuthConsumerKey(Constants.TWIT_CONSUMER_KEY)
-                .setOAuthConsumerSecret(Constants.TWIT_CONSUMER_SECRET)
-                .setOAuthAccessToken(mAuthAdapter.getCurrentProvider().getAccessGrant().getKey())
-                .setOAuthAccessTokenSecret(mAuthAdapter.getCurrentProvider().getAccessGrant().getSecret());
-        TwitterFactory tf = new TwitterFactory(cb.build());
-        Twitter twitter = tf.getInstance();
-        List<Status> statuses = twitter.getHomeTimeline();
+            ConfigurationBuilder cb = new ConfigurationBuilder();
+            cb.setDebugEnabled(true)
+                    .setOAuthConsumerKey(Constants.TWIT_CONSUMER_KEY)
+                    .setOAuthConsumerSecret(Constants.TWIT_CONSUMER_SECRET)
+                    .setOAuthAccessToken(mAuthAdapter.getCurrentProvider().getAccessGrant().getKey())
+                    .setOAuthAccessTokenSecret(mAuthAdapter.getCurrentProvider().getAccessGrant().getSecret());
+            TwitterFactory tf = new TwitterFactory(cb.build());
+            Twitter twitter = tf.getInstance();
+            List<Status> statuses = twitter.getFavorites();
             googleCardsAdapter = new GoogleCardsAdapter(getSherlockActivity(), statuses);
             SwingBottomInAnimationAdapter swingBottomInAnimationAdapter = new SwingBottomInAnimationAdapter(googleCardsAdapter);
             swingBottomInAnimationAdapter.setInitialDelayMillis(300);

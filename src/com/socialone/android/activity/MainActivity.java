@@ -37,13 +37,13 @@ import com.google.analytics.tracking.android.EasyTracker;
 import com.socialone.android.R;
 import com.socialone.android.fragment.AboutFragment;
 import com.socialone.android.fragment.FacebookMainFeedFragment;
-import com.socialone.android.fragment.FlickrMainFeed;
 import com.socialone.android.fragment.FourSquareFeedFragment;
 import com.socialone.android.fragment.OptiFeedFragment;
 import com.socialone.android.fragment.SocialFragment;
-import com.socialone.android.fragment.TwitterMainFeedFragment;
 import com.socialone.android.fragment.UserProfileFragment;
 import com.socialone.android.fragment.appnet.AppNetNavFragment;
+import com.socialone.android.fragment.flickr.FlickrNavFragment;
+import com.socialone.android.fragment.twitter.TwitterNavFragment;
 import com.socialone.android.utils.BlurTransformation;
 import com.socialone.android.utils.Constants;
 import com.socialone.android.utils.OldBlurTransformation;
@@ -273,13 +273,13 @@ public class MainActivity extends SherlockFragmentActivity implements DrawerLayo
                 fragment = new AppNetNavFragment();
                 break;
             case NAV_TWITTER:
-                fragment = new TwitterMainFeedFragment();
+                fragment = new TwitterNavFragment();
                 break;
             case NAV_FOURSQUARE:
                 fragment = new FourSquareFeedFragment();
                 break;
             case NAV_FLICKR:
-                fragment = new FlickrMainFeed();
+                fragment = new FlickrNavFragment();
                 break;
             case NAV_ABOUT:
                 fragment = new AboutFragment();

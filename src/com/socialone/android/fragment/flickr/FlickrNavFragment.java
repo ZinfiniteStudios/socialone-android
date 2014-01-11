@@ -1,4 +1,4 @@
-package com.socialone.android.fragment.appnet;
+package com.socialone.android.fragment.flickr;
 
 import android.content.Context;
 import android.content.Intent;
@@ -25,7 +25,7 @@ import java.util.List;
 /**
  * Created by david.hodge on 1/10/14.
  */
-public class AppNetNavFragment extends SherlockFragment{
+public class FlickrNavFragment extends SherlockFragment{
 
     View view;
     ViewPager viewPager;
@@ -33,10 +33,10 @@ public class AppNetNavFragment extends SherlockFragment{
     private ArrayList<Fragment> mFragments;
     private ArrayList<String> mtitles;
     FragmentManager fm;
-    AppNetFeedFragment appNetFeedFragment = new AppNetFeedFragment();
-    AppNetMentionsFragment appNetMentionsFragment = new AppNetMentionsFragment();
-    AppNetInteractionsFragment appNetInteractionsFragment = new AppNetInteractionsFragment();
-    AppNetStarsFragment appNetStarsFragment = new AppNetStarsFragment();
+    FlickrExploreFragment flickrExploreFragment = new FlickrExploreFragment();
+    FlickrContactsFragment flickrContactsFragment = new FlickrContactsFragment();
+    FlickrFavoriteFragment flickrFavoriteFragment = new FlickrFavoriteFragment();
+    FlickrGroupsFragment flickrGroupsFragment = new FlickrGroupsFragment();
     PagerAdapter pagerAdapter;
 
     @Override
@@ -54,16 +54,16 @@ public class AppNetNavFragment extends SherlockFragment{
         titlePageIndicator = (TitlePageIndicator) view.findViewById(R.id.social_tpi);
 
         mtitles = new ArrayList<String>();
-        mtitles.add("Main");
-        mtitles.add("Mentions");
-        mtitles.add("Interactions");
-        mtitles.add("Stars");
+        mtitles.add("Explore");
+        mtitles.add("Contacts");
+        mtitles.add("Favorites");
+        mtitles.add("Groups");
 
         mFragments =  new ArrayList<Fragment>();
-        mFragments.add(appNetFeedFragment);
-        mFragments.add(appNetMentionsFragment);
-        mFragments.add(appNetInteractionsFragment);
-        mFragments.add(appNetStarsFragment);
+        mFragments.add(flickrExploreFragment);
+        mFragments.add(flickrContactsFragment);
+        mFragments.add(flickrFavoriteFragment);
+        mFragments.add(flickrGroupsFragment);
 
         pagerAdapter = new PagerAdapter(getSherlockActivity(), mtitles, mFragments);
 
@@ -99,7 +99,7 @@ public class AppNetNavFragment extends SherlockFragment{
         private ArrayList<Fragment> mFragments;
 
         public PagerAdapter(Context context, ArrayList<String> strings, ArrayList<Fragment> fragments){
-            super(AppNetNavFragment.this.getChildFragmentManager());
+            super(FlickrNavFragment.this.getChildFragmentManager());
             this.context = context;
             this.titles = strings;
             this.mFragments = fragments;

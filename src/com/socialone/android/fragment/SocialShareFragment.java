@@ -6,6 +6,9 @@ import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.location.Criteria;
+import android.location.Location;
+import android.location.LocationManager;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.StrictMode;
@@ -31,6 +34,8 @@ import com.actionbarsherlock.app.SherlockFragment;
 import com.actionbarsherlock.view.Menu;
 import com.actionbarsherlock.view.MenuInflater;
 import com.actionbarsherlock.view.MenuItem;
+import com.crashlytics.android.Crashlytics;
+import com.crittercism.app.Crittercism;
 import com.facebook.FacebookRequestError;
 import com.facebook.HttpMethod;
 import com.facebook.Request;
@@ -44,7 +49,9 @@ import com.google.analytics.tracking.android.EasyTracker;
 import com.google.android.gms.plus.PlusShare;
 import com.parse.signpost.OAuth;
 import com.socialone.android.R;
+import com.socialone.android.appnet.adnlib.Annotations;
 import com.socialone.android.appnet.adnlib.AppDotNetClient;
+import com.socialone.android.appnet.adnlib.data.Annotation;
 import com.socialone.android.appnet.adnlib.data.Post;
 import com.socialone.android.appnet.adnlib.response.PostResponseHandler;
 import com.socialone.android.utils.Constants;
@@ -59,6 +66,7 @@ import org.json.JSONObject;
 import java.io.ByteArrayOutputStream;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.List;
 
 import oak.widget.CancelEditText;
@@ -87,6 +95,7 @@ public class SocialShareFragment extends SherlockFragment {
     Switch myspaceSwitch;
     Switch linkedinSwitch;
     Switch flickrSwitch;
+    Switch locationSwtich;
 
     LinearLayout photoShareBtn;
     LinearLayout linkShareBtn;
@@ -126,6 +135,11 @@ public class SocialShareFragment extends SherlockFragment {
     boolean addPhoto = false;
     boolean addLink = false;
     boolean addMood = false;
+
+    Location location;
+    LocationManager locationManager;
+    String lat;
+    String lon;
 
     private final TextWatcher mTextEditorWatcher = new TextWatcher() {
         public void beforeTextChanged(CharSequence s, int start, int count, int after) {
@@ -178,6 +192,7 @@ public class SocialShareFragment extends SherlockFragment {
         myspaceSwitch = (Switch) view.findViewById(R.id.myspace_switch);
         linkedinSwitch = (Switch) view.findViewById(R.id.linkedin_switch);
         flickrSwitch = (Switch) view.findViewById(R.id.flickr_switch);
+        locationSwtich = (Switch) view.findViewById(R.id.location_switch);
 
         photoShareBtn = (LinearLayout) view.findViewById(R.id.photo_share_btn);
         linkShareBtn = (LinearLayout) view.findViewById(R.id.link_share_btn);
@@ -248,7 +263,27 @@ public class SocialShareFragment extends SherlockFragment {
                 plusSetup();
             }
         });
+        locationSwtich.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                getUserLocation();
+            }
+        });
         return view;
+    }
+
+    private void getUserLocation() {
+        try {
+            locationManager = (LocationManager) getSherlockActivity().getSystemService(getSherlockActivity().LOCATION_SERVICE);
+            String bestProvider = locationManager.getBestProvider(new Criteria(), false);
+            location = locationManager.getLastKnownLocation(bestProvider);
+            lat = Double.toString(location.getLatitude());
+            lon = Double.toString(location.getLongitude());
+        } catch (Exception e) {
+            e.printStackTrace();
+            Crittercism.logHandledException(e);
+            Crashlytics.logException(e);
+        }
     }
 
     private void shareAddThings(){
@@ -572,6 +607,15 @@ public class SocialShareFragment extends SherlockFragment {
     private void appNetShare(String string){
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getSherlockActivity());
         Post post = new Post(string);
+        if(locationSwtich.isChecked()){
+            HashMap<String, Object> list2 = new HashMap<String, Object>();
+            list2.put("latitude", lat);
+            list2.put("longitude", lon);
+            Annotation annotation = new Annotation();
+            annotation.setType(Annotations.GEOLOCATION);
+            annotation.setValue(list2);
+            post.addAnnotation(annotation);
+        }
         client = new AppDotNetClient(prefs.getString(OAuth.OAUTH_TOKEN, null));
         client.createPost(post, new PostResponseHandler() {
             @Override

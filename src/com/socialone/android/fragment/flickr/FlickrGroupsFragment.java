@@ -1,10 +1,9 @@
-package com.socialone.android.fragment;
+package com.socialone.android.fragment.flickr;
 
 import android.content.Context;
 import android.os.Bundle;
 import android.os.StrictMode;
 import android.text.Html;
-import android.text.format.DateFormat;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -13,32 +12,31 @@ import android.widget.BaseAdapter;
 import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
+
 import com.actionbarsherlock.app.SherlockFragment;
 import com.googlecode.flickrjandroid.Flickr;
-import com.googlecode.flickrjandroid.RequestContext;
+import com.googlecode.flickrjandroid.groups.Group;
 import com.googlecode.flickrjandroid.oauth.OAuth;
-import com.googlecode.flickrjandroid.oauth.OAuthToken;
 import com.googlecode.flickrjandroid.people.User;
-import com.googlecode.flickrjandroid.photos.Photo;
 import com.haarman.listviewanimations.swinginadapters.prepared.SwingBottomInAnimationAdapter;
 import com.socialone.android.R;
-import com.socialone.android.appnet.adnlib.response.InteractionListResponseHandler;
 import com.socialone.android.utils.Constants;
 import com.socialone.android.utils.FlickrHelper;
 import com.socialone.android.viewcomponents.RelativeTimeTextView;
 import com.squareup.picasso.Picasso;
+
 import org.brickred.socialauth.android.DialogListener;
 import org.brickred.socialauth.android.SocialAuthAdapter;
 import org.brickred.socialauth.android.SocialAuthError;
 
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Date;
-import java.util.List;
 
 /**
- * Created by david.hodge on 1/9/14.
+ * Created by david.hodge on 1/11/14.
  */
-public class FlickrMainFeed extends SherlockFragment {
-
+public class FlickrGroupsFragment extends SherlockFragment {
 
     View view;
     ListView listView;
@@ -93,7 +91,6 @@ public class FlickrMainFeed extends SherlockFragment {
 
             @Override
             public void onError(SocialAuthError socialAuthError) {
-                Log.e("twitter", "auth adapter " + socialAuthError.getMessage());
             }
 
             @Override
@@ -115,28 +112,29 @@ public class FlickrMainFeed extends SherlockFragment {
         String userName = user.getRealName();
 //        Log.d("flickr", userName);
         Date day = null;
-//        List<Photo> photos = f.getFavoritesInterface().getList(user.getId(), null, null, 50, 1, null);
-        List<Photo> photos = f.getInterestingnessInterface().getList(day, Constants.EXTRAS, Constants.FETCH_PER_PAGE, 1);
-        googleCardsAdapter = new GoogleCardsAdapter(getSherlockActivity(), photos);
+        ArrayList<Group> groups = new ArrayList<Group>();
+        Collection<Group> photos = f.getPoolsInterface().getGroups();
+        groups.addAll(photos);
+        googleCardsAdapter = new GoogleCardsAdapter(getSherlockActivity(), groups);
         SwingBottomInAnimationAdapter swingBottomInAnimationAdapter = new SwingBottomInAnimationAdapter(googleCardsAdapter);
         swingBottomInAnimationAdapter.setInitialDelayMillis(300);
         swingBottomInAnimationAdapter.setAbsListView(listView);
         listView.setAdapter(swingBottomInAnimationAdapter);
-        googleCardsAdapter.setData(photos);
+        googleCardsAdapter.setData(groups);
     }
 
     public class GoogleCardsAdapter extends BaseAdapter {
 
         private Context mContext;
-        private List<Photo> mFeed;
+        private ArrayList<Group> mFeed;
         private boolean mShouldReturnEmpty = true;
 
-        public GoogleCardsAdapter(Context context, List<Photo> feed) {
+        public GoogleCardsAdapter(Context context, ArrayList<Group> feed) {
             mContext = context;
             mFeed = feed;
         }
 
-        public void setData(List<Photo> feed){
+        public void setData(ArrayList<Group> feed){
             mFeed = feed;
         }
 
@@ -151,7 +149,7 @@ public class FlickrMainFeed extends SherlockFragment {
         }
 
         @Override
-        public Photo getItem(int position) {
+        public Group getItem(int position) {
             return mFeed.get(position);
         }
 
@@ -177,18 +175,13 @@ public class FlickrMainFeed extends SherlockFragment {
                 viewHolder = (ViewHolder) view.getTag();
             }
 
-            final Photo feed = getItem(position);
-            viewHolder.flickrName.setText(feed.getTitle());
-            viewHolder.flickrExtra.setText(Integer.toString(feed.getViews()));
+            final Group feed = getItem(position);
+            viewHolder.flickrName.setText(feed.getName());
+            viewHolder.flickrExtra.setText(Integer.toString(feed.getMembers()));
 //            viewHolder.flickrExtra.setReferenceTime(feed.getDateAdded().getTime());
-            try{
-                Log.d("flickr", Integer.toString(feed.getViews()));
-            }catch (Exception e){
-                Log.d("flickr", e.toString());
-            }
 //            viewHolder.flickrExtra.setText(feed.getId());
             Picasso.with(mContext)
-                    .load(feed.getLargeUrl())
+                    .load(feed.getBuddyIconUrl())
                     .into(viewHolder.flickrImage);
 
             return view;

@@ -1,4 +1,4 @@
-package com.socialone.android.fragment.appnet;
+package com.socialone.android.fragment.twitter;
 
 import android.content.Context;
 import android.content.Intent;
@@ -23,9 +23,9 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Created by david.hodge on 1/10/14.
+ * Created by david.hodge on 1/11/14.
  */
-public class AppNetNavFragment extends SherlockFragment{
+public class TwitterNavFragment extends SherlockFragment {
 
     View view;
     ViewPager viewPager;
@@ -33,10 +33,12 @@ public class AppNetNavFragment extends SherlockFragment{
     private ArrayList<Fragment> mFragments;
     private ArrayList<String> mtitles;
     FragmentManager fm;
-    AppNetFeedFragment appNetFeedFragment = new AppNetFeedFragment();
-    AppNetMentionsFragment appNetMentionsFragment = new AppNetMentionsFragment();
-    AppNetInteractionsFragment appNetInteractionsFragment = new AppNetInteractionsFragment();
-    AppNetStarsFragment appNetStarsFragment = new AppNetStarsFragment();
+    TwitterMyTweetsFragment twitterMyTweetsFragment = new TwitterMyTweetsFragment();
+    TwitterMainFeedFragment twitterMainFeedFragment = new TwitterMainFeedFragment();
+    TwitterMentionsFragment twitterMentionsFragment = new TwitterMentionsFragment();
+    TwitterRetweetsFragment twitterRetweetsFragment = new TwitterRetweetsFragment();
+    TwitterFavoritesFragment twitterFavoritesFragment = new TwitterFavoritesFragment();
+    TwitterNearbyTrendsFragment twitterNearbyTrendsFragment = new TwitterNearbyTrendsFragment();
     PagerAdapter pagerAdapter;
 
     @Override
@@ -54,21 +56,26 @@ public class AppNetNavFragment extends SherlockFragment{
         titlePageIndicator = (TitlePageIndicator) view.findViewById(R.id.social_tpi);
 
         mtitles = new ArrayList<String>();
-        mtitles.add("Main");
+        mtitles.add("My Tweets");
+        mtitles.add("Feed");
         mtitles.add("Mentions");
-        mtitles.add("Interactions");
-        mtitles.add("Stars");
+        mtitles.add("ReTweets");
+        mtitles.add("Favorites");
+        mtitles.add("Nearby");
 
         mFragments =  new ArrayList<Fragment>();
-        mFragments.add(appNetFeedFragment);
-        mFragments.add(appNetMentionsFragment);
-        mFragments.add(appNetInteractionsFragment);
-        mFragments.add(appNetStarsFragment);
+        mFragments.add(twitterMyTweetsFragment);
+        mFragments.add(twitterMainFeedFragment);
+        mFragments.add(twitterMentionsFragment);
+        mFragments.add(twitterRetweetsFragment);
+        mFragments.add(twitterFavoritesFragment);
+        mFragments.add(twitterNearbyTrendsFragment);
 
         pagerAdapter = new PagerAdapter(getSherlockActivity(), mtitles, mFragments);
 
         viewPager.setAdapter(pagerAdapter);
         viewPager.setOffscreenPageLimit(5);
+        viewPager.setCurrentItem(1);
         titlePageIndicator.setViewPager(viewPager);
         titlePageIndicator.setOnPageChangeListener(socialOPCL);
         titlePageIndicator.setOnCenterItemClickListener(new TitlePageIndicator.OnCenterItemClickListener() {
@@ -99,7 +106,7 @@ public class AppNetNavFragment extends SherlockFragment{
         private ArrayList<Fragment> mFragments;
 
         public PagerAdapter(Context context, ArrayList<String> strings, ArrayList<Fragment> fragments){
-            super(AppNetNavFragment.this.getChildFragmentManager());
+            super(TwitterNavFragment.this.getChildFragmentManager());
             this.context = context;
             this.titles = strings;
             this.mFragments = fragments;
