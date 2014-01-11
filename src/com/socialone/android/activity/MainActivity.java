@@ -36,7 +36,6 @@ import com.facebook.model.GraphUser;
 import com.google.analytics.tracking.android.EasyTracker;
 import com.socialone.android.R;
 import com.socialone.android.fragment.AboutFragment;
-import com.socialone.android.fragment.AppNetFeedFragment;
 import com.socialone.android.fragment.FacebookMainFeedFragment;
 import com.socialone.android.fragment.FlickrMainFeed;
 import com.socialone.android.fragment.FourSquareFeedFragment;
@@ -44,6 +43,7 @@ import com.socialone.android.fragment.OptiFeedFragment;
 import com.socialone.android.fragment.SocialFragment;
 import com.socialone.android.fragment.TwitterMainFeedFragment;
 import com.socialone.android.fragment.UserProfileFragment;
+import com.socialone.android.fragment.appnet.AppNetNavFragment;
 import com.socialone.android.utils.BlurTransformation;
 import com.socialone.android.utils.Constants;
 import com.socialone.android.utils.OldBlurTransformation;
@@ -65,7 +65,6 @@ public class MainActivity extends SherlockFragmentActivity implements DrawerLayo
     ImageView userBackground;
     TextView userNameText;
     TextView userLocationText;
-
 
     ActionBarDrawerToggle mActionBarDrawerToggle;
     FragmentManager mfragmentManager;
@@ -271,7 +270,7 @@ public class MainActivity extends SherlockFragmentActivity implements DrawerLayo
                 fragment = new SocialFragment();
                 break;
             case NAV_APP_NET:
-                fragment = new AppNetFeedFragment();
+                fragment = new AppNetNavFragment();
                 break;
             case NAV_TWITTER:
                 fragment = new TwitterMainFeedFragment();
@@ -289,11 +288,8 @@ public class MainActivity extends SherlockFragmentActivity implements DrawerLayo
                 return;
         }
 
-        if (fragment != null) {
-            fragment.setArguments(args);
-            fragment.setRetainInstance(true);
-        }
-
+        fragment.setArguments(args);
+        fragment.setRetainInstance(true);
         ft = mfragmentManager.beginTransaction();
         ft.setCustomAnimations(R.anim.fade_in, R.anim.fade_out);
         ft.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_FADE);
