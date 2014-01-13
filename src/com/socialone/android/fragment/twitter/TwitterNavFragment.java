@@ -39,6 +39,7 @@ public class TwitterNavFragment extends SherlockFragment {
     TwitterRetweetsFragment twitterRetweetsFragment = new TwitterRetweetsFragment();
     TwitterFavoritesFragment twitterFavoritesFragment = new TwitterFavoritesFragment();
     TwitterNearbyTrendsFragment twitterNearbyTrendsFragment = new TwitterNearbyTrendsFragment();
+    TwitterFeedStreamFragment twitterFeedStreamFragment = new TwitterFeedStreamFragment();
     PagerAdapter pagerAdapter;
 
     @Override
@@ -62,6 +63,7 @@ public class TwitterNavFragment extends SherlockFragment {
         mtitles.add("ReTweets");
         mtitles.add("Favorites");
         mtitles.add("Nearby");
+        mtitles.add("Stream");
 
         mFragments =  new ArrayList<Fragment>();
         mFragments.add(twitterMyTweetsFragment);
@@ -70,6 +72,7 @@ public class TwitterNavFragment extends SherlockFragment {
         mFragments.add(twitterRetweetsFragment);
         mFragments.add(twitterFavoritesFragment);
         mFragments.add(twitterNearbyTrendsFragment);
+        mFragments.add(twitterFeedStreamFragment);
 
         pagerAdapter = new PagerAdapter(getSherlockActivity(), mtitles, mFragments);
 

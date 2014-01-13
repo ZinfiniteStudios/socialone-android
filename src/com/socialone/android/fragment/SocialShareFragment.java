@@ -63,6 +63,7 @@ import org.brickred.socialauth.android.SocialAuthError;
 import org.brickred.socialauth.android.SocialAuthListener;
 import org.json.JSONObject;
 
+import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.util.Arrays;
 import java.util.Collection;
@@ -70,6 +71,12 @@ import java.util.HashMap;
 import java.util.List;
 
 import oak.widget.CancelEditText;
+import twitter4j.GeoLocation;
+import twitter4j.Status;
+import twitter4j.StatusUpdate;
+import twitter4j.Twitter;
+import twitter4j.TwitterFactory;
+import twitter4j.conf.ConfigurationBuilder;
 
 /**
  * Created with IntelliJ IDEA.
@@ -501,59 +508,113 @@ public class SocialShareFragment extends SherlockFragment {
 
     private void twitterShare(String string){
         final String share = string;
-        Log.d("twitter", share);
+        byte[] data = null;
+
         //Note that at times this
         if(addPhoto){
-            byte[] data = null;
-
-            Log.d("photo", picturePath);
-            Bitmap bi = BitmapFactory.decodeFile(picturePath);
-            ByteArrayOutputStream baos = new ByteArrayOutputStream();
-            bi.compress(Bitmap.CompressFormat.JPEG, 100, baos);
-            data = baos.toByteArray();
             try{
-                mAuthAdapter.uploadImageAsync(string, "userImage.jpg", bi, 30, new SocialAuthListener<Integer>() {
-                    @Override
-                    public void onExecute(String s, Integer status) {
-                        if (status == 200 || status == 201 || status == 204) {
-                            Toast.makeText(getSherlockActivity(),
-                                    "Twitter Share completed",
-                                    Toast.LENGTH_LONG).show();
-                            shareField.getText().clear();
-                        } else {
-                            Log.e("twitter", "Error updating twitter status=" + status);
-                        }
-
-                    }
-
-                    @Override
-                    public void onError(SocialAuthError socialAuthError) {
-
-                    }
-                });
-            }catch (Exception e){
-                e.printStackTrace();
+                Bitmap bi = BitmapFactory.decodeFile(picturePath);
+                ByteArrayOutputStream baos = new ByteArrayOutputStream();
+                bi.compress(Bitmap.CompressFormat.JPEG, 50, baos);
+                data = baos.toByteArray();
+                ByteArrayInputStream bs = new ByteArrayInputStream(data);
+            Log.d("twitter", share);
+            ConfigurationBuilder cb = new ConfigurationBuilder();
+            cb.setDebugEnabled(true)
+                    .setOAuthConsumerKey(Constants.TWIT_CONSUMER_KEY)
+                    .setOAuthConsumerSecret(Constants.TWIT_CONSUMER_SECRET)
+                    .setOAuthAccessToken(mAuthAdapter.getCurrentProvider().getAccessGrant().getKey())
+                    .setOAuthAccessTokenSecret(mAuthAdapter.getCurrentProvider().getAccessGrant().getSecret());
+            TwitterFactory tf = new TwitterFactory(cb.build());
+            Twitter twitter = tf.getInstance();
+            StatusUpdate statusUpdate = new StatusUpdate(string);
+            if(locationSwtich.isChecked()){
+                statusUpdate.setLocation(new GeoLocation(location.getLatitude(), location.getLongitude()));
+                statusUpdate.setDisplayCoordinates(true);
             }
-        }else{
-            mAuthAdapter.updateStatus(string, new SocialAuthListener<Integer>() {
-                @Override
-                public void onExecute(String s, Integer status) {
-                    if (status == 200 || status == 201 || status == 204) {
-                        Toast.makeText(getSherlockActivity(),
-                            "Twitter Share completed",
-                            Toast.LENGTH_LONG).show();
-                        shareField.getText().clear();
-                    } else {
-                        Log.e("twitter", "Error updating twitter status=" + status);
-                    }
-                }
+                statusUpdate.setMedia("userimg.jpg", bs);
+            Status status = twitter.updateStatus(statusUpdate);
+            }catch (Exception e){
+                Log.e("twitter", e.toString());
+            }
+        }else {
 
-                @Override
-                public void onError(SocialAuthError socialAuthError) {
-                    Log.e("twitter", "Error updating twitter", socialAuthError);
-                }
-            }, false);
+        try {
+
+
+        Log.d("twitter", share);
+        ConfigurationBuilder cb = new ConfigurationBuilder();
+        cb.setDebugEnabled(true)
+                .setOAuthConsumerKey(Constants.TWIT_CONSUMER_KEY)
+                .setOAuthConsumerSecret(Constants.TWIT_CONSUMER_SECRET)
+                .setOAuthAccessToken(mAuthAdapter.getCurrentProvider().getAccessGrant().getKey())
+                .setOAuthAccessTokenSecret(mAuthAdapter.getCurrentProvider().getAccessGrant().getSecret());
+        TwitterFactory tf = new TwitterFactory(cb.build());
+        Twitter twitter = tf.getInstance();
+        StatusUpdate statusUpdate = new StatusUpdate(string);
+            if(locationSwtich.isChecked()){
+                statusUpdate.setLocation(new GeoLocation(location.getLatitude(), location.getLongitude()));
+                statusUpdate.setDisplayCoordinates(true);
+            }
+        Status status = twitter.updateStatus(statusUpdate);
+        }catch (Exception e){
+            Log.e("twitter", e.toString());
+            }
         }
+
+
+//        //Note that at times this
+//        if(addPhoto){
+//            byte[] data = null;
+//
+//            Log.d("photo", picturePath);
+//            Bitmap bi = BitmapFactory.decodeFile(picturePath);
+//            ByteArrayOutputStream baos = new ByteArrayOutputStream();
+//            bi.compress(Bitmap.CompressFormat.JPEG, 100, baos);
+//            data = baos.toByteArray();
+//            try{
+//                mAuthAdapter.uploadImageAsync(string, "userImage.jpg", bi, 30, new SocialAuthListener<Integer>() {
+//                    @Override
+//                    public void onExecute(String s, Integer status) {
+//                        if (status == 200 || status == 201 || status == 204) {
+//                            Toast.makeText(getSherlockActivity(),
+//                                    "Twitter Share completed",
+//                                    Toast.LENGTH_LONG).show();
+//                            shareField.getText().clear();
+//                        } else {
+//                            Log.e("twitter", "Error updating twitter status=" + status);
+//                        }
+//
+//                    }
+//
+//                    @Override
+//                    public void onError(SocialAuthError socialAuthError) {
+//
+//                    }
+//                });
+//            }catch (Exception e){
+//                e.printStackTrace();
+//            }
+//        }else{
+//            mAuthAdapter.updateStatus(string, new SocialAuthListener<Integer>() {
+//                @Override
+//                public void onExecute(String s, Integer status) {
+//                    if (status == 200 || status == 201 || status == 204) {
+//                        Toast.makeText(getSherlockActivity(),
+//                            "Twitter Share completed",
+//                            Toast.LENGTH_LONG).show();
+//                        shareField.getText().clear();
+//                    } else {
+//                        Log.e("twitter", "Error updating twitter status=" + status);
+//                    }
+//                }
+//
+//                @Override
+//                public void onError(SocialAuthError socialAuthError) {
+//                    Log.e("twitter", "Error updating twitter", socialAuthError);
+//                }
+//            }, false);
+//        }
     }
 
     private void plusSetup(){
