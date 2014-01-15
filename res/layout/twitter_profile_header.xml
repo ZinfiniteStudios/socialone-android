@@ -1,17 +1,26 @@
 <?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:background="@color/custom_red"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="fill_parent">
 
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+  <RelativeLayout
+    android:id="@+id/twitter_profile_layout"
     android:orientation="vertical"
     android:layout_width="match_parent"
     android:layout_height="200dp">
 
     <ImageView
         android:id="@+id/twitter_background_image"
+        android:scaleType="centerCrop"
         android:layout_width="fill_parent"
         android:layout_height="200dp" />
 
     <LinearLayout
         android:id="@+id/twitter_top_header"
+        android:background="@color/translucent_black"
         android:orientation="horizontal"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content">
@@ -36,12 +45,25 @@
     </LinearLayout>
 
 
+      <LinearLayout
+          android:layout_centerInParent="true"
+          android:layout_marginTop="20dp"
+          android:padding="10dp"
+          android:orientation="horizontal"
+          android:background="@color/translucent_black"
+          android:layout_below="@+id/twitter_top_header"
+          android:layout_width="wrap_content"
+          android:layout_height="wrap_content">
     <ImageView
         android:id="@+id/twitter_profile_image"
-        android:layout_below="@+id/twitter_top_header"
         android:layout_margin="12dp"
         android:layout_width="75dp"
         android:layout_height="75dp" />
+
+          <LinearLayout
+              android:orientation="vertical"
+              android:layout_width="wrap_content"
+              android:layout_height="wrap_content">
 
     <oak.widget.TextViewWithFont
         android:id="@+id/twitter_tweet_count_text"
@@ -75,15 +97,30 @@
         android:text="4 favorites"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content" />
+          </LinearLayout>
+
+</LinearLayout>
 
 
     <oak.widget.TextViewWithFont
+        android:background="@color/translucent_black"
         android:id="@+id/twitter_desc_text"
         android:text="Android dev, 22 years old, blah blah blah"
         android:layout_alignParentBottom="true"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content" />
+    </RelativeLayout>
 
+    <com.viewpagerindicator.TitlePageIndicator
+        android:id="@+id/social_tpi"
+        android:layout_below="@+id/twitter_profile_layout"
+        style="@style/CustomTitlePageIndicator"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content" />
 
+    <oak.widget.BeastViewPager
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent"
+        android:id="@+id/social_view_pager" />
 
-</RelativeLayout>
+</LinearLayout>

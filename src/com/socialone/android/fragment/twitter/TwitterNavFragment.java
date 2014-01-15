@@ -40,6 +40,7 @@ public class TwitterNavFragment extends SherlockFragment {
     TwitterFavoritesFragment twitterFavoritesFragment = new TwitterFavoritesFragment();
     TwitterNearbyTrendsFragment twitterNearbyTrendsFragment = new TwitterNearbyTrendsFragment();
     TwitterFeedStreamFragment twitterFeedStreamFragment = new TwitterFeedStreamFragment();
+    TwitterProfileFragment twitterProfileFragment = new TwitterProfileFragment();
     PagerAdapter pagerAdapter;
 
     @Override
@@ -57,6 +58,7 @@ public class TwitterNavFragment extends SherlockFragment {
         titlePageIndicator = (TitlePageIndicator) view.findViewById(R.id.social_tpi);
 
         mtitles = new ArrayList<String>();
+        mtitles.add("Profile");
         mtitles.add("My Tweets");
         mtitles.add("Feed");
         mtitles.add("Mentions");
@@ -66,6 +68,7 @@ public class TwitterNavFragment extends SherlockFragment {
         mtitles.add("Stream");
 
         mFragments =  new ArrayList<Fragment>();
+        mFragments.add(twitterProfileFragment);
         mFragments.add(twitterMyTweetsFragment);
         mFragments.add(twitterMainFeedFragment);
         mFragments.add(twitterMentionsFragment);
@@ -77,8 +80,8 @@ public class TwitterNavFragment extends SherlockFragment {
         pagerAdapter = new PagerAdapter(getSherlockActivity(), mtitles, mFragments);
 
         viewPager.setAdapter(pagerAdapter);
-        viewPager.setOffscreenPageLimit(5);
-        viewPager.setCurrentItem(1);
+        viewPager.setOffscreenPageLimit(8);
+        viewPager.setCurrentItem(2);
         titlePageIndicator.setViewPager(viewPager);
         titlePageIndicator.setOnPageChangeListener(socialOPCL);
         titlePageIndicator.setOnCenterItemClickListener(new TitlePageIndicator.OnCenterItemClickListener() {

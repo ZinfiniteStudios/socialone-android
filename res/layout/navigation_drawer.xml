@@ -7,7 +7,7 @@
     android:layout_width="240dp"
     android:layout_height="match_parent"
     android:layout_gravity="start"
-    android:background="@color/black_overlay">
+    android:background="@color/black">
 
     <ScrollView
         android:layout_width="fill_parent"
@@ -74,7 +74,7 @@
             <com.socialone.android.viewcomponents.NavDrawerItem
                 style="@style/NavDrawerItem"
                 android:id="@+id/nav_item_optifeed"
-                socialone:itemText="OptiFeed" />
+                socialone:itemText="ClusterFuckFeed" />
 
 
 

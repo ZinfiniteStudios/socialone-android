@@ -33,6 +33,13 @@
         android:layout_above="@+id/bottom_btns"
         android:layout_width="match_parent"
         android:layout_height="wrap_content" />
+
+    <Button
+        android:id="@+id/user_voice_btn"
+        android:layout_above="@+id/bottom_btns"
+        android:text="App Support and Vote for new features!"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content" />
  <LinearLayout
      android:id="@+id/bottom_btns"
      android:orientation="horizontal"

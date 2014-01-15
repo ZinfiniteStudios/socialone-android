@@ -47,6 +47,8 @@ import com.facebook.UiLifecycleHelper;
 import com.facebook.model.GraphUser;
 import com.google.analytics.tracking.android.EasyTracker;
 import com.google.android.gms.plus.PlusShare;
+import com.googlecode.flickrjandroid.Flickr;
+import com.googlecode.flickrjandroid.uploader.UploadMetaData;
 import com.parse.signpost.OAuth;
 import com.socialone.android.R;
 import com.socialone.android.appnet.adnlib.Annotations;
@@ -56,6 +58,7 @@ import com.socialone.android.appnet.adnlib.data.Post;
 import com.socialone.android.appnet.adnlib.response.PostResponseHandler;
 import com.socialone.android.utils.Constants;
 import com.socialone.android.utils.Datastore;
+import com.socialone.android.utils.FlickrHelper;
 
 import org.brickred.socialauth.android.DialogListener;
 import org.brickred.socialauth.android.SocialAuthAdapter;
@@ -147,6 +150,9 @@ public class SocialShareFragment extends SherlockFragment {
     LocationManager locationManager;
     String lat;
     String lon;
+
+    Flickr f;
+    ConfigurationBuilder cb;
 
     private final TextWatcher mTextEditorWatcher = new TextWatcher() {
         public void beforeTextChanged(CharSequence s, int start, int count, int after) {
@@ -258,12 +264,6 @@ public class SocialShareFragment extends SherlockFragment {
                 linkedinSetup();
             }
         });
-        flickrSwitch.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
-            @Override
-            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                flickrSetup();
-            }
-        });
         plusSwitch.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
@@ -277,6 +277,17 @@ public class SocialShareFragment extends SherlockFragment {
             }
         });
         return view;
+    }
+
+    @Override
+    public void onViewCreated(View view, Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
+        flickrSwitch.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                flickrSetup();
+            }
+        });
     }
 
     private void getUserLocation() {
@@ -490,6 +501,7 @@ public class SocialShareFragment extends SherlockFragment {
             @Override
             public void onError(SocialAuthError socialAuthError) {
                 Log.e("twitter", "auth adapter " + socialAuthError.getMessage());
+                Log.e("twitter", "auth adapter " + socialAuthError.toString());
             }
 
             @Override
@@ -519,7 +531,7 @@ public class SocialShareFragment extends SherlockFragment {
                 data = baos.toByteArray();
                 ByteArrayInputStream bs = new ByteArrayInputStream(data);
             Log.d("twitter", share);
-            ConfigurationBuilder cb = new ConfigurationBuilder();
+            cb = new ConfigurationBuilder();
             cb.setDebugEnabled(true)
                     .setOAuthConsumerKey(Constants.TWIT_CONSUMER_KEY)
                     .setOAuthConsumerSecret(Constants.TWIT_CONSUMER_SECRET)
@@ -543,12 +555,12 @@ public class SocialShareFragment extends SherlockFragment {
 
 
         Log.d("twitter", share);
-        ConfigurationBuilder cb = new ConfigurationBuilder();
-        cb.setDebugEnabled(true)
-                .setOAuthConsumerKey(Constants.TWIT_CONSUMER_KEY)
-                .setOAuthConsumerSecret(Constants.TWIT_CONSUMER_SECRET)
-                .setOAuthAccessToken(mAuthAdapter.getCurrentProvider().getAccessGrant().getKey())
-                .setOAuthAccessTokenSecret(mAuthAdapter.getCurrentProvider().getAccessGrant().getSecret());
+        cb = new ConfigurationBuilder();
+            cb.setDebugEnabled(true)
+                    .setOAuthConsumerKey(Constants.TWIT_CONSUMER_KEY)
+                    .setOAuthConsumerSecret(Constants.TWIT_CONSUMER_SECRET)
+                    .setOAuthAccessToken(mAuthAdapter.getCurrentProvider().getAccessGrant().getKey())
+                    .setOAuthAccessTokenSecret(mAuthAdapter.getCurrentProvider().getAccessGrant().getSecret());
         TwitterFactory tf = new TwitterFactory(cb.build());
         Twitter twitter = tf.getInstance();
         StatusUpdate statusUpdate = new StatusUpdate(string);
@@ -753,7 +765,15 @@ public class SocialShareFragment extends SherlockFragment {
         flickrAuthAdapter = new SocialAuthAdapter(new DialogListener() {
             @Override
             public void onComplete(Bundle bundle) {
-
+                getSherlockActivity().runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                Log.d("flickr", "flickr complete");
+                f = FlickrHelper.getInstance().getFlickrAuthed(
+                        flickrAuthAdapter.getCurrentProvider().getAccessGrant().getKey(),
+                        flickrAuthAdapter.getCurrentProvider().getAccessGrant().getSecret());
+                    }
+                });
             }
 
             @Override
@@ -776,35 +796,42 @@ public class SocialShareFragment extends SherlockFragment {
     }
 
     private void flickrShare(String string){
+
         byte[] data = null;
 
-        Log.d("photo", picturePath);
         Bitmap bi = BitmapFactory.decodeFile(picturePath);
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
         bi.compress(Bitmap.CompressFormat.JPEG, 100, baos);
         data = baos.toByteArray();
-        try{
-            flickrAuthAdapter.uploadImageAsync(string, "userImage.jpg", bi, 30, new SocialAuthListener<Integer>() {
-                @Override
-                public void onExecute(String s, Integer status) {
-                    if (status == 200 || status == 201 || status == 204) {
-                        Toast.makeText(getSherlockActivity(),
-                                "flickr Share completed",
-                                Toast.LENGTH_LONG).show();
-                    } else {
-                        Log.e("flickr", "Error updating flickr status=" + status);
-                    }
+        try {
+            f.getUploader().upload("image.jpg", data, new UploadMetaData());
 
-                }
-
-                @Override
-                public void onError(SocialAuthError socialAuthError) {
-
-                }
-            });
         }catch (Exception e){
-            e.printStackTrace();
+            Log.d("flickr", e.toString());
         }
+
+//        try{
+//            flickrAuthAdapter.uploadImageAsync(string, "userImage.jpg", bi, 30, new SocialAuthListener<Integer>() {
+//                @Override
+//                public void onExecute(String s, Integer status) {
+//                    if (status == 200 || status == 201 || status == 204) {
+//                        Toast.makeText(getSherlockActivity(),
+//                                "flickr Share completed",
+//                                Toast.LENGTH_LONG).show();
+//                    } else {
+//                        Log.e("flickr", "Error updating flickr status=" + status);
+//                    }
+//
+//                }
+//
+//                @Override
+//                public void onError(SocialAuthError socialAuthError) {
+//
+//                }
+//            });
+//        }catch (Exception e){
+//           Log.e("flickr", e.toString());
+//        }
     }
 
     public void shareAllThings(){

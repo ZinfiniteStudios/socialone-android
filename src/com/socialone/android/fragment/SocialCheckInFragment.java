@@ -46,6 +46,8 @@ import com.socialone.android.appnet.adnlib.data.Annotation;
 import com.socialone.android.appnet.adnlib.data.Post;
 import com.socialone.android.appnet.adnlib.response.PostResponseHandler;
 import com.socialone.android.fragment.appnet.AppNetCheckInFragment;
+import com.socialone.android.fragment.facebook.FacebookCheckInFragment;
+import com.socialone.android.fragment.foursquare.FourSquareCheckInFragment;
 import com.socialone.android.utils.Datastore;
 import com.viewpagerindicator.TitlePageIndicator;
 

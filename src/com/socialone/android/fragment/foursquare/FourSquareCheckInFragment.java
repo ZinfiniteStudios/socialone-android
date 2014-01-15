@@ -1,4 +1,4 @@
-package com.socialone.android.fragment;
+package com.socialone.android.fragment.foursquare;
 
 import android.app.Dialog;
 import android.content.Context;

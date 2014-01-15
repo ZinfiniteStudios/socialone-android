@@ -1,6 +1,10 @@
 package com.socialone.android;
 
 import android.app.Application;
+import android.content.pm.PackageInfo;
+import android.content.pm.PackageManager;
+import android.content.pm.Signature;
+import android.util.Base64;
 import android.util.Log;
 
 import com.crashlytics.android.Crashlytics;
@@ -8,8 +12,13 @@ import com.crittercism.app.Crittercism;
 import com.parse.Parse;
 import com.parse.ParseInstallation;
 import com.parse.PushService;
-import com.socialone.android.activity.StartupActivity;
+import com.socialone.android.activity.MainActivity;
 import com.socialone.android.utils.Datastore;
+import com.uservoice.uservoicesdk.Config;
+import com.uservoice.uservoicesdk.UserVoice;
+
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
 
 public class MainApp extends Application {
 
@@ -26,8 +35,10 @@ public class MainApp extends Application {
         Crashlytics.start(this);
         Crittercism.init(getApplicationContext(), getResources().getString(R.string.critter_id));
         Parse.initialize(this, "qAC53f5OOSOSrWNS5rSPzqZRSyZdfBxbvLQg1zFH", "2DcrC6RA6a3zZ1HKgKKZmjf37aEUWiNGEWpY2cda");
-        PushService.setDefaultPushCallback(this, StartupActivity.class);
+        PushService.setDefaultPushCallback(this, MainActivity.class);
         ParseInstallation.getCurrentInstallation().saveInBackground();
+        Config config = new Config("socialone.uservoice.com");
+        UserVoice.init(config, this);
 //        try {
 //            int newVersionCode = getPackageManager()
 //                    .getPackageInfo(getPackageName(), 0).versionCode;
@@ -39,6 +50,22 @@ public class MainApp extends Application {
 //        } catch (PackageManager.NameNotFoundException e) {
 //            e.printStackTrace();
 //        }
+
+        // Add code to print out the key hash
+        try {
+            PackageInfo info = getPackageManager().getPackageInfo(
+                    "com.socialone.android",
+                    PackageManager.GET_SIGNATURES);
+            for (Signature signature : info.signatures) {
+                MessageDigest md = MessageDigest.getInstance("SHA");
+                md.update(signature.toByteArray());
+                Log.d("KeyHash:", Base64.encodeToString(md.digest(), Base64.DEFAULT));
+            }
+        } catch (PackageManager.NameNotFoundException e) {
+
+        } catch (NoSuchAlgorithmException e) {
+
+        }
     }
 
     private void onVersionUpdate(int oldVersionCode, int newVersionCode) {

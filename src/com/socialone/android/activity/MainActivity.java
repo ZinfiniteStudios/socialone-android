@@ -1,11 +1,17 @@
 package com.socialone.android.activity;
 
+import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.content.res.Configuration;
+import android.graphics.Bitmap;
 import android.graphics.drawable.Drawable;
 import android.os.Build;
 import android.os.Bundle;
+import android.renderscript.Allocation;
+import android.renderscript.Element;
+import android.renderscript.RenderScript;
+import android.renderscript.ScriptIntrinsicBlur;
 import android.support.v4.app.ActionBarDrawerToggle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
@@ -34,15 +40,16 @@ import com.facebook.SessionState;
 import com.facebook.UiLifecycleHelper;
 import com.facebook.model.GraphUser;
 import com.google.analytics.tracking.android.EasyTracker;
+import com.nineoldandroids.view.ViewHelper;
 import com.socialone.android.R;
 import com.socialone.android.fragment.AboutFragment;
-import com.socialone.android.fragment.FacebookMainFeedFragment;
-import com.socialone.android.fragment.FourSquareFeedFragment;
 import com.socialone.android.fragment.OptiFeedFragment;
 import com.socialone.android.fragment.SocialFragment;
 import com.socialone.android.fragment.UserProfileFragment;
 import com.socialone.android.fragment.appnet.AppNetNavFragment;
+import com.socialone.android.fragment.facebook.FacebookMainFeedFragment;
 import com.socialone.android.fragment.flickr.FlickrNavFragment;
+import com.socialone.android.fragment.foursquare.FourSquareFeedFragment;
 import com.socialone.android.fragment.twitter.TwitterNavFragment;
 import com.socialone.android.utils.BlurTransformation;
 import com.socialone.android.utils.Constants;
@@ -57,7 +64,7 @@ import com.squareup.picasso.Picasso;
 /**
  * Created by david.hodge on 12/18/13.
  */
-public class MainActivity extends SherlockFragmentActivity implements DrawerLayout.DrawerListener {
+public class MainActivity extends SherlockFragmentActivity  {
 
     DrawerLayout mDrawerLayout;
     FrameLayout mContent;
@@ -65,6 +72,7 @@ public class MainActivity extends SherlockFragmentActivity implements DrawerLayo
     ImageView userBackground;
     TextView userNameText;
     TextView userLocationText;
+    ImageView mBlurImage;
 
     ActionBarDrawerToggle mActionBarDrawerToggle;
     FragmentManager mfragmentManager;
@@ -72,6 +80,8 @@ public class MainActivity extends SherlockFragmentActivity implements DrawerLayo
     Context mContext;
     FragmentTransaction ft;
     private AmazonInsights insights;
+
+    BlurDrawerToggle blurDrawerToggle;
 
 //    AdLayout adLayout;
 //    AdTargetingOptions adTargetingOptions;
@@ -107,6 +117,7 @@ public class MainActivity extends SherlockFragmentActivity implements DrawerLayo
 
         setContentView(R.layout.main);
         mDrawerLayout = (DrawerLayout) findViewById(R.id.drawer_root);
+        mBlurImage = (ImageView) findViewById(R.id.blur_image);
         mContent = (FrameLayout) findViewById(R.id.fragment_container);
 
         userImage = (ImageView) findViewById(R.id.user_profile_image);
@@ -145,7 +156,7 @@ public class MainActivity extends SherlockFragmentActivity implements DrawerLayo
         initDrawerLayout();
         getUserInfo();
         if (savedInstanceState == null) {
-            setContentFragment(NAV_SHARE);
+            setContentFragment(NAV_APP_NET);
         }
     }
 
@@ -159,8 +170,16 @@ public class MainActivity extends SherlockFragmentActivity implements DrawerLayo
         mDrawerLayout.setDrawerShadow(R.drawable.drawer_shadow, GravityCompat.START);
         mActionBarDrawerToggle = new ActionBarDrawerToggle(this, mDrawerLayout, R.drawable.ic_navigation_drawer,
                 R.string.drawer_open, R.string.drawer_close);
+
+        blurDrawerToggle = new BlurDrawerToggle(this,
+                mDrawerLayout,
+                R.drawable.ic_navigation_drawer,
+                R.string.drawer_open,
+                R.string.drawer_close,
+                mBlurImage);
         mActionBarDrawerToggle.syncState();
         mDrawerLayout.setDrawerListener(mActionBarDrawerToggle);
+        mDrawerLayout.setScrimColor(getResources().getColor(R.color.translucent_white));
     }
 
     private void getUserInfo() {
@@ -625,25 +644,25 @@ public class MainActivity extends SherlockFragmentActivity implements DrawerLayo
         }
     }
 
-    @Override
-    public void onDrawerSlide(View view, float v) {
-        //To change body of implemented methods use File | Settings | File Templates.
-    }
-
-    @Override
-    public void onDrawerOpened(View view) {
-        //To change body of implemented methods use File | Settings | File Templates.
-    }
-
-    @Override
-    public void onDrawerClosed(View view) {
-        navigationDrawerItemClick(view);
-    }
-
-    @Override
-    public void onDrawerStateChanged(int i) {
-        //To change body of implemented methods use File | Settings | File Templates.
-    }
+//    @Override
+//    public void onDrawerSlide(View view, float v) {
+//        //To change body of implemented methods use File | Settings | File Templates.
+//    }
+//
+//    @Override
+//    public void onDrawerOpened(View view) {
+//        //To change body of implemented methods use File | Settings | File Templates.
+//    }
+//
+//    @Override
+//    public void onDrawerClosed(View view) {
+//        navigationDrawerItemClick(view);
+//    }
+//
+//    @Override
+//    public void onDrawerStateChanged(int i) {
+//        //To change body of implemented methods use File | Settings | File Templates.
+//    }
 
     public static Session ensureFacebookSessionFromCache(Context context){
         Session activeSession = Session.getActiveSession();
@@ -651,5 +670,85 @@ public class MainActivity extends SherlockFragmentActivity implements DrawerLayo
             activeSession = Session.openActiveSessionFromCache(context);
         }
         return activeSession;
+    }
+
+    public class BlurDrawerToggle extends ActionBarDrawerToggle implements DrawerLayout.DrawerListener {
+        RenderScript rs;
+        Activity mActivity;
+        ImageView mBlurImage;
+
+        public BlurDrawerToggle(Activity activity, DrawerLayout drawerLayout,
+                                int drawerImageRes, int openDrawerContentDescRes, int closeDrawerContentDescRes, ImageView blurImage) {
+            super(activity, drawerLayout, drawerImageRes, openDrawerContentDescRes, closeDrawerContentDescRes);
+            mActivity = activity;
+            mBlurImage = blurImage;
+        }
+
+        @Override
+        public void onDrawerSlide(final View drawerView, final float slideOffset) {
+            super.onDrawerSlide(drawerView, slideOffset);
+            if (slideOffset > 0.0f) {
+                setBlurAlpha(slideOffset);
+            }
+            else {
+                clearBlurImage();
+            }
+        }
+
+        @Override
+        public void onDrawerClosed(View view) {
+            clearBlurImage();
+        }
+
+
+        private void setBlurAlpha(float slideOffset) {
+//            if (mBlurImage.getVisibility() != View.VISIBLE) {
+                setBlurImage();
+//            }
+            ViewHelper.setAlpha(mBlurImage, slideOffset);
+        }
+
+        public Bitmap transform(Bitmap bitmap) {
+
+            //TODO use renderscript v8 or dont do this on 2.3 devices
+            rs = RenderScript.create(mActivity);
+            // Create another bitmap that will hold the results of the filter.
+            Bitmap blurredBitmap = Bitmap.createBitmap(bitmap);
+
+            // Allocate memory for Renderscript to work with
+            Allocation input = Allocation.createFromBitmap(rs, bitmap, Allocation.MipmapControl.MIPMAP_FULL, Allocation.USAGE_SCRIPT);
+            Allocation output = Allocation.createTyped(rs, input.getType());
+
+            // Load up an instance of the specific script that we want to use.
+            ScriptIntrinsicBlur script = ScriptIntrinsicBlur.create(rs, Element.U8_4(rs));
+            script.setInput(input);
+
+            // Set the blur radius
+            script.setRadius(25);
+
+            // Start the ScriptIntrinisicBlur
+            script.forEach(output);
+
+            // Copy the output to the blurred bitmap
+            output.copyTo(blurredBitmap);
+            bitmap.recycle();
+
+            return blurredBitmap;
+        }
+
+
+        public void setBlurImage() {
+            mDrawerLayout.setDrawingCacheEnabled(true);
+            mDrawerLayout.buildDrawingCache();
+            mBlurImage.setVisibility(View.VISIBLE);
+            Bitmap downScaled = Bitmap.createBitmap(mDrawerLayout.getDrawingCache());
+            downScaled = transform(downScaled);
+            mBlurImage.setImageBitmap(downScaled);
+        }
+
+        public void clearBlurImage() {
+            mBlurImage.setVisibility(View.GONE);
+            mBlurImage.setImageBitmap(null);
+        }
     }
 }

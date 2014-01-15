@@ -1,7 +1,6 @@
 package com.socialone.android.fragment.appnet;
 
 import android.content.Context;
-import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
@@ -20,7 +19,6 @@ import com.socialone.android.R;
 import com.viewpagerindicator.TitlePageIndicator;
 
 import java.util.ArrayList;
-import java.util.List;
 
 /**
  * Created by david.hodge on 1/10/14.
@@ -33,6 +31,7 @@ public class AppNetNavFragment extends SherlockFragment{
     private ArrayList<Fragment> mFragments;
     private ArrayList<String> mtitles;
     FragmentManager fm;
+    AppNetProfileFragment appNetProfileFragment = new AppNetProfileFragment();
     AppNetFeedFragment appNetFeedFragment = new AppNetFeedFragment();
     AppNetMentionsFragment appNetMentionsFragment = new AppNetMentionsFragment();
     AppNetInteractionsFragment appNetInteractionsFragment = new AppNetInteractionsFragment();
@@ -54,12 +53,14 @@ public class AppNetNavFragment extends SherlockFragment{
         titlePageIndicator = (TitlePageIndicator) view.findViewById(R.id.social_tpi);
 
         mtitles = new ArrayList<String>();
+        mtitles.add("Profile");
         mtitles.add("Main");
         mtitles.add("Mentions");
         mtitles.add("Interactions");
         mtitles.add("Stars");
 
         mFragments =  new ArrayList<Fragment>();
+        mFragments.add(appNetProfileFragment);
         mFragments.add(appNetFeedFragment);
         mFragments.add(appNetMentionsFragment);
         mFragments.add(appNetInteractionsFragment);
@@ -82,15 +83,15 @@ public class AppNetNavFragment extends SherlockFragment{
         return view;
     }
 
-    @Override
-    public void onActivityResult(int requestCode, int resultCode, Intent data) {
-        List<Fragment> fragments = getChildFragmentManager().getFragments();
-        if (fragments != null) {
-            for (Fragment fragment : fragments) {
-                fragment.onActivityResult(requestCode, resultCode, data);
-            }
-        }
-    }
+//    @Override
+//    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+//        List<Fragment> fragments = getChildFragmentManager().getFragments();
+//        if (fragments != null) {
+//            for (Fragment fragment : fragments) {
+//                fragment.onActivityResult(requestCode, resultCode, data);
+//            }
+//        }
+//    }
 
     class PagerAdapter extends FragmentPagerAdapter {
         Context context;

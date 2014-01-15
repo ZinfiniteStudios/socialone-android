@@ -77,12 +77,6 @@
 
     <meta-data android:name="com.crashlytics.ApiKey" android:value="1a1c083d279aeeae6a4349cbdd6d9459cf95ecdb" />
 
-    <receiver android:name="com.quantcast.measurement.service.QCReferrerReceiver" android:exported="true">
-      <intent-filter>
-          <action android:name="com.android.vending.INSTALL_REFERRER" />
-      </intent-filter>
-    </receiver>
-
       <service android:name="com.parse.PushService" />
       <receiver android:name="com.parse.ParseBroadcastReceiver">
           <intent-filter>
@@ -91,11 +85,12 @@
           </intent-filter>
       </receiver>
 
-      <activity
-          android:name="com.ubertesters.sdk.UbertestersScreen"
-          android:configChanges="orientation|keyboardHidden|keyboard"
-          android:screenOrientation="portrait"/>
-      <meta-data android:name="ubertesters_project_id" android:value="508801d2-45b5-11e3-b89c-123141017889"/>
+        <activity android:name="com.uservoice.uservoicesdk.activity.PortalActivity" />
+        <activity android:name="com.uservoice.uservoicesdk.activity.ForumActivity" />
+        <activity android:name="com.uservoice.uservoicesdk.activity.ArticleActivity" />
+        <activity android:name="com.uservoice.uservoicesdk.activity.TopicActivity" />
+        <activity android:name="com.uservoice.uservoicesdk.activity.ContactActivity" android:configChanges="orientation|keyboardHidden|screenSize" />
+        <activity android:name="com.uservoice.uservoicesdk.activity.PostIdeaActivity" android:configChanges="orientation|keyboardHidden|screenSize" />
 
         <activity android:name="com.socialone.android.fragment.SocialConnectFragment" />
   </application>

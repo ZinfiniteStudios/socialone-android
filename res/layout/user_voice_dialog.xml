@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content">
+
+    <oak.widget.ButtonWithFont
+        android:id="@+id/user_voice_portal"
+        android:text="Portal"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content" />
+
+    <oak.widget.ButtonWithFont
+        android:id="@+id/user_voice_forum"
+        android:text="Forum"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content" />
+
+    <oak.widget.ButtonWithFont
+        android:id="@+id/user_voice_contact"
+        android:text="Contact Us"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content" />
+
+    <oak.widget.ButtonWithFont
+        android:id="@+id/user_voice_post_idea"
+        android:text="Post Idea"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content" />
+
+</LinearLayout>

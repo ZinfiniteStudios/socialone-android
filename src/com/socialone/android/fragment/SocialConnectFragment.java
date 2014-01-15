@@ -12,7 +12,6 @@ import android.text.InputType;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
-import android.widget.EditText;
 import android.widget.Toast;
 
 import com.actionbarsherlock.view.Menu;
@@ -58,8 +57,8 @@ import com.socialone.android.socialauth.LoginListener;
 import com.socialone.android.socialauth.MyspaceAuth;
 import com.socialone.android.socialauth.TwitterAuth;
 import com.socialone.android.utils.Constants;
-
 import com.socialone.android.viewcomponents.FloatLabel;
+
 import org.json.JSONObject;
 
 import java.util.Arrays;
@@ -215,8 +214,6 @@ public class SocialConnectFragment extends RoboSherlockFragmentActivity
         twitterLoginAdapter.setListener(new LoginListener() {
             @Override
             public void onComplete(Bundle bundle) {
-                edit.putBoolean("twitter", true);
-                edit.commit();
                 Toast.makeText(SocialConnectFragment.this, "twitter connected", Toast.LENGTH_LONG).show();
             }
 

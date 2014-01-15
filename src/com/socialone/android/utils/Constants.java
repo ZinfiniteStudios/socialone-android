@@ -8,7 +8,7 @@ import java.util.Set;
  */
 public class Constants {
 
-    public static final String TWITTER_CALLBACK = "http://social.zinfinitestudios.com/v1/callback/";
+    public static final String TWITTER_CALLBACK = "https://social.zinfinitestudios.com/v1/callback/";
     public static final String INSTAGRAM_CALLBACK = "http://social.zinfinitestudios.com/v1/callback/";
     public static final String FOURSQUARE_CALLBACK = "http://social.zinfinitestudios.com/v1/callback/";
     public static final String TUMBLR_CALLBACK = "http://social.zinfinitestudios.com/v1/callback/";
@@ -42,8 +42,14 @@ public class Constants {
     public static final String PREF_ACCES_TOKEN = "Troubled.accesToken";
     public static final String SHARED_PREFERENCES = "TroubledSharedPreferences";
 
-    public static final String TWIT_CONSUMER_KEY = "ifls6s19VWz7xJjtlILo0Q";
-    public static final String TWIT_CONSUMER_SECRET = "AXiyrJ2oB6iKTO2zYIHkAhkKUtsNzJbO5kEAJjcwoSc";
+    public static final String TWITTER_TOKEN = " ";
+    public static final String TWITTER_SECRET = " ";
+
+//    public static final String TWIT_CONSUMER_KEY = "ifls6s19VWz7xJjtlILo0Q";
+//    public static final String TWIT_CONSUMER_SECRET = "AXiyrJ2oB6iKTO2zYIHkAhkKUtsNzJbO5kEAJjcwoSc";
+
+    public static final String TWIT_CONSUMER_KEY = "DSR9G9DlPj3P0dMIL32dbA";
+    public static final String TWIT_CONSUMER_SECRET = "sBcmiuIbR2Sl7waNZ2wqFGzpjINjzzUWKuyuRNHqqU";
     public static final String TWIT_ACCESS_TOKEN = "twit.token";
     public static final String TWIT_ACCESS_SECRET = "twit.secret";
 

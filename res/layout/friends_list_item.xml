@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_margin="8dp"
+    android:background="@color/translucent_white"
+    android:layout_width="match_parent"
+    android:layout_height="100dp">
+
+    <ImageView
+        android:id="@+id/user_background_image"
+        android:layout_margin="8dp"
+        android:scaleType="centerCrop"
+        android:layout_width="fill_parent"
+        android:layout_height="90dp" />
+
+    <ImageView
+        android:id="@+id/user_profile_image"
+        android:layout_margin="16dp"
+        android:layout_centerVertical="true"
+        android:layout_width="56dp"
+        android:layout_height="56dp" />
+
+    <oak.widget.TextViewWithFont
+        android:id="@+id/user_user_name"
+        android:layout_toRightOf="@+id/user_profile_image"
+        android:layout_marginTop="26dp"
+        android:text="davidhodge229"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content" />
+
+    <oak.widget.TextViewWithFont
+        android:id="@+id/user_real_name"
+        android:layout_toRightOf="@+id/user_profile_image"
+        android:layout_below="@+id/user_user_name"
+        android:layout_marginTop="8dp"
+        android:text="davidhodge229"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content" />
+
+</RelativeLayout>
