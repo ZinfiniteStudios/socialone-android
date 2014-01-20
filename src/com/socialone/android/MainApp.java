@@ -1,6 +1,7 @@
 package com.socialone.android;
 
 import android.app.Application;
+import android.content.Context;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 import android.content.pm.Signature;
@@ -26,6 +27,7 @@ public class MainApp extends Application {
     public static final String XMLNS = "http://socialone-android/schema";
 
     Datastore mDataStore;
+    private static Context mContext;
 
 
     @Override
@@ -39,6 +41,7 @@ public class MainApp extends Application {
         ParseInstallation.getCurrentInstallation().saveInBackground();
         Config config = new Config("socialone.uservoice.com");
         UserVoice.init(config, this);
+        mContext = getApplicationContext();
 //        try {
 //            int newVersionCode = getPackageManager()
 //                    .getPackageInfo(getPackageName(), 0).versionCode;
@@ -66,6 +69,10 @@ public class MainApp extends Application {
         } catch (NoSuchAlgorithmException e) {
 
         }
+    }
+
+    public static Context getContext() {
+        return mContext;
     }
 
     private void onVersionUpdate(int oldVersionCode, int newVersionCode) {

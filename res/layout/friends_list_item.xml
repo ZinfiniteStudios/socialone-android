@@ -25,7 +25,7 @@
         android:id="@+id/user_user_name"
         android:layout_toRightOf="@+id/user_profile_image"
         android:layout_marginTop="26dp"
-        android:text="davidhodge229"
+        android:maxLines="1"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content" />
 
@@ -34,7 +34,8 @@
         android:layout_toRightOf="@+id/user_profile_image"
         android:layout_below="@+id/user_user_name"
         android:layout_marginTop="8dp"
-        android:text="davidhodge229"
+        android:maxLines="1"
+        android:ellipsize="marquee"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content" />
 

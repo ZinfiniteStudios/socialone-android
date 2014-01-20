@@ -1,6 +1,7 @@
 package com.socialone.android.fragment.flickr;
 
 import android.content.Context;
+import android.content.Intent;
 import android.os.Bundle;
 import android.os.StrictMode;
 import android.text.Html;
@@ -20,6 +21,7 @@ import com.googlecode.flickrjandroid.people.User;
 import com.googlecode.flickrjandroid.photos.Photo;
 import com.haarman.listviewanimations.swinginadapters.prepared.SwingBottomInAnimationAdapter;
 import com.socialone.android.R;
+import com.socialone.android.activity.FlickrImageViewer;
 import com.socialone.android.utils.Constants;
 import com.socialone.android.utils.FlickrHelper;
 import com.socialone.android.viewcomponents.RelativeTimeTextView;
@@ -188,6 +190,15 @@ public class FlickrContactsFragment extends SherlockFragment{
             Picasso.with(mContext)
                     .load(feed.getLargeUrl())
                     .into(viewHolder.flickrImage);
+
+            viewHolder.flickrImage.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    Intent photoViewerIntent = new Intent(getSherlockActivity(), FlickrImageViewer.class);
+                    photoViewerIntent.putExtra("photoid", feed.getId());
+                    startActivity(photoViewerIntent);
+                }
+            });
 
             return view;
         }

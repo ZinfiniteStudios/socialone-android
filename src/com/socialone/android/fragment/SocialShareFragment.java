@@ -56,6 +56,8 @@ import com.socialone.android.appnet.adnlib.AppDotNetClient;
 import com.socialone.android.appnet.adnlib.data.Annotation;
 import com.socialone.android.appnet.adnlib.data.Post;
 import com.socialone.android.appnet.adnlib.response.PostResponseHandler;
+import com.socialone.android.fivehundredpx.api.auth.User;
+import com.socialone.android.fivehundredpx.api.services.UploadService;
 import com.socialone.android.utils.Constants;
 import com.socialone.android.utils.Datastore;
 import com.socialone.android.utils.FlickrHelper;
@@ -68,6 +70,9 @@ import org.json.JSONObject;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.io.InputStream;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashMap;
@@ -106,6 +111,7 @@ public class SocialShareFragment extends SherlockFragment {
     Switch linkedinSwitch;
     Switch flickrSwitch;
     Switch locationSwtich;
+    Switch fiveHundSwitch;
 
     LinearLayout photoShareBtn;
     LinearLayout linkShareBtn;
@@ -150,9 +156,10 @@ public class SocialShareFragment extends SherlockFragment {
     LocationManager locationManager;
     String lat;
     String lon;
-
+    Uri selectedImage;
     Flickr f;
     ConfigurationBuilder cb;
+    User fiveUser;
 
     private final TextWatcher mTextEditorWatcher = new TextWatcher() {
         public void beforeTextChanged(CharSequence s, int start, int count, int after) {
@@ -206,6 +213,7 @@ public class SocialShareFragment extends SherlockFragment {
         linkedinSwitch = (Switch) view.findViewById(R.id.linkedin_switch);
         flickrSwitch = (Switch) view.findViewById(R.id.flickr_switch);
         locationSwtich = (Switch) view.findViewById(R.id.location_switch);
+        fiveHundSwitch = (Switch) view.findViewById(R.id.fivehund_switch);
 
         photoShareBtn = (LinearLayout) view.findViewById(R.id.photo_share_btn);
         linkShareBtn = (LinearLayout) view.findViewById(R.id.link_share_btn);
@@ -274,6 +282,13 @@ public class SocialShareFragment extends SherlockFragment {
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
                 getUserLocation();
+            }
+        });
+
+        fiveHundSwitch.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                fiveUser = new User();
             }
         });
         return view;
@@ -674,7 +689,7 @@ public class SocialShareFragment extends SherlockFragment {
             public void onError(SocialAuthError socialAuthError) {
                 Log.e("googleplus", "Error updating google plus", socialAuthError);
             }
-        }, false);
+        }, true);
     }
 
     private void appNetShare(String string){
@@ -834,6 +849,33 @@ public class SocialShareFragment extends SherlockFragment {
 //        }
     }
 
+    private boolean mIsBound;
+    private void fiveHundShare(){
+        byte[] data = null;
+        Bitmap bi = BitmapFactory.decodeFile(picturePath);
+        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+        bi.compress(Bitmap.CompressFormat.JPEG, 100, baos);
+        data = baos.toByteArray();
+
+        Intent i = new Intent(getSherlockActivity(), UploadService.class);
+        i.putExtra("selectedImageUri", data);
+        i.putExtra("accessToken", fiveUser.accessToken);
+        i.putExtra("title", "test upload");
+        i.putExtra("description", "testing image upload");
+
+//                bindService(i, mConnection, Context.BIND_AUTO_CREATE);
+
+        getSherlockActivity().startService(i);
+        mIsBound = true;
+        onFinishTask();
+
+    }
+
+    public void onFinishTask() {
+        //TODO
+        Log.d("500px", "image upload completed");
+    }
+
     public void shareAllThings(){
         String userShareText = shareField.getText().toString();
 
@@ -863,6 +905,33 @@ public class SocialShareFragment extends SherlockFragment {
                     .setText(userShareText)
                     .getIntent();
             startActivityForResult(shareIntent, 0);
+
+            //plus share builder
+//            PlusShare.Builder builder = new PlusShare.Builder(this, monPlusClient);
+//            builder.addCallToAction("DISCOVER", Uri.parse(target), ident);
+//            builder.setContentUrl(Uri.parse(target));
+//            builder.setContentDeepLinkId(ident, topic.getNomPeintre(), desc,
+//                    Uri.parse(topic.getLien()));
+//            builder.setText(texte + " #Art");
+//            Intent shareIntent = builder.getIntent();
+//            startActivityForResult(shareIntent, SHAREGPLUS_REQUEST_CODE);
+
+              //example of using sms
+//            String phoneNo = 33669;
+//            String sms = "example message";
+//
+//            try {
+//                SmsManager smsManager = SmsManager.getDefault();
+//                smsManager.sendTextMessage(phoneNo, null, sms, null, null);
+//                Toast.makeText(getApplicationContext(), "SMS Sent!",
+//                        Toast.LENGTH_LONG).show();
+//            } catch (Exception e) {
+//                Toast.makeText(getApplicationContext(),
+//                        "SMS faild, please try again later!",
+//                        Toast.LENGTH_LONG).show();
+//                e.printStackTrace();
+//            }
+
             plusShare(userShareText);
         }
 
@@ -889,6 +958,10 @@ public class SocialShareFragment extends SherlockFragment {
 
         if(flickrSwitch.isChecked()){
             flickrShare(userShareText);
+        }
+
+        if(fiveHundSwitch.isChecked()){
+            fiveHundShare();
         }
 
 //        shareField.getText().clear();
@@ -935,6 +1008,44 @@ public class SocialShareFragment extends SherlockFragment {
         }
     }
 
+    public Bitmap getThumbnail(Uri uri) throws FileNotFoundException,
+            IOException {
+        InputStream input = getSherlockActivity().getContentResolver().openInputStream(uri);
+
+        BitmapFactory.Options onlyBoundsOptions = new BitmapFactory.Options();
+        onlyBoundsOptions.inJustDecodeBounds = true;
+        onlyBoundsOptions.inDither = true;// optional
+        onlyBoundsOptions.inPreferredConfig = Bitmap.Config.ARGB_8888;// optional
+        BitmapFactory.decodeStream(input, null, onlyBoundsOptions);
+        input.close();
+        if ((onlyBoundsOptions.outWidth == -1)
+                || (onlyBoundsOptions.outHeight == -1))
+            return null;
+
+        int originalSize = (onlyBoundsOptions.outHeight > onlyBoundsOptions.outWidth) ? onlyBoundsOptions.outHeight
+                : onlyBoundsOptions.outWidth;
+
+        double ratio = (originalSize > 200) ? (originalSize / 200)
+                : 1.0;
+
+        BitmapFactory.Options bitmapOptions = new BitmapFactory.Options();
+        bitmapOptions.inSampleSize = getPowerOfTwoForSampleRatio(ratio);
+        bitmapOptions.inDither = true;// optional
+        bitmapOptions.inPreferredConfig = Bitmap.Config.ARGB_8888;// optional
+        input = getSherlockActivity().getContentResolver().openInputStream(uri);
+        Bitmap bitmap = BitmapFactory.decodeStream(input, null, bitmapOptions);
+        input.close();
+        return bitmap;
+    }
+
+    private static int getPowerOfTwoForSampleRatio(double ratio) {
+        int k = Integer.highestOneBit((int) Math.floor(ratio));
+        if (k == 0)
+            return 1;
+        else
+            return k;
+    }
+
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
@@ -942,7 +1053,7 @@ public class SocialShareFragment extends SherlockFragment {
         try{
         if (!TextUtils.isEmpty(data.getData().toString())) {
             Log.d("photo", "got dat photo");
-            Uri selectedImage = data.getData();
+            selectedImage = data.getData();
             String[] filePathColumn = { MediaStore.Images.Media.DATA };
             Cursor cursor = getSherlockActivity().getContentResolver().query(selectedImage, filePathColumn, null, null, null);
             cursor.moveToFirst();
@@ -950,7 +1061,8 @@ public class SocialShareFragment extends SherlockFragment {
             picturePath = cursor.getString(columnIndex);
             cursor.close();
             Log.d("photo", picturePath);
-            photoShareImg.setImageBitmap(BitmapFactory.decodeFile(picturePath));
+//            photoShareImg.setImageBitmap(BitmapFactory.decodeFile(picturePath));
+            photoShareImg.setImageBitmap(getThumbnail(selectedImage));
             addPhoto = true;
         }else{
             Log.d("photo", "result fail");

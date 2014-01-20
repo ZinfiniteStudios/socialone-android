@@ -115,6 +115,7 @@ public class SocialConnectFragment extends RoboSherlockFragmentActivity
     ConnectionResult connectionResult;
     SharedPreferences prefs;
     SharedPreferences.Editor edit;
+    PxApi api;
 
     public static final String CONSUMER_KEY = "Get this from your Tumblr application settings page";
     public static final String CONSUMER_SECRET = "Get this from your Tumblr application settings page";
@@ -693,8 +694,8 @@ public class SocialConnectFragment extends RoboSherlockFragmentActivity
         edit.commit();
         editor.commit();
 
-
-        final PxApi api = new PxApi(fiveUser.accessToken,
+        dialog.dismiss();
+        api = new PxApi(fiveUser.accessToken,
                 getString(R.string.px_consumer_key),
                 getString(R.string.px_consumer_secret));
 

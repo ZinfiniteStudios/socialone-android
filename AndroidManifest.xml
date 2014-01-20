@@ -93,6 +93,8 @@
         <activity android:name="com.uservoice.uservoicesdk.activity.PostIdeaActivity" android:configChanges="orientation|keyboardHidden|screenSize" />
 
         <activity android:name="com.socialone.android.fragment.SocialConnectFragment" />
+        <activity android:name="com.socialone.android.activity.FlickrImageViewer" />
+        <service android:name="com.socialone.android.fivehundredpx.api.services.UploadService" />
   </application>
 
 </manifest>

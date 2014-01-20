@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <style name="FlickrTheme" parent="Theme.Sherlock">
+        <item name="android:windowActionBarOverlay">true</item>
+        <item name="android:windowTranslucentStatus">true</item>
+        <item name="android:windowTranslucentNavigation">true</item>
+        <item name="android:fitsSystemWindows">false</item>
+        <item name="actionBarStyle">@style/Widget.Flickr.ActionBar</item>
+        <item name="android:actionBarStyle">@style/Widget.Flickr.ActionBar</item>
+    </style>
+
+
+</resources>

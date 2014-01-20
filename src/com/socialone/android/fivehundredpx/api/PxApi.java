@@ -1,12 +1,16 @@
 package com.socialone.android.fivehundredpx.api;
 
+import android.content.Context;
+import android.content.SharedPreferences;
 import android.util.Log;
 
 import com.parse.signpost.commonshttp.CommonsHttpOAuthConsumer;
 import com.parse.signpost.exception.OAuthCommunicationException;
 import com.parse.signpost.exception.OAuthExpectationFailedException;
 import com.parse.signpost.exception.OAuthMessageSignerException;
+import com.socialone.android.MainApp;
 import com.socialone.android.fivehundredpx.api.auth.AccessToken;
+import com.socialone.android.utils.Constants;
 
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
@@ -71,10 +75,11 @@ public class PxApi {
 	private void signRequest(HttpUriRequest request)
 			throws OAuthMessageSignerException,
             OAuthExpectationFailedException, OAuthCommunicationException {
+        SharedPreferences preferences = MainApp.getContext().getSharedPreferences(Constants.SHARED_PREFERENCES, Context.MODE_PRIVATE);
 		CommonsHttpOAuthConsumer consumer = new CommonsHttpOAuthConsumer(
 				consumerKey, consumerSecret);
-		consumer.setTokenWithSecret(accessToken.getToken(),
-				accessToken.getTokenSecret());
+		consumer.setTokenWithSecret(preferences.getString(Constants.PREF_ACCES_TOKEN, null),
+				preferences.getString(Constants.PREF_TOKEN_SECRET, null));
 		consumer.sign(request);
 	}
 

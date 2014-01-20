@@ -49,7 +49,7 @@
 
     <style name="CustomTitlePageIndicator">
         <item name="android:background">@color/translucent_black</item>
-        <item name="footerColor">#FF3300</item>
+        <item name="footerColor">#32CD99</item>
         <item name="footerLineHeight">1dp</item>
         <item name="footerIndicatorHeight">3dp</item>
         <item name="footerIndicatorStyle">underline</item>

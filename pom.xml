@@ -210,11 +210,11 @@
             </exclusions>
         </dependency>
 
-        <dependency>
-            <groupId>org.brickred.socialauth.android</groupId>
-            <artifactId>socialauth-willowtree</artifactId>
-            <version>4.3</version>
-        </dependency>
+        <!--<dependency>-->
+            <!--<groupId>org.brickred.socialauth.android</groupId>-->
+            <!--<artifactId>socialauth-willowtree</artifactId>-->
+            <!--<version>4.3</version>-->
+        <!--</dependency>-->
 
         <dependency>
             <groupId>com.facebook.android</groupId>

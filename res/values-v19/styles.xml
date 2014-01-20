@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <style name="Widget.Flickr.ActionBar" parent="Widget.Sherlock.ActionBar">
+        <!--<item name="android:background">@color/transparent</item>-->
+        <!--<item name="background">@color/transparent</item>-->
+        <item name="android:background">@color/translucent_black</item>
+        <item name="background">@color/translucent_black</item>
+    </style>
+
+</resources>

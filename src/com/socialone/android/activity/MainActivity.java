@@ -50,6 +50,8 @@ import com.socialone.android.fragment.appnet.AppNetNavFragment;
 import com.socialone.android.fragment.facebook.FacebookMainFeedFragment;
 import com.socialone.android.fragment.flickr.FlickrNavFragment;
 import com.socialone.android.fragment.foursquare.FourSquareFeedFragment;
+import com.socialone.android.fragment.googeplus.GooglePlusFeedFragment;
+import com.socialone.android.fragment.instagram.InstagramFeedFragment;
 import com.socialone.android.fragment.twitter.TwitterNavFragment;
 import com.socialone.android.utils.BlurTransformation;
 import com.socialone.android.utils.Constants;
@@ -104,6 +106,8 @@ public class MainActivity extends SherlockFragmentActivity  {
     public static final int NAV_TWITTER = R.id.nav_item_twitter;
     public static final int NAV_FOURSQUARE = R.id.nav_item_foursquare;
     public static final int NAV_FLICKR = R.id.nav_item_flickr;
+    public static final int NAV_GPLUS = R.id.nav_item_gplus;
+    public static final int NAV_INSTAGRM = R.id.nav_item_instagram;
     public static final int NAV_ABOUT = R.id.nav_item_about;
     public static final int NAV_PROFILE = R.id.drawer_user_profile;
 
@@ -290,6 +294,12 @@ public class MainActivity extends SherlockFragmentActivity  {
                 break;
             case NAV_APP_NET:
                 fragment = new AppNetNavFragment();
+                break;
+            case NAV_GPLUS:
+                fragment = new GooglePlusFeedFragment();
+                break;
+            case NAV_INSTAGRM:
+                fragment = new InstagramFeedFragment();
                 break;
             case NAV_TWITTER:
                 fragment = new TwitterNavFragment();
