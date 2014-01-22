@@ -25,7 +25,6 @@ import android.widget.Toast;
 
 import com.actionbarsherlock.app.SherlockFragment;
 import com.crashlytics.android.Crashlytics;
-import com.crittercism.app.Crittercism;
 import com.facebook.Session;
 import com.facebook.SessionState;
 import com.facebook.UiLifecycleHelper;
@@ -306,7 +305,6 @@ public class SocialCheckInFragment extends SherlockFragment {
             mMap.animateCamera(CameraUpdateFactory.newCameraPosition(HOME));
         } catch (Exception e) {
             e.printStackTrace();
-            Crittercism.logHandledException(e);
             Crashlytics.logException(e);
         }
     }

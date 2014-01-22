@@ -35,7 +35,6 @@ import com.actionbarsherlock.view.Menu;
 import com.actionbarsherlock.view.MenuInflater;
 import com.actionbarsherlock.view.MenuItem;
 import com.crashlytics.android.Crashlytics;
-import com.crittercism.app.Crittercism;
 import com.facebook.FacebookRequestError;
 import com.facebook.HttpMethod;
 import com.facebook.Request;
@@ -314,7 +313,6 @@ public class SocialShareFragment extends SherlockFragment {
             lon = Double.toString(location.getLongitude());
         } catch (Exception e) {
             e.printStackTrace();
-            Crittercism.logHandledException(e);
             Crashlytics.logException(e);
         }
     }

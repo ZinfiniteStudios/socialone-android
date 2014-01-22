@@ -20,6 +20,8 @@ public class Constants {
 
     public static final String TUMBLR_CONSUMER_KEY = "oXkVuOgUZZJ4FK68vEPXk7kH8zhhnZiUIAQJ8p94jO3GUCG6Sg";
     public static final String TUMBLR_CONSUMER_SECRET = "pWRZdsQPlSm9vVTFiDXCKJTtA2VCiZTpjypThAsmXyNWMERV9O";
+    public static final String TUMBLR_ACCESS = "tumblr_access";
+    public static final String TUMBLR_SECRET = "tumblr_secret";
 
     public static final String FLICKR_KEY = "87d0ccf46bf73b10709e03d78edb0d25";
     public static final String FLICKR_SECRET = "5d1ee0b6ac5c67e9";

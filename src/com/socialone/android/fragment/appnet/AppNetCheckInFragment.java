@@ -20,7 +20,6 @@ import android.widget.TextView;
 
 import com.actionbarsherlock.app.SherlockFragment;
 import com.crashlytics.android.Crashlytics;
-import com.crittercism.app.Crittercism;
 import com.haarman.listviewanimations.swinginadapters.prepared.SwingBottomInAnimationAdapter;
 import com.parse.signpost.OAuth;
 import com.socialone.android.R;
@@ -105,7 +104,6 @@ public class AppNetCheckInFragment extends SherlockFragment {
             });
         } catch (Exception e) {
             e.printStackTrace();
-            Crittercism.logHandledException(e);
             Crashlytics.logException(e);
         }
     }

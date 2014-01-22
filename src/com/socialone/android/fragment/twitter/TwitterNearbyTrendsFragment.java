@@ -17,7 +17,6 @@ import android.widget.TextView;
 
 import com.actionbarsherlock.app.SherlockFragment;
 import com.crashlytics.android.Crashlytics;
-import com.crittercism.app.Crittercism;
 import com.haarman.listviewanimations.swinginadapters.prepared.SwingBottomInAnimationAdapter;
 import com.socialone.android.R;
 import com.socialone.android.utils.Constants;
@@ -83,7 +82,6 @@ public class TwitterNearbyTrendsFragment extends SherlockFragment {
             twitterSetup();
         } catch (Exception e) {
             e.printStackTrace();
-            Crittercism.logHandledException(e);
             Crashlytics.logException(e);
         }
     }

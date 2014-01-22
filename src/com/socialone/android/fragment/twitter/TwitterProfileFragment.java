@@ -25,7 +25,6 @@ import com.actionbarsherlock.view.Menu;
 import com.actionbarsherlock.view.MenuInflater;
 import com.actionbarsherlock.view.MenuItem;
 import com.crashlytics.android.Crashlytics;
-import com.crittercism.app.Crittercism;
 import com.socialone.android.R;
 import com.socialone.android.utils.BlurTransformation;
 import com.socialone.android.utils.Constants;
@@ -144,7 +143,6 @@ public class TwitterProfileFragment extends SherlockFragment {
             twitterSetup();
         } catch (Exception e) {
             e.printStackTrace();
-            Crittercism.logHandledException(e);
             Crashlytics.logException(e);
         }
     }
