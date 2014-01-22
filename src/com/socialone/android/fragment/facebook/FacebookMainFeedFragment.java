@@ -200,8 +200,6 @@ public class FacebookMainFeedFragment extends SherlockFragment {
             }
 
             String getCreatedTime = post.getCreated_Time();
-//            long finalTimeStamp = Long.valueOf(getCreatedTime);
-//            SimpleDateFormat dateFormatter = new SimpleDateFormat("yyyy-MM-dd'T'hh:mm:ssZ");
 
             SimpleDateFormat formatter = getDateFormat();
             ParsePosition pos = new ParsePosition(0);

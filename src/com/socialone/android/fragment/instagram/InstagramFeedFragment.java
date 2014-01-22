@@ -15,16 +15,21 @@ import android.widget.TextView;
 import com.actionbarsherlock.app.SherlockFragment;
 import com.haarman.listviewanimations.swinginadapters.prepared.SwingBottomInAnimationAdapter;
 import com.socialone.android.R;
+import com.socialone.android.jinstagram.Instagram;
+import com.socialone.android.jinstagram.auth.model.Token;
+import com.socialone.android.jinstagram.auth.oauth.InstagramService;
+import com.socialone.android.jinstagram.entity.common.ImageData;
+import com.socialone.android.jinstagram.entity.users.feed.MediaFeed;
+import com.socialone.android.jinstagram.entity.users.feed.MediaFeedData;
 import com.socialone.android.utils.Constants;
 import com.socialone.android.viewcomponents.RelativeTimeTextView;
 import com.squareup.picasso.Picasso;
 
-import org.brickred.socialauth.Feed;
 import org.brickred.socialauth.android.DialogListener;
 import org.brickred.socialauth.android.SocialAuthAdapter;
 import org.brickred.socialauth.android.SocialAuthError;
-import org.brickred.socialauth.android.SocialAuthListener;
 
+import java.text.SimpleDateFormat;
 import java.util.List;
 
 /**
@@ -37,6 +42,8 @@ public class InstagramFeedFragment extends SherlockFragment {
     ListView listView;
     SocialAuthAdapter instaAuthAdapter;
     GoogleCardsAdapter googleCardsAdapter;
+    InstagramService instagramService;
+    Instagram instagram;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -64,7 +71,20 @@ public class InstagramFeedFragment extends SherlockFragment {
         instaAuthAdapter = new SocialAuthAdapter(new DialogListener() {
             @Override
             public void onComplete(Bundle bundle) {
-                getInstaFeed();
+                Token token = new Token(instaAuthAdapter.getCurrentProvider().getAccessGrant().getKey(), instaAuthAdapter.getCurrentProvider().getAccessGrant().getSecret());
+                instagram = new Instagram(token);
+                try{
+                    MediaFeed feed = instagram.getUserFeeds();
+                    List<MediaFeedData> userFeed = feed.getData();
+                    googleCardsAdapter = new GoogleCardsAdapter(getSherlockActivity(), userFeed);
+                    SwingBottomInAnimationAdapter swingBottomInAnimationAdapter = new SwingBottomInAnimationAdapter(googleCardsAdapter);
+                    swingBottomInAnimationAdapter.setInitialDelayMillis(300);
+                    swingBottomInAnimationAdapter.setAbsListView(listView);
+                    listView.setAdapter(swingBottomInAnimationAdapter);
+                    googleCardsAdapter.setData(userFeed);
+                }catch (Exception e){
+                    e.printStackTrace();
+                }
             }
 
             @Override
@@ -86,39 +106,18 @@ public class InstagramFeedFragment extends SherlockFragment {
         instaAuthAdapter.authorize(getSherlockActivity(), SocialAuthAdapter.Provider.INSTAGRAM);
     }
 
-    private void getInstaFeed(){
-        instaAuthAdapter.getFeedsAsync(new SocialAuthListener<List<Feed>>() {
-            @Override
-            public void onExecute(String s, List<Feed> feeds) {
-                Log.d("plus", s);
-                Log.d("plus", feeds.toString());
-                googleCardsAdapter = new GoogleCardsAdapter(getSherlockActivity(), feeds);
-                SwingBottomInAnimationAdapter swingBottomInAnimationAdapter = new SwingBottomInAnimationAdapter(googleCardsAdapter);
-                swingBottomInAnimationAdapter.setInitialDelayMillis(300);
-                swingBottomInAnimationAdapter.setAbsListView(listView);
-                listView.setAdapter(swingBottomInAnimationAdapter);
-                googleCardsAdapter.setData(feeds);
-            }
-
-            @Override
-            public void onError(SocialAuthError socialAuthError) {
-
-            }
-        });
-    }
-
     public class GoogleCardsAdapter extends BaseAdapter {
 
         private Context mContext;
-        private List<Feed> mFeed;
+        private List<MediaFeedData> mFeed;
         private boolean mShouldReturnEmpty = true;
 
-        public GoogleCardsAdapter(Context context, List<Feed> feed) {
+        public GoogleCardsAdapter(Context context, List<MediaFeedData> feed) {
             mContext = context;
             mFeed = feed;
         }
 
-        public void setData(List<Feed> feed){
+        public void setData(List<MediaFeedData> feed){
             mFeed = feed;
         }
 
@@ -133,7 +132,7 @@ public class InstagramFeedFragment extends SherlockFragment {
         }
 
         @Override
-        public Feed getItem(int position) {
+        public MediaFeedData getItem(int position) {
             return mFeed.get(position);
         }
 
@@ -161,17 +160,20 @@ public class InstagramFeedFragment extends SherlockFragment {
                 viewHolder = (ViewHolder) view.getTag();
             }
 
-            final Feed feed = getItem(position);
-            viewHolder.userRealName.setText(feed.getFrom());
-            viewHolder.userTwitName.setText(feed.getScreenName());
-            viewHolder.postTime.setReferenceTime(feed.getCreatedAt().getTime());
-            viewHolder.instaInfo.setText(feed.getId());
+            final MediaFeedData feed = getItem(position);
+            viewHolder.userRealName.setText(feed.getUser().getFullName());
+            viewHolder.userTwitName.setText(feed.getUser().getUserName());
+
+            Long referenceTime = Long.parseLong(feed.getCaption().getCreatedTime());
+            viewHolder.postTime.setReferenceTime(referenceTime);
+            viewHolder.instaInfo.setText(feed.getCaption().getText());
             //TODO add on click to these to open the respective client or user profile
 //            viewHolder.postClient.setText("via " + stripHtml(feed.getSource()));
 //            viewHolder.postUser.setText("from " + feed.getUser().get);
 
+            ImageData imageData = feed.getImages().getStandardResolution();
             Picasso.with(mContext)
-                    .load(feed.getMessage())
+                    .load(imageData.getImageUrl())
                     .into(viewHolder.userImg);
 
             return view;
@@ -187,6 +189,10 @@ public class InstagramFeedFragment extends SherlockFragment {
 
         public String stripHtml(String html) {
             return Html.fromHtml(html).toString();
+        }
+
+        public SimpleDateFormat getDateFormat() {
+            return new SimpleDateFormat("yyyy-MM-dd'T'hh:mm:ssZ");
         }
     }
 }

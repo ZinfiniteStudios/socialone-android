@@ -30,9 +30,6 @@ import android.widget.Toast;
 import com.actionbarsherlock.app.ActionBar;
 import com.actionbarsherlock.app.SherlockFragmentActivity;
 import com.actionbarsherlock.view.MenuItem;
-import com.amazon.insights.AmazonInsights;
-import com.amazon.insights.InsightsCredentials;
-import com.amazon.insights.InsightsOptions;
 import com.facebook.Request;
 import com.facebook.Response;
 import com.facebook.Session;
@@ -81,7 +78,6 @@ public class MainActivity extends SherlockFragmentActivity  {
     NavDrawerItem currentNavigationDrawerItem;
     Context mContext;
     FragmentTransaction ft;
-    private AmazonInsights insights;
 
     BlurDrawerToggle blurDrawerToggle;
 
@@ -114,10 +110,6 @@ public class MainActivity extends SherlockFragmentActivity  {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
-        InsightsCredentials credentials = AmazonInsights.newCredentials(getString(R.string.amazon_key), getString(R.string.amazon_private_key));
-        InsightsOptions options = AmazonInsights.newOptions(true, true);
-        insights = AmazonInsights.newInstance(credentials, getApplicationContext(), options);
 
         setContentView(R.layout.main);
         mDrawerLayout = (DrawerLayout) findViewById(R.id.drawer_root);
@@ -634,15 +626,12 @@ public class MainActivity extends SherlockFragmentActivity  {
     public void onResume() {
         super.onResume();
         uiHelper.onResume();
-        this.insights.getSessionClient().resumeSession();
     }
 
     @Override
     public void onPause() {
         super.onPause();
         uiHelper.onPause();
-        this.insights.getSessionClient().pauseSession();
-        this.insights.getEventClient().submitEvents();
     }
 
     private void onSessionStateChange(Session session, SessionState state, Exception exception) {

@@ -24,6 +24,9 @@ public class Constants {
     public static final String FLICKR_KEY = "87d0ccf46bf73b10709e03d78edb0d25";
     public static final String FLICKR_SECRET = "5d1ee0b6ac5c67e9";
 
+    public static final String INSTAGRAM_KEY = "96908692759242ba8c563dca55eb1b14";
+    public static final String INSTAGRAM_SECRET = "cf28648ceb1e452dadc734fb935576e7";
+
     public static final String REQUEST_URL = "http://www.tumblr.com/oauth/request_token";
     public static final String ACCESS_URL = "http://www.tumblr.com/oauth/access_token";
     public static final String AUTHORIZE_URL = "http://www.tumblr.com/oauth/authorize";
