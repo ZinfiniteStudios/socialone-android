@@ -49,6 +49,7 @@ import com.socialone.android.fragment.flickr.FlickrNavFragment;
 import com.socialone.android.fragment.foursquare.FourSquareFeedFragment;
 import com.socialone.android.fragment.googeplus.GooglePlusFeedFragment;
 import com.socialone.android.fragment.instagram.InstagramFeedFragment;
+import com.socialone.android.fragment.tumblr.TumblrMainFeedFragment;
 import com.socialone.android.fragment.twitter.TwitterNavFragment;
 import com.socialone.android.utils.BlurTransformation;
 import com.socialone.android.utils.Constants;
@@ -106,6 +107,7 @@ public class MainActivity extends SherlockFragmentActivity  {
     public static final int NAV_INSTAGRM = R.id.nav_item_instagram;
     public static final int NAV_ABOUT = R.id.nav_item_about;
     public static final int NAV_PROFILE = R.id.drawer_user_profile;
+    public static final int NAV_TUMBLR = R.id.nav_item_tumblr;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -295,6 +297,9 @@ public class MainActivity extends SherlockFragmentActivity  {
                 break;
             case NAV_TWITTER:
                 fragment = new TwitterNavFragment();
+                break;
+            case NAV_TUMBLR:
+                fragment = new TumblrMainFeedFragment();
                 break;
             case NAV_FOURSQUARE:
                 fragment = new FourSquareFeedFragment();
