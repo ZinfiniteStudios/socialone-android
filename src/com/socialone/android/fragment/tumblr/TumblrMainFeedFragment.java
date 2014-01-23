@@ -5,6 +5,7 @@ import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.text.Html;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -61,6 +62,7 @@ public class TumblrMainFeedFragment extends SherlockFragment {
         client = new JumblrClient(Constants.TUMBLR_CONSUMER_KEY, Constants.TUMBLR_CONSUMER_SECRET);
         client.setToken(prefs.getString(Constants.TUMBLR_ACCESS, null), prefs.getString(Constants.TUMBLR_SECRET, null));
         List<Post> posts = client.userDashboard();
+
         googleCardsAdapter = new GoogleCardsAdapter(getSherlockActivity(), posts);
         SwingBottomInAnimationAdapter swingBottomInAnimationAdapter = new SwingBottomInAnimationAdapter(googleCardsAdapter);
         swingBottomInAnimationAdapter.setInitialDelayMillis(300);
@@ -125,17 +127,16 @@ public class TumblrMainFeedFragment extends SherlockFragment {
 
             final Post post = getItem(position);
             viewHolder.userRealName.setText(post.getBlogName());
+            Log.d("tumblr", "post" + Integer.toString(position) + post.getBlogName() + " " + post.getFormat() + " " + post.getId() +  " " + post.getPostUrl() + " " + post.getRebloggedFromId() + " " + post.getReblogKey() +
+            " " + post.getSourceUrl() + " " + post.getState() + " " + post.getTags().toArray().toString()  +  " " + post.getType() + " " + post.getTimestamp());
 
-            viewHolder.postTime.setReferenceTime(post.getTimestamp());
-            viewHolder.instaInfo.setText(post.getRebloggedFromName());
-            //TODO add on click to these to open the respective client or user profile
-//            viewHolder.postClient.setText("via " + stripHtml(feed.getSource()));
-//            viewHolder.postUser.setText("from " + feed.getUser().get);
-
+            viewHolder.postTime.setText(post.getDateGMT());
+            viewHolder.instaInfo.setText(post.getSourceUrl());
 
             Picasso.with(mContext)
-                    .load(post.getSourceUrl())
+                    .load(post.getClient().blogAvatar(post.getBlogName()))
                     .into(viewHolder.userImg);
+
 
             return view;
         }

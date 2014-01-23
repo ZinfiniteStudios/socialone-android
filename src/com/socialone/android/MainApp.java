@@ -9,10 +9,6 @@ import android.util.Base64;
 import android.util.Log;
 
 import com.crashlytics.android.Crashlytics;
-import com.parse.Parse;
-import com.parse.ParseInstallation;
-import com.parse.PushService;
-import com.socialone.android.activity.MainActivity;
 import com.socialone.android.utils.Datastore;
 import com.uservoice.uservoicesdk.Config;
 import com.uservoice.uservoicesdk.UserVoice;
@@ -34,9 +30,9 @@ public class MainApp extends Application {
         super.onCreate();
         Log.i(TAG, "onCreate");
         Crashlytics.start(this);
-        Parse.initialize(this, "qAC53f5OOSOSrWNS5rSPzqZRSyZdfBxbvLQg1zFH", "2DcrC6RA6a3zZ1HKgKKZmjf37aEUWiNGEWpY2cda");
-        PushService.setDefaultPushCallback(this, MainActivity.class);
-        ParseInstallation.getCurrentInstallation().saveInBackground();
+//        Parse.initialize(this, "qAC53f5OOSOSrWNS5rSPzqZRSyZdfBxbvLQg1zFH", "2DcrC6RA6a3zZ1HKgKKZmjf37aEUWiNGEWpY2cda");
+//        PushService.setDefaultPushCallback(this, MainActivity.class);
+//        ParseInstallation.getCurrentInstallation().saveInBackground();
         Config config = new Config("socialone.uservoice.com");
         UserVoice.init(config, this);
         mContext = getApplicationContext();

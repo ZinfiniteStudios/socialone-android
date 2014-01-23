@@ -48,7 +48,6 @@ import com.google.analytics.tracking.android.EasyTracker;
 import com.google.android.gms.plus.PlusShare;
 import com.googlecode.flickrjandroid.Flickr;
 import com.googlecode.flickrjandroid.uploader.UploadMetaData;
-import com.parse.signpost.OAuth;
 import com.socialone.android.R;
 import com.socialone.android.appnet.adnlib.Annotations;
 import com.socialone.android.appnet.adnlib.AppDotNetClient;
@@ -60,6 +59,7 @@ import com.socialone.android.fivehundredpx.api.services.UploadService;
 import com.socialone.android.utils.Constants;
 import com.socialone.android.utils.Datastore;
 import com.socialone.android.utils.FlickrHelper;
+import com.tumblr.jumblr.JumblrClient;
 
 import org.brickred.socialauth.android.DialogListener;
 import org.brickred.socialauth.android.SocialAuthAdapter;
@@ -76,8 +76,10 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import oak.widget.CancelEditText;
+import oauth.signpost.OAuth;
 import twitter4j.GeoLocation;
 import twitter4j.Status;
 import twitter4j.StatusUpdate;
@@ -111,6 +113,7 @@ public class SocialShareFragment extends SherlockFragment {
     Switch flickrSwitch;
     Switch locationSwtich;
     Switch fiveHundSwitch;
+    Switch tumblrSwitch;
 
     LinearLayout photoShareBtn;
     LinearLayout linkShareBtn;
@@ -159,6 +162,8 @@ public class SocialShareFragment extends SherlockFragment {
     Flickr f;
     ConfigurationBuilder cb;
     User fiveUser;
+    JumblrClient jumblrClient;
+    SharedPreferences prefs;
 
     private final TextWatcher mTextEditorWatcher = new TextWatcher() {
         public void beforeTextChanged(CharSequence s, int start, int count, int after) {
@@ -213,6 +218,7 @@ public class SocialShareFragment extends SherlockFragment {
         flickrSwitch = (Switch) view.findViewById(R.id.flickr_switch);
         locationSwtich = (Switch) view.findViewById(R.id.location_switch);
         fiveHundSwitch = (Switch) view.findViewById(R.id.fivehund_switch);
+        tumblrSwitch = (Switch) view.findViewById(R.id.tumblr_switch);
 
         photoShareBtn = (LinearLayout) view.findViewById(R.id.photo_share_btn);
         linkShareBtn = (LinearLayout) view.findViewById(R.id.link_share_btn);
@@ -302,6 +308,8 @@ public class SocialShareFragment extends SherlockFragment {
                 flickrSetup();
             }
         });
+
+        prefs = PreferenceManager.getDefaultSharedPreferences(getSherlockActivity());
     }
 
     private void getUserLocation() {
@@ -869,6 +877,19 @@ public class SocialShareFragment extends SherlockFragment {
 
     }
 
+    private void tumblrShare(String string){
+        jumblrClient = new JumblrClient(Constants.TUMBLR_CONSUMER_KEY, Constants.TUMBLR_CONSUMER_SECRET);
+        jumblrClient.setToken(prefs.getString(Constants.TUMBLR_ACCESS, null), prefs.getString(Constants.TUMBLR_SECRET, null));
+        try{
+            Map<String, String> detail = new HashMap<String, String>();
+            detail.put("quote", string);
+            detail.put("type", "quote");
+            jumblrClient.postCreate(jumblrClient.user().getName(), detail);
+        }catch (Exception e){
+            Log.e("tumblr", e.toString());
+        }
+    }
+
     public void onFinishTask() {
         //TODO
         Log.d("500px", "image upload completed");
@@ -961,6 +982,11 @@ public class SocialShareFragment extends SherlockFragment {
         if(fiveHundSwitch.isChecked()){
             fiveHundShare();
         }
+
+        if(tumblrSwitch.isChecked()){
+            tumblrShare(userShareText);
+        }
+
 
 //        shareField.getText().clear();
 

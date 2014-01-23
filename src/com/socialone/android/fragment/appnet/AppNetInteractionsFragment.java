@@ -5,6 +5,7 @@ import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.text.Html;
+import android.text.util.Linkify;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -15,7 +16,6 @@ import android.widget.TextView;
 
 import com.actionbarsherlock.app.SherlockFragment;
 import com.haarman.listviewanimations.swinginadapters.prepared.SwingBottomInAnimationAdapter;
-import com.parse.signpost.OAuth;
 import com.socialone.android.R;
 import com.socialone.android.appnet.adnlib.AppDotNetClient;
 import com.socialone.android.appnet.adnlib.data.Interaction;
@@ -24,6 +24,8 @@ import com.socialone.android.appnet.adnlib.response.InteractionListResponseHandl
 import com.socialone.android.viewcomponents.RelativeTimeTextView;
 
 import java.util.ArrayList;
+
+import oauth.signpost.OAuth;
 
 /**
  * Created by david.hodge on 1/10/14.
@@ -168,6 +170,7 @@ public class AppNetInteractionsFragment extends SherlockFragment {
 
             final Interaction feed = getItem(position);
             viewHolder.textView.setText(feed.getAction());
+            Linkify.addLinks(viewHolder.textView, Linkify.ALL);
 //            viewHolder.userRealName.setText(feed.getUser().getName());
 //            viewHolder.userTwitName.setText("@" + feed.getUser().getScreenName());
             viewHolder.postTime.setReferenceTime(feed.getEventDate().getTime());

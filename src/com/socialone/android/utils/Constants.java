@@ -50,11 +50,11 @@ public class Constants {
     public static final String TWITTER_TOKEN = " ";
     public static final String TWITTER_SECRET = " ";
 
-//    public static final String TWIT_CONSUMER_KEY = "ifls6s19VWz7xJjtlILo0Q";
-//    public static final String TWIT_CONSUMER_SECRET = "AXiyrJ2oB6iKTO2zYIHkAhkKUtsNzJbO5kEAJjcwoSc";
+    public static final String TWIT_CONSUMER_KEY = "ifls6s19VWz7xJjtlILo0Q";
+    public static final String TWIT_CONSUMER_SECRET = "AXiyrJ2oB6iKTO2zYIHkAhkKUtsNzJbO5kEAJjcwoSc";
 
-    public static final String TWIT_CONSUMER_KEY = "DSR9G9DlPj3P0dMIL32dbA";
-    public static final String TWIT_CONSUMER_SECRET = "sBcmiuIbR2Sl7waNZ2wqFGzpjINjzzUWKuyuRNHqqU";
+//    public static final String TWIT_CONSUMER_KEY = "DSR9G9DlPj3P0dMIL32dbA";
+//    public static final String TWIT_CONSUMER_SECRET = "sBcmiuIbR2Sl7waNZ2wqFGzpjINjzzUWKuyuRNHqqU";
     public static final String TWIT_ACCESS_TOKEN = "twit.token";
     public static final String TWIT_ACCESS_SECRET = "twit.secret";
 

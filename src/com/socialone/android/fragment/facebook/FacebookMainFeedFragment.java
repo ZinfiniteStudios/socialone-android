@@ -3,6 +3,7 @@ package com.socialone.android.fragment.facebook;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
+import android.text.util.Linkify;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -163,6 +164,13 @@ public class FacebookMainFeedFragment extends SherlockFragment {
             return position;
         }
 
+        public void addRangeToTop(ArrayList<NewsFeedItem> items){
+
+            for(int i=0; i< items.size(); i++){
+                mAppPlace.add(0, items.get(i));
+            }
+        }
+
         @Override
         public View getView(int position, View convertView, ViewGroup parent) {
             ViewHolder viewHolder;
@@ -190,6 +198,7 @@ public class FacebookMainFeedFragment extends SherlockFragment {
 //                viewHolder.textView.setText(post.pictureMessage);
 //            }else{
                 viewHolder.textView.setText(post.getMessage());
+            Linkify.addLinks(viewHolder.textView, Linkify.ALL);
 //            }
             try{
             SimpleDateFormat dateFormat = new SimpleDateFormat("DD-MM-YYYY");

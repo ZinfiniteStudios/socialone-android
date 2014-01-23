@@ -3,6 +3,7 @@ package com.socialone.android.fragment.twitter;
 import android.content.Context;
 import android.os.Bundle;
 import android.text.Html;
+import android.text.util.Linkify;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -145,6 +146,12 @@ public class TwitterMainFeedFragment extends SherlockFragment {
             return position;
         }
 
+//        public void AddRangeToTop(ArrayList<Status> feed) {
+//            for (Status mFeed : feed){
+//                this.insert(feed, 0);
+//            }
+//        }
+
         @Override
         public View getView(int position, View convertView, ViewGroup parent) {
             ViewHolder viewHolder;
@@ -171,6 +178,7 @@ public class TwitterMainFeedFragment extends SherlockFragment {
 
             final Status feed = getItem(position);
             viewHolder.textView.setText(feed.getText());
+            Linkify.addLinks(viewHolder.textView, Linkify.ALL);
             viewHolder.userRealName.setText(feed.getUser().getName());
             viewHolder.userTwitName.setText("@" + feed.getUser().getScreenName());
             viewHolder.postTime.setReferenceTime(feed.getCreatedAt().getTime());

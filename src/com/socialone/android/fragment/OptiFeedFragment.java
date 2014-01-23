@@ -30,7 +30,6 @@ import com.facebook.model.GraphUser;
 import com.google.analytics.tracking.android.EasyTracker;
 import com.google.gson.Gson;
 import com.haarman.listviewanimations.swinginadapters.prepared.SwingBottomInAnimationAdapter;
-import com.parse.signpost.OAuth;
 import com.socialone.android.R;
 import com.socialone.android.api.facebook.NewsFeedItem;
 import com.socialone.android.appnet.adnlib.AppDotNetClient;
@@ -54,6 +53,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
+import oauth.signpost.OAuth;
 import twitter4j.Status;
 import twitter4j.Twitter;
 import twitter4j.TwitterFactory;

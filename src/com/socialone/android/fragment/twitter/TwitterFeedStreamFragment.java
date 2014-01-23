@@ -3,6 +3,7 @@ package com.socialone.android.fragment.twitter;
 import android.content.Context;
 import android.os.Bundle;
 import android.text.Html;
+import android.text.util.Linkify;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -299,6 +300,7 @@ public class TwitterFeedStreamFragment extends SherlockFragment{
 
             final Status feed = getItem(position);
             viewHolder.textView.setText(feed.getText());
+            Linkify.addLinks(viewHolder.textView, Linkify.ALL);
             viewHolder.userRealName.setText(feed.getUser().getName());
             viewHolder.userTwitName.setText("@" + feed.getUser().getScreenName());
             viewHolder.postTime.setReferenceTime(feed.getCreatedAt().getTime());

@@ -5,6 +5,7 @@ import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.text.Html;
+import android.text.util.Linkify;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -16,7 +17,6 @@ import android.widget.TextView;
 
 import com.actionbarsherlock.app.SherlockFragment;
 import com.haarman.listviewanimations.swinginadapters.prepared.SwingBottomInAnimationAdapter;
-import com.parse.signpost.OAuth;
 import com.socialone.android.R;
 import com.socialone.android.appnet.adnlib.AppDotNetClient;
 import com.socialone.android.appnet.adnlib.data.Post;
@@ -27,6 +27,8 @@ import com.socialone.android.viewcomponents.RelativeTimeTextView;
 import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
+
+import oauth.signpost.OAuth;
 
 /**
  * Created by david.hodge on 1/10/14.
@@ -169,6 +171,7 @@ public class AppNetMentionsFragment extends SherlockFragment {
 
             final Post post = getItem(position);
             viewHolder.textView.setText(post.getText());
+            Linkify.addLinks(viewHolder.textView, Linkify.ALL);
             viewHolder.postTime.setReferenceTime(post.getCreatedAt().getTime());
             //TODO add on click to these to open the respective client or user profile
             viewHolder.postClient.setText("via " + post.getSource().getName());

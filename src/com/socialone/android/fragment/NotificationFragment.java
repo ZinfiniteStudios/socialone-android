@@ -30,7 +30,6 @@ import com.googlecode.flickrjandroid.Flickr;
 import com.googlecode.flickrjandroid.activity.Item;
 import com.googlecode.flickrjandroid.people.User;
 import com.haarman.listviewanimations.swinginadapters.prepared.SwingBottomInAnimationAdapter;
-import com.parse.signpost.OAuth;
 import com.socialone.android.R;
 import com.socialone.android.appnet.adnlib.AppDotNetClient;
 import com.socialone.android.appnet.adnlib.data.Interaction;
@@ -53,6 +52,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
+import oauth.signpost.OAuth;
 import twitter4j.Status;
 import twitter4j.Twitter;
 import twitter4j.TwitterFactory;
