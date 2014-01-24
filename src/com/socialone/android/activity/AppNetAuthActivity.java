@@ -10,11 +10,12 @@ import android.webkit.WebView;
 import android.webkit.WebViewClient;
 
 import com.actionbarsherlock.app.SherlockActivity;
-import com.parse.signpost.OAuth;
 import com.socialone.android.R;
 import com.socialone.android.appnet.adnlib.AppDotNetClient;
 import com.socialone.android.appnet.adnlib.data.User;
 import com.socialone.android.appnet.adnlib.response.UserResponseHandler;
+
+import oauth.signpost.OAuth;
 
 /**
  * Created by david.hodge on 12/28/13.

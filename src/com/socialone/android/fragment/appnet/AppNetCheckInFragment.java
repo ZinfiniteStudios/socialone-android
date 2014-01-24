@@ -21,7 +21,6 @@ import android.widget.TextView;
 import com.actionbarsherlock.app.SherlockFragment;
 import com.crashlytics.android.Crashlytics;
 import com.haarman.listviewanimations.swinginadapters.prepared.SwingBottomInAnimationAdapter;
-import com.parse.signpost.OAuth;
 import com.socialone.android.R;
 import com.socialone.android.appnet.adnlib.Annotations;
 import com.socialone.android.appnet.adnlib.AppDotNetClient;
@@ -35,6 +34,8 @@ import com.socialone.android.appnet.adnlib.response.PostResponseHandler;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+
+import oauth.signpost.OAuth;
 
 /**
  * Created by david.hodge on 12/30/13.

@@ -83,7 +83,7 @@ public class FacebookMainFeedFragment extends SherlockFragment {
         getFacebookFeed();
     }
 
-    private void getFacebookFeed(){
+    private void getFacebookFeed() {
         session = ensureFacebookSessionFromCache(getSherlockActivity());
 
         if (session != null) {
@@ -91,7 +91,7 @@ public class FacebookMainFeedFragment extends SherlockFragment {
             Request.Callback callback = new Request.Callback() {
                 @Override
                 public void onCompleted(Response response) {
-                    try{
+                    try {
                         Log.d("faceboook", response.toString());
                         GraphObject responseGraphObject = response.getGraphObject();
                         JSONObject json = responseGraphObject.getInnerJSONObject();
@@ -100,7 +100,7 @@ public class FacebookMainFeedFragment extends SherlockFragment {
 //                        ArrayList<NewsFeedItem> posts = gson.fromJson(json.getJSONArray("data").toString(), type);
                         ArrayList<NewsFeedItem> posts = new ArrayList<NewsFeedItem>();
 
-                        JSONArray dataArray = (JSONArray)json.get("data");
+                        JSONArray dataArray = (JSONArray) json.get("data");
                         GraphObjectList<NewsFeedItem> newsFeedItems = GraphObject.Factory.createList(dataArray, NewsFeedItem.class);
                         for (NewsFeedItem newsfeedItem : newsFeedItems) {
                             posts.add(newsfeedItem);
@@ -113,7 +113,7 @@ public class FacebookMainFeedFragment extends SherlockFragment {
                         listView.setAdapter(swingBottomInAnimationAdapter);
                         googleCardsAdapter.setData(posts);
 
-                    }catch (Exception e){
+                    } catch (Exception e) {
                         Log.d("facebook", e.toString());
                     }
                 }
@@ -141,7 +141,7 @@ public class FacebookMainFeedFragment extends SherlockFragment {
             mAppPlace = appPlace;
         }
 
-        public void setData(ArrayList<NewsFeedItem> appPlace){
+        public void setData(ArrayList<NewsFeedItem> appPlace) {
             mAppPlace = appPlace;
         }
 
@@ -164,9 +164,9 @@ public class FacebookMainFeedFragment extends SherlockFragment {
             return position;
         }
 
-        public void addRangeToTop(ArrayList<NewsFeedItem> items){
+        public void addRangeToTop(ArrayList<NewsFeedItem> items) {
 
-            for(int i=0; i< items.size(); i++){
+            for (int i = 0; i < items.size(); i++) {
                 mAppPlace.add(0, items.get(i));
             }
         }
@@ -197,14 +197,15 @@ public class FacebookMainFeedFragment extends SherlockFragment {
 //            if(post.pictureMessage != null){
 //                viewHolder.textView.setText(post.pictureMessage);
 //            }else{
-                viewHolder.textView.setText(post.getMessage());
+            viewHolder.textView.setText(post.getMessage());
             Linkify.addLinks(viewHolder.textView, Linkify.ALL);
+            viewHolder.textView.setLinkTextColor(getResources().getColor(R.color.custom_blue));
 //            }
-            try{
-            SimpleDateFormat dateFormat = new SimpleDateFormat("DD-MM-YYYY");
-            Date d = dateFormat.parse(post.getCreated_Time());
-             viewHolder.postTime.setText(d.toString());
-            }catch (Exception e){
+            try {
+                SimpleDateFormat dateFormat = new SimpleDateFormat("DD-MM-YYYY");
+                Date d = dateFormat.parse(post.getCreated_Time());
+                viewHolder.postTime.setText(d.toString());
+            } catch (Exception e) {
 
             }
 
@@ -215,10 +216,10 @@ public class FacebookMainFeedFragment extends SherlockFragment {
             long then = formatter.parse(getCreatedTime, pos).getTime();
             long now = new Date().getTime();
 
-            long seconds = (now - then)/1000;
-            long minutes = seconds/60;
-            long hours = minutes/60;
-            long days = hours/24;
+            long seconds = (now - then) / 1000;
+            long minutes = seconds / 60;
+            long hours = minutes / 60;
+            long days = hours / 24;
 
             String friendly = null;
             long num = 0;
@@ -242,9 +243,9 @@ public class FacebookMainFeedFragment extends SherlockFragment {
             viewHolder.postTime.setText(postTimeStamp);
 //            viewHolder.postTime.setText(post.getCreated_Time().toString());
             //TODO add on click to these to open the respective client or user profile
-            try{
+            try {
                 viewHolder.postClient.setText("via " + post.getApplication().getName());
-            }catch (Exception e){
+            } catch (Exception e) {
                 e.printStackTrace();
                 viewHolder.postClient.setText("via " + "Unavailable");
             }
@@ -313,7 +314,7 @@ public class FacebookMainFeedFragment extends SherlockFragment {
             });
             meRequest.executeAndWait();
         } else if (state.isClosed()) {
-            Toast.makeText(getSherlockActivity(), "error",Toast.LENGTH_SHORT).show();
+            Toast.makeText(getSherlockActivity(), "error", Toast.LENGTH_SHORT).show();
         }
     }
 
@@ -359,7 +360,7 @@ public class FacebookMainFeedFragment extends SherlockFragment {
         EasyTracker.getInstance().activityStop(getSherlockActivity());
     }
 
-    public static Session ensureFacebookSessionFromCache(Context context){
+    public static Session ensureFacebookSessionFromCache(Context context) {
         Session activeSession = Session.getActiveSession();
         if (activeSession == null || !activeSession.getState().isOpened()) {
             activeSession = Session.openActiveSessionFromCache(context);

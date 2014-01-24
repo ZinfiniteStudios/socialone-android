@@ -25,7 +25,6 @@ import com.actionbarsherlock.view.Menu;
 import com.actionbarsherlock.view.MenuInflater;
 import com.actionbarsherlock.view.MenuItem;
 import com.haarman.listviewanimations.swinginadapters.prepared.SwingBottomInAnimationAdapter;
-import com.parse.signpost.OAuth;
 import com.socialone.android.R;
 import com.socialone.android.appnet.adnlib.AppDotNetClient;
 import com.socialone.android.appnet.adnlib.data.Post;
@@ -40,6 +39,8 @@ import com.squareup.picasso.Picasso;
 import com.viewpagerindicator.TitlePageIndicator;
 
 import java.util.ArrayList;
+
+import oauth.signpost.OAuth;
 
 /**
  * Created by david.hodge on 1/14/14.

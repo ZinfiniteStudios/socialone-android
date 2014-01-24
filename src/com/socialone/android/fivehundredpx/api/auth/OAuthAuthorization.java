@@ -2,8 +2,6 @@ package com.socialone.android.fivehundredpx.api.auth;
 
 import android.util.Log;
 
-import com.parse.signpost.commonshttp.CommonsHttpOAuthConsumer;
-import com.parse.signpost.commonshttp.CommonsHttpOAuthProvider;
 import com.socialone.android.fivehundredpx.api.FiveHundredException;
 
 import org.apache.http.HttpEntity;
@@ -16,6 +14,9 @@ import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.util.EntityUtils;
 
 import java.io.IOException;
+
+import oauth.signpost.commonshttp.CommonsHttpOAuthConsumer;
+import oauth.signpost.commonshttp.CommonsHttpOAuthProvider;
 
 public class OAuthAuthorization {
 

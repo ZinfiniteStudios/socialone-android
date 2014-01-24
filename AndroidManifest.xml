@@ -77,13 +77,13 @@
 
     <meta-data android:name="com.crashlytics.ApiKey" android:value="1a1c083d279aeeae6a4349cbdd6d9459cf95ecdb" />
 
-      <service android:name="com.parse.PushService" />
-      <receiver android:name="com.parse.ParseBroadcastReceiver">
-          <intent-filter>
-              <action android:name="android.intent.action.BOOT_COMPLETED" />
-              <action android:name="android.intent.action.USER_PRESENT" />
-          </intent-filter>
-      </receiver>
+      <!--<service android:name="com.parse.PushService" />-->
+      <!--<receiver android:name="com.parse.ParseBroadcastReceiver">-->
+          <!--<intent-filter>-->
+              <!--<action android:name="android.intent.action.BOOT_COMPLETED" />-->
+              <!--<action android:name="android.intent.action.USER_PRESENT" />-->
+          <!--</intent-filter>-->
+      <!--</receiver>-->
 
         <activity android:name="com.uservoice.uservoicesdk.activity.PortalActivity" />
         <activity android:name="com.uservoice.uservoicesdk.activity.ForumActivity" />

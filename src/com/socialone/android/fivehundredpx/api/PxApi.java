@@ -4,10 +4,6 @@ import android.content.Context;
 import android.content.SharedPreferences;
 import android.util.Log;
 
-import com.parse.signpost.commonshttp.CommonsHttpOAuthConsumer;
-import com.parse.signpost.exception.OAuthCommunicationException;
-import com.parse.signpost.exception.OAuthExpectationFailedException;
-import com.parse.signpost.exception.OAuthMessageSignerException;
 import com.socialone.android.MainApp;
 import com.socialone.android.fivehundredpx.api.auth.AccessToken;
 import com.socialone.android.utils.Constants;
@@ -28,6 +24,11 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.UnsupportedEncodingException;
 import java.util.List;
+
+import oauth.signpost.commonshttp.CommonsHttpOAuthConsumer;
+import oauth.signpost.exception.OAuthCommunicationException;
+import oauth.signpost.exception.OAuthExpectationFailedException;
+import oauth.signpost.exception.OAuthMessageSignerException;
 
 public class PxApi {
 	private static final String TAG = "ApiHelper";

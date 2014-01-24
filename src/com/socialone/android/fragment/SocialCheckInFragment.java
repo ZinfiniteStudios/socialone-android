@@ -37,7 +37,6 @@ import com.google.android.gms.maps.MapView;
 import com.google.android.gms.maps.MapsInitializer;
 import com.google.android.gms.maps.model.CameraPosition;
 import com.google.android.gms.maps.model.LatLng;
-import com.parse.signpost.OAuth;
 import com.socialone.android.R;
 import com.socialone.android.appnet.adnlib.Annotations;
 import com.socialone.android.appnet.adnlib.AppDotNetClient;
@@ -54,6 +53,8 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
+
+import oauth.signpost.OAuth;
 
 /**
  * Created with IntelliJ IDEA.

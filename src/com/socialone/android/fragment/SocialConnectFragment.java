@@ -30,8 +30,6 @@ import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GooglePlayServicesClient;
 import com.google.android.gms.common.SignInButton;
 import com.google.android.gms.plus.PlusClient;
-import com.parse.signpost.commonshttp.CommonsHttpOAuthConsumer;
-import com.parse.signpost.commonshttp.CommonsHttpOAuthProvider;
 import com.socialone.android.R;
 import com.socialone.android.activity.AppNetAuthActivity;
 import com.socialone.android.activity.MainActivity;
@@ -63,6 +61,8 @@ import org.json.JSONObject;
 
 import java.util.Arrays;
 
+import oauth.signpost.commonshttp.CommonsHttpOAuthConsumer;
+import oauth.signpost.commonshttp.CommonsHttpOAuthProvider;
 
 
 /**

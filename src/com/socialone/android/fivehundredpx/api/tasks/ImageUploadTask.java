@@ -4,16 +4,10 @@ import android.content.Context;
 import android.content.SharedPreferences;
 import android.net.Uri;
 import android.os.AsyncTask;
-import android.os.Environment;
 import android.util.Log;
 import android.widget.Toast;
 
-import com.parse.entity.mime.HttpMultipartMode;
-import com.parse.entity.mime.MultipartEntity;
-import com.parse.entity.mime.content.FileBody;
-import com.parse.entity.mime.content.StringBody;
 import com.socialone.android.MainApp;
-import com.socialone.android.R;
 import com.socialone.android.fivehundredpx.api.auth.AccessToken;
 import com.socialone.android.utils.Constants;
 
@@ -26,7 +20,6 @@ import org.apache.http.protocol.HttpContext;
 import org.json.JSONObject;
 
 import java.io.BufferedReader;
-import java.io.File;
 import java.io.InputStreamReader;
 
 /**
@@ -50,23 +43,23 @@ public class ImageUploadTask extends AsyncTask<Object, Void, String> {
 
             final Context c = MainApp.getContext();
 
-            MultipartEntity entity = new MultipartEntity(
-                    HttpMultipartMode.BROWSER_COMPATIBLE);
-
-            File myFile = new File(Environment.getExternalStorageDirectory(), selectedImage.getPath());
-            if (!myFile.exists()) {
-                myFile.mkdirs();
-                myFile.createNewFile();
-            }
-            entity.addPart("photo_id", new StringBody(photo_id));
-            entity.addPart("upload_key", new StringBody(upload_key));
-            entity.addPart("file",
-                    new FileBody(new File(selectedImage.getPath())));
-
-            entity.addPart("consumer_key",
-                    new StringBody(c.getString(R.string.px_consumer_key)));
-            entity.addPart("access_key", new StringBody(preferences.getString(Constants.PREF_ACCES_TOKEN, null)));
-            httpPost.setEntity(entity);
+//            MultiPartEntity entity = new MultipartEntity(
+//                    HttpMultipartMode.BROWSER_COMPATIBLE);
+//
+//            File myFile = new File(Environment.getExternalStorageDirectory(), selectedImage.getPath());
+//            if (!myFile.exists()) {
+//                myFile.mkdirs();
+//                myFile.createNewFile();
+//            }
+//            entity.addPart("photo_id", new StringBody(photo_id));
+//            entity.addPart("upload_key", new StringBody(upload_key));
+//            entity.addPart("file",
+//                    new FileBody(new File(selectedImage.getPath())));
+//
+//            entity.addPart("consumer_key",
+//                    new StringBody(c.getString(R.string.px_consumer_key)));
+//            entity.addPart("access_key", new StringBody(preferences.getString(Constants.PREF_ACCES_TOKEN, null)));
+//            httpPost.setEntity(entity);
             HttpResponse response = httpClient.execute(httpPost, localContext);
             BufferedReader reader = new BufferedReader(new InputStreamReader(
                     response.getEntity().getContent(), "UTF-8"));
