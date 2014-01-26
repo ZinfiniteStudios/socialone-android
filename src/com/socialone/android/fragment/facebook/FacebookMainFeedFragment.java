@@ -3,6 +3,7 @@ package com.socialone.android.fragment.facebook;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
+import android.text.TextUtils;
 import android.text.util.Linkify;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -29,6 +30,9 @@ import com.google.gson.Gson;
 import com.haarman.listviewanimations.swinginadapters.prepared.SwingBottomInAnimationAdapter;
 import com.socialone.android.R;
 import com.socialone.android.api.facebook.NewsFeedItem;
+import com.socialone.android.library.ActionBarPullToRefresh;
+import com.socialone.android.library.actionbarsherlock.PullToRefreshLayout;
+import com.socialone.android.library.listeners.OnRefreshListener;
 import com.socialone.android.utils.Constants;
 import com.socialone.android.viewcomponents.RelativeTimeTextView;
 import com.squareup.picasso.Picasso;
@@ -50,6 +54,7 @@ public class FacebookMainFeedFragment extends SherlockFragment {
     ListView listView;
     GoogleCardsAdapter googleCardsAdapter;
 
+    private PullToRefreshLayout mPullToRefreshLayout;
     private UiLifecycleHelper uiHelper;
     Session session;
     Gson gson;
@@ -73,7 +78,7 @@ public class FacebookMainFeedFragment extends SherlockFragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         view = inflater.inflate(R.layout.social_checkin_list, container, false);
         listView = (ListView) view.findViewById(R.id.activity_googlecards_listview);
-
+        mPullToRefreshLayout = (PullToRefreshLayout) view.findViewById(R.id.ptr_layout);
         return view;
     }
 
@@ -81,6 +86,16 @@ public class FacebookMainFeedFragment extends SherlockFragment {
     public void onViewCreated(View view, Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
         getFacebookFeed();
+
+        ActionBarPullToRefresh.from(getSherlockActivity())
+                .allChildrenArePullable()
+                .listener(new OnRefreshListener() {
+                    @Override
+                    public void onRefreshStarted(View view) {
+                        getFacebookFeed();
+                    }
+                })
+                .setup(mPullToRefreshLayout);
     }
 
     private void getFacebookFeed() {
@@ -105,7 +120,7 @@ public class FacebookMainFeedFragment extends SherlockFragment {
                         for (NewsFeedItem newsfeedItem : newsFeedItems) {
                             posts.add(newsfeedItem);
                         }
-
+                        mPullToRefreshLayout.setRefreshComplete();
                         googleCardsAdapter = new GoogleCardsAdapter(getSherlockActivity(), posts);
                         SwingBottomInAnimationAdapter swingBottomInAnimationAdapter = new SwingBottomInAnimationAdapter(googleCardsAdapter);
                         swingBottomInAnimationAdapter.setInitialDelayMillis(300);
@@ -179,6 +194,7 @@ public class FacebookMainFeedFragment extends SherlockFragment {
                 view = LayoutInflater.from(mContext).inflate(R.layout.facebook_feed_item, parent, false);
 
                 viewHolder = new ViewHolder();
+                viewHolder.postType = (TextView) view.findViewById(R.id.social_post_type);
                 viewHolder.textView = (TextView) view.findViewById(R.id.social_checkin_name);
                 viewHolder.userImg = (ImageView) view.findViewById(R.id.user_image);
                 viewHolder.repostPost = (ImageView) view.findViewById(R.id.repost_post);
@@ -197,7 +213,13 @@ public class FacebookMainFeedFragment extends SherlockFragment {
 //            if(post.pictureMessage != null){
 //                viewHolder.textView.setText(post.pictureMessage);
 //            }else{
-            viewHolder.textView.setText(post.getMessage());
+            viewHolder.postType.setText(post.getType() + " by " + post.getFrom().getName());
+            if(!TextUtils.isEmpty(post.getMessage())){
+               viewHolder.textView.setText(post.getMessage());
+            }else{
+                viewHolder.textView.setText(post.getDescription());
+
+            }
             Linkify.addLinks(viewHolder.textView, Linkify.ALL);
             viewHolder.textView.setLinkTextColor(getResources().getColor(R.color.custom_blue));
 //            }
@@ -247,9 +269,9 @@ public class FacebookMainFeedFragment extends SherlockFragment {
                 viewHolder.postClient.setText("via " + post.getApplication().getName());
             } catch (Exception e) {
                 e.printStackTrace();
-                viewHolder.postClient.setText("via " + "Unavailable");
+//                viewHolder.postClient.setText("via " + post.getVia().getName());
             }
-            viewHolder.postUser.setText("from " + post.getFrom().getName());
+//            viewHolder.postUser.setText("from " + post.getFrom().getName());
 
             Picasso.with(mContext)
                     .load(Constants.FACEBOOK_GRAPH + post.getFrom().getID() + "/picture?type=large")
@@ -280,12 +302,12 @@ public class FacebookMainFeedFragment extends SherlockFragment {
 
                 }
             });
-//            setImageView(viewHolder, position);
 
             return view;
         }
 
         public class ViewHolder {
+            TextView postType;
             TextView textView;
             RelativeTimeTextView postTime;
             TextView postClient;

@@ -13,4 +13,13 @@
 
     <color name="black_overlay">#8000</color>
     <color name="white_overlay">#26FFFFFF</color>
+
+    <color name="default_progress_bar_color">#FF33B5E5</color>
+
+    <color name="app_main_color">#32CD99</color>
+
+    <integer-array name="ptr_colors">
+        <item>@color/app_main_color</item>
+        <item>@color/custom_red</item>
+    </integer-array>
 </resources>

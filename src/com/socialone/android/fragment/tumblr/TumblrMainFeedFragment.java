@@ -17,6 +17,9 @@ import android.widget.TextView;
 import com.actionbarsherlock.app.SherlockFragment;
 import com.haarman.listviewanimations.swinginadapters.prepared.SwingBottomInAnimationAdapter;
 import com.socialone.android.R;
+import com.socialone.android.library.ActionBarPullToRefresh;
+import com.socialone.android.library.actionbarsherlock.PullToRefreshLayout;
+import com.socialone.android.library.listeners.OnRefreshListener;
 import com.socialone.android.utils.Constants;
 import com.socialone.android.viewcomponents.RelativeTimeTextView;
 import com.squareup.picasso.Picasso;
@@ -36,6 +39,7 @@ public class TumblrMainFeedFragment extends SherlockFragment {
     SharedPreferences prefs;
     JumblrClient client;
     GoogleCardsAdapter googleCardsAdapter;
+    private PullToRefreshLayout mPullToRefreshLayout;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -48,6 +52,7 @@ public class TumblrMainFeedFragment extends SherlockFragment {
         setHasOptionsMenu(true);
         view = inflater.inflate(R.layout.social_checkin_list, container, false);
         listView = (ListView) view.findViewById(R.id.activity_googlecards_listview);
+        mPullToRefreshLayout = (PullToRefreshLayout) view.findViewById(R.id.ptr_layout);
         return view;
     }
 
@@ -56,13 +61,22 @@ public class TumblrMainFeedFragment extends SherlockFragment {
         super.onViewCreated(view, savedInstanceState);
         prefs = PreferenceManager.getDefaultSharedPreferences(getSherlockActivity());
         getUserDashboard();
+        ActionBarPullToRefresh.from(getSherlockActivity())
+                .allChildrenArePullable()
+                .listener(new OnRefreshListener() {
+                    @Override
+                    public void onRefreshStarted(View view) {
+                        getUserDashboard();
+                    }
+                })
+                .setup(mPullToRefreshLayout);
     }
 
     private void getUserDashboard(){
         client = new JumblrClient(Constants.TUMBLR_CONSUMER_KEY, Constants.TUMBLR_CONSUMER_SECRET);
         client.setToken(prefs.getString(Constants.TUMBLR_ACCESS, null), prefs.getString(Constants.TUMBLR_SECRET, null));
         List<Post> posts = client.userDashboard();
-
+        mPullToRefreshLayout.setRefreshComplete();
         googleCardsAdapter = new GoogleCardsAdapter(getSherlockActivity(), posts);
         SwingBottomInAnimationAdapter swingBottomInAnimationAdapter = new SwingBottomInAnimationAdapter(googleCardsAdapter);
         swingBottomInAnimationAdapter.setInitialDelayMillis(300);

@@ -22,6 +22,9 @@ import com.googlecode.flickrjandroid.photos.Photo;
 import com.haarman.listviewanimations.swinginadapters.prepared.SwingBottomInAnimationAdapter;
 import com.socialone.android.R;
 import com.socialone.android.activity.FlickrImageViewer;
+import com.socialone.android.library.ActionBarPullToRefresh;
+import com.socialone.android.library.actionbarsherlock.PullToRefreshLayout;
+import com.socialone.android.library.listeners.OnRefreshListener;
 import com.socialone.android.utils.Constants;
 import com.socialone.android.utils.FlickrHelper;
 import com.socialone.android.viewcomponents.RelativeTimeTextView;
@@ -47,6 +50,7 @@ public class FlickrExploreFragment extends SherlockFragment {
     Flickr f;
     OAuth auth;
     User user;
+    private PullToRefreshLayout mPullToRefreshLayout;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -61,6 +65,7 @@ public class FlickrExploreFragment extends SherlockFragment {
         setHasOptionsMenu(true);
         view = inflater.inflate(R.layout.social_checkin_list, container, false);
         listView = (ListView) view.findViewById(R.id.activity_googlecards_listview);
+        mPullToRefreshLayout = (PullToRefreshLayout) view.findViewById(R.id.ptr_layout);
 
         return view;
     }
@@ -69,6 +74,20 @@ public class FlickrExploreFragment extends SherlockFragment {
     public void onViewCreated(View view, Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
         flickrSetup();
+
+        ActionBarPullToRefresh.from(getSherlockActivity())
+                .allChildrenArePullable()
+                .listener(new OnRefreshListener() {
+                    @Override
+                    public void onRefreshStarted(View view) {
+                        try{
+                            setUpFeed();
+                        }catch (Exception e){
+                            Log.d("flickr", e.toString());
+                        }
+                    }
+                })
+                .setup(mPullToRefreshLayout);
     }
 
     private void flickrSetup(){
@@ -117,6 +136,7 @@ public class FlickrExploreFragment extends SherlockFragment {
         Date day = null;
 //        List<Photo> photos = f.getFavoritesInterface().getList(user.getId(), null, null, 50, 1, null);
         List<Photo> photos = f.getInterestingnessInterface().getList(day, Constants.EXTRAS, Constants.FETCH_PER_PAGE, 1);
+        mPullToRefreshLayout.setRefreshComplete();
         googleCardsAdapter = new GoogleCardsAdapter(getSherlockActivity(), photos);
         SwingBottomInAnimationAdapter swingBottomInAnimationAdapter = new SwingBottomInAnimationAdapter(googleCardsAdapter);
         swingBottomInAnimationAdapter.setInitialDelayMillis(300);

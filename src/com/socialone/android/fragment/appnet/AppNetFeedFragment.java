@@ -23,6 +23,9 @@ import com.socialone.android.appnet.adnlib.data.Post;
 import com.socialone.android.appnet.adnlib.data.PostList;
 import com.socialone.android.appnet.adnlib.response.PostListResponseHandler;
 import com.socialone.android.appnet.adnlib.response.PostResponseHandler;
+import com.socialone.android.library.ActionBarPullToRefresh;
+import com.socialone.android.library.actionbarsherlock.PullToRefreshLayout;
+import com.socialone.android.library.listeners.OnRefreshListener;
 import com.socialone.android.viewcomponents.RelativeTimeTextView;
 import com.squareup.picasso.Picasso;
 
@@ -34,13 +37,12 @@ import oauth.signpost.OAuth;
  * Created by david.hodge on 1/2/14.
  */
 public class AppNetFeedFragment extends SherlockFragment {
-//    public class AppNetFeedFragment extends SherlockFragment implements OnRefreshListener{
 
     View view;
     ListView listView;
     AppDotNetClient client;
     GoogleCardsAdapter googleCardsAdapter;
-//    PullToRefreshLayout pullToRefreshLayout;
+    private PullToRefreshLayout mPullToRefreshLayout;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -54,14 +56,7 @@ public class AppNetFeedFragment extends SherlockFragment {
         view = inflater.inflate(R.layout.social_checkin_list, container, false);
         listView = (ListView) view.findViewById(R.id.activity_googlecards_listview);
 
-//        pullToRefreshLayout = (PullToRefreshLayout) view.findViewById(R.id.ptr_layout);
-//        ActionBarPullToRefresh.from(getActivity())
-//                // Mark All Children as pullable
-//                .allChildrenArePullable()
-//                        // Set the OnRefreshListener
-//                .listener(AppNetFeedFragment.this)
-//                        // Finally commit the setup to our PullToRefreshLayout
-//                .setup(pullToRefreshLayout);
+        mPullToRefreshLayout = (PullToRefreshLayout) view.findViewById(R.id.ptr_layout);
         return view;
     }
 
@@ -69,6 +64,16 @@ public class AppNetFeedFragment extends SherlockFragment {
     public void onViewCreated(View view, Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
         getAppNetFeed();
+
+        ActionBarPullToRefresh.from(getSherlockActivity())
+                .allChildrenArePullable()
+                .listener(new OnRefreshListener() {
+                    @Override
+                    public void onRefreshStarted(View view) {
+                        getAppNetFeed();
+                    }
+                })
+                .setup(mPullToRefreshLayout);
     }
 
     private void getAppNetFeed(){
@@ -81,6 +86,7 @@ public class AppNetFeedFragment extends SherlockFragment {
                 getSherlockActivity().runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
+                        mPullToRefreshLayout.setRefreshComplete();
                         googleCardsAdapter = new GoogleCardsAdapter(getSherlockActivity(), places);
                         SwingBottomInAnimationAdapter swingBottomInAnimationAdapter = new SwingBottomInAnimationAdapter(googleCardsAdapter);
                         swingBottomInAnimationAdapter.setInitialDelayMillis(300);

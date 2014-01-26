@@ -173,8 +173,7 @@ public class TwitterFeedStreamFragment extends SherlockFragment{
 
                 @Override
                 public void onStatus(Status status) {
-                    Log.d("twitterstream", status.getText());
-                    statuses.add(status);
+                    statuses.add(0, status);
                     googleCardsAdapter.setData(statuses);
                     googleCardsAdapter.notifyDataSetChanged();
                 }

@@ -21,6 +21,9 @@ import com.socialone.android.jinstagram.auth.oauth.InstagramService;
 import com.socialone.android.jinstagram.entity.common.ImageData;
 import com.socialone.android.jinstagram.entity.users.feed.MediaFeed;
 import com.socialone.android.jinstagram.entity.users.feed.MediaFeedData;
+import com.socialone.android.library.ActionBarPullToRefresh;
+import com.socialone.android.library.actionbarsherlock.PullToRefreshLayout;
+import com.socialone.android.library.listeners.OnRefreshListener;
 import com.socialone.android.utils.Constants;
 import com.socialone.android.viewcomponents.RelativeTimeTextView;
 import com.squareup.picasso.Picasso;
@@ -44,6 +47,7 @@ public class InstagramFeedFragment extends SherlockFragment {
     GoogleCardsAdapter googleCardsAdapter;
     InstagramService instagramService;
     Instagram instagram;
+    private PullToRefreshLayout mPullToRefreshLayout;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -56,6 +60,7 @@ public class InstagramFeedFragment extends SherlockFragment {
         setHasOptionsMenu(true);
         view = inflater.inflate(R.layout.social_checkin_list, container, false);
         listView = (ListView) view.findViewById(R.id.activity_googlecards_listview);
+        mPullToRefreshLayout = (PullToRefreshLayout) view.findViewById(R.id.ptr_layout);
         return view;
     }
 
@@ -63,6 +68,15 @@ public class InstagramFeedFragment extends SherlockFragment {
     public void onViewCreated(View view, Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
         instaSetup();
+        ActionBarPullToRefresh.from(getSherlockActivity())
+                .allChildrenArePullable()
+                .listener(new OnRefreshListener() {
+                    @Override
+                    public void onRefreshStarted(View view) {
+                        getInstaFeed();
+                    }
+                })
+                .setup(mPullToRefreshLayout);
     }
 
 
@@ -73,18 +87,7 @@ public class InstagramFeedFragment extends SherlockFragment {
             public void onComplete(Bundle bundle) {
                 Token token = new Token(instaAuthAdapter.getCurrentProvider().getAccessGrant().getKey(), instaAuthAdapter.getCurrentProvider().getAccessGrant().getSecret());
                 instagram = new Instagram(token);
-                try{
-                    MediaFeed feed = instagram.getUserFeeds();
-                    List<MediaFeedData> userFeed = feed.getData();
-                    googleCardsAdapter = new GoogleCardsAdapter(getSherlockActivity(), userFeed);
-                    SwingBottomInAnimationAdapter swingBottomInAnimationAdapter = new SwingBottomInAnimationAdapter(googleCardsAdapter);
-                    swingBottomInAnimationAdapter.setInitialDelayMillis(300);
-                    swingBottomInAnimationAdapter.setAbsListView(listView);
-                    listView.setAdapter(swingBottomInAnimationAdapter);
-                    googleCardsAdapter.setData(userFeed);
-                }catch (Exception e){
-                    e.printStackTrace();
-                }
+                getInstaFeed();
             }
 
             @Override
@@ -104,6 +107,22 @@ public class InstagramFeedFragment extends SherlockFragment {
         });
         instaAuthAdapter.addCallBack(SocialAuthAdapter.Provider.INSTAGRAM, Constants.INSTAGRAM_CALLBACK);
         instaAuthAdapter.authorize(getSherlockActivity(), SocialAuthAdapter.Provider.INSTAGRAM);
+    }
+
+    private void getInstaFeed(){
+        try{
+            MediaFeed feed = instagram.getUserFeeds();
+            List<MediaFeedData> userFeed = feed.getData();
+            mPullToRefreshLayout.setRefreshComplete();
+            googleCardsAdapter = new GoogleCardsAdapter(getSherlockActivity(), userFeed);
+            SwingBottomInAnimationAdapter swingBottomInAnimationAdapter = new SwingBottomInAnimationAdapter(googleCardsAdapter);
+            swingBottomInAnimationAdapter.setInitialDelayMillis(300);
+            swingBottomInAnimationAdapter.setAbsListView(listView);
+            listView.setAdapter(swingBottomInAnimationAdapter);
+            googleCardsAdapter.setData(userFeed);
+        }catch (Exception e){
+            e.printStackTrace();
+        }
     }
 
     public class GoogleCardsAdapter extends BaseAdapter {
