@@ -1,6 +1,9 @@
 package com.socialone.android.fragment.foursquare;
 
 import android.content.Context;
+import android.location.Criteria;
+import android.location.Location;
+import android.location.LocationManager;
 import android.os.Bundle;
 import android.text.Html;
 import android.util.Log;
@@ -16,9 +19,12 @@ import com.actionbarsherlock.app.SherlockFragment;
 import com.haarman.listviewanimations.swinginadapters.prepared.SwingBottomInAnimationAdapter;
 import com.socialone.android.R;
 import com.socialone.android.condesales.EasyFoursquareAsync;
+import com.socialone.android.condesales.criterias.TipsCriteria;
 import com.socialone.android.condesales.listeners.AccessTokenRequestListener;
 import com.socialone.android.condesales.listeners.GetCheckInsListener;
+import com.socialone.android.condesales.listeners.TipsResquestListener;
 import com.socialone.android.condesales.models.Checkin;
+import com.socialone.android.condesales.models.Tip;
 import com.socialone.android.viewcomponents.RelativeTimeTextView;
 import com.squareup.picasso.Picasso;
 
@@ -32,7 +38,9 @@ public class FourSquareFeedFragment extends SherlockFragment {
     View view;
     ListView listView;
     EasyFoursquareAsync easyFoursquareAsync;
-    GoogleCardsAdapter googleCardsAdapter;
+    GoogleCardsAdapter2 googleCardsAdapter;
+    Location location;
+    LocationManager locationManager;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -55,6 +63,10 @@ public class FourSquareFeedFragment extends SherlockFragment {
     }
 
     private void getFourSquareFeed(){
+        locationManager = (LocationManager) getSherlockActivity().getSystemService(getSherlockActivity().LOCATION_SERVICE);
+        String bestProvider = locationManager.getBestProvider(new Criteria(), false);
+        location = locationManager.getLastKnownLocation(bestProvider);
+
         easyFoursquareAsync = new EasyFoursquareAsync(getSherlockActivity());
         easyFoursquareAsync.requestAccess(new AccessTokenRequestListener() {
             @Override
@@ -67,12 +79,12 @@ public class FourSquareFeedFragment extends SherlockFragment {
                         getSherlockActivity().runOnUiThread(new Runnable() {
                             @Override
                             public void run() {
-                                googleCardsAdapter = new GoogleCardsAdapter(getSherlockActivity(), venueArrayList);
-                                SwingBottomInAnimationAdapter swingBottomInAnimationAdapter =  new SwingBottomInAnimationAdapter(googleCardsAdapter);
-                                swingBottomInAnimationAdapter.setInitialDelayMillis(300);
-                                swingBottomInAnimationAdapter.setAbsListView(listView);
-                                listView.setAdapter(swingBottomInAnimationAdapter);
-                                googleCardsAdapter.setData(venueArrayList);
+//                                googleCardsAdapter = new GoogleCardsAdapter(getSherlockActivity(), venueArrayList);
+//                                SwingBottomInAnimationAdapter swingBottomInAnimationAdapter =  new SwingBottomInAnimationAdapter(googleCardsAdapter);
+//                                swingBottomInAnimationAdapter.setInitialDelayMillis(300);
+//                                swingBottomInAnimationAdapter.setAbsListView(listView);
+//                                listView.setAdapter(swingBottomInAnimationAdapter);
+//                                googleCardsAdapter.setData(venueArrayList);
                             }
                         });
 
@@ -83,6 +95,26 @@ public class FourSquareFeedFragment extends SherlockFragment {
 
                     }
                 });
+                TipsCriteria tipsCriteria = new TipsCriteria();
+                tipsCriteria.setLocation(location);
+                tipsCriteria.setQuantity(50);
+                easyFoursquareAsync.getTipsNearby(new TipsResquestListener() {
+                    @Override
+                    public void onTipsFetched(ArrayList<Tip> tips) {
+                        Log.d("foursquare", Integer.toString(tips.size()));
+                        googleCardsAdapter = new GoogleCardsAdapter2(getSherlockActivity(), tips);
+                        SwingBottomInAnimationAdapter swingBottomInAnimationAdapter =  new SwingBottomInAnimationAdapter(googleCardsAdapter);
+                        swingBottomInAnimationAdapter.setInitialDelayMillis(300);
+                        swingBottomInAnimationAdapter.setAbsListView(listView);
+                        listView.setAdapter(swingBottomInAnimationAdapter);
+                        googleCardsAdapter.setData(tips);
+                    }
+
+                    @Override
+                    public void onError(String errorMsg) {
+
+                    }
+                }, tipsCriteria);
             }
 
             @Override
@@ -162,6 +194,113 @@ public class FourSquareFeedFragment extends SherlockFragment {
 
             Picasso.with(mContext)
                     .load(post.getVenue().getCanonicalUrl())
+                    .resize(200, 200)
+                    .centerCrop()
+                    .into(viewHolder.userImg);
+
+            viewHolder.starPost.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+
+                }
+            });
+
+            viewHolder.repostPost.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+
+                }
+            });
+//            setImageView(viewHolder, position);
+
+            return view;
+        }
+
+        public class ViewHolder {
+            TextView textView;
+            RelativeTimeTextView postTime;
+            TextView postClient;
+            TextView postUser;
+            ImageView userImg;
+            ImageView starPost;
+            ImageView repostPost;
+        }
+
+        public String stripHtml(String html) {
+            return Html.fromHtml(html).toString();
+        }
+    }
+
+    public class GoogleCardsAdapter2 extends BaseAdapter {
+
+        private Context mContext;
+        private ArrayList<Tip> mAppPlace;
+        private boolean mShouldReturnEmpty = true;
+
+        public GoogleCardsAdapter2(Context context, ArrayList<Tip> appPlace) {
+            mContext = context;
+            mAppPlace = appPlace;
+        }
+
+        public void setData(ArrayList<Tip> appPlace){
+            mAppPlace = appPlace;
+        }
+
+        @Override
+        public boolean isEmpty() {
+            return mShouldReturnEmpty && super.isEmpty();
+        }
+
+        @Override
+        public int getCount() {
+            return mAppPlace.size();
+        }
+
+        @Override
+        public Tip getItem(int position) {
+            return mAppPlace.get(position);
+        }
+
+        public long getItemId(int position) {
+            return position;
+        }
+
+        @Override
+        public View getView(int position, View convertView, ViewGroup parent) {
+            ViewHolder viewHolder;
+            View view = convertView;
+            if (view == null) {
+                view = LayoutInflater.from(mContext).inflate(R.layout.appnet_feed_item, parent, false);
+
+                viewHolder = new ViewHolder();
+                viewHolder.textView = (TextView) view.findViewById(R.id.social_checkin_name);
+                viewHolder.userImg = (ImageView) view.findViewById(R.id.user_image);
+                viewHolder.repostPost = (ImageView) view.findViewById(R.id.repost_post);
+                viewHolder.starPost = (ImageView) view.findViewById(R.id.star_post);
+                viewHolder.postTime = (RelativeTimeTextView) view.findViewById(R.id.post_time);
+                viewHolder.postClient = (TextView) view.findViewById(R.id.post_info_client);
+                viewHolder.postUser = (TextView) view.findViewById(R.id.post_info_user);
+
+                view.setTag(viewHolder);
+
+            } else {
+                viewHolder = (ViewHolder) view.getTag();
+            }
+
+            final Tip post = getItem(position);
+            viewHolder.textView.setText(post.getText());
+            viewHolder.postTime.setReferenceTime(post.getCreatedAt());
+            //TODO add on click to these to open the respective client or user profile
+            viewHolder.postClient.setText(post.getVenue().getName());
+            try{
+                viewHolder.postUser.setText(post.getUser().getFirstName());
+            }catch (Exception e){
+                e.printStackTrace();
+                viewHolder.postUser.setText("from " + "Unknown");
+            }
+
+            Picasso.with(mContext)
+                    .load(post.getUser().getPhoto())
                     .resize(200, 200)
                     .centerCrop()
                     .into(viewHolder.userImg);

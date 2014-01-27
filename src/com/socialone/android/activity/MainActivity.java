@@ -154,7 +154,7 @@ public class MainActivity extends SherlockFragmentActivity  {
         initDrawerLayout();
         getUserInfo();
         if (savedInstanceState == null) {
-            setContentFragment(NAV_APP_NET);
+            setContentFragment(NAV_SHARE);
         }
     }
 

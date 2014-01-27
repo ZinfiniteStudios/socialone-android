@@ -10,5 +10,4 @@
         <item name="android:actionBarStyle">@style/Widget.Flickr.ActionBar</item>
     </style>
 
-
 </resources>

@@ -140,6 +140,7 @@ public class AppNetProfileFragment extends SherlockFragment {
                 getSherlockActivity().runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
+                        android.os.Process.setThreadPriority(android.os.Process.THREAD_PRIORITY_BACKGROUND);
                         Picasso.with(getSherlockActivity())
                                 .load(responseData.getAvatarImage().getUrl())
                                 .resize(200, 200)

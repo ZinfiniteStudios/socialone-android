@@ -76,17 +76,17 @@ public class TwitterMainFeedFragment extends SherlockFragment {
                 .setup(mPullToRefreshLayout);
     }
 
-    private void setUpTwit4j(){
-        try{
-        ConfigurationBuilder cb = new ConfigurationBuilder();
-        cb.setDebugEnabled(true)
-                .setOAuthConsumerKey(Constants.TWIT_CONSUMER_KEY)
-                .setOAuthConsumerSecret(Constants.TWIT_CONSUMER_SECRET)
-                .setOAuthAccessToken(mAuthAdapter.getCurrentProvider().getAccessGrant().getKey())
-                .setOAuthAccessTokenSecret(mAuthAdapter.getCurrentProvider().getAccessGrant().getSecret());
-        TwitterFactory tf = new TwitterFactory(cb.build());
-        Twitter twitter = tf.getInstance();
-        List<Status> statuses = twitter.getHomeTimeline();
+    private void setUpTwit4j() {
+        try {
+            ConfigurationBuilder cb = new ConfigurationBuilder();
+            cb.setDebugEnabled(true)
+                    .setOAuthConsumerKey(Constants.TWIT_CONSUMER_KEY)
+                    .setOAuthConsumerSecret(Constants.TWIT_CONSUMER_SECRET)
+                    .setOAuthAccessToken(mAuthAdapter.getCurrentProvider().getAccessGrant().getKey())
+                    .setOAuthAccessTokenSecret(mAuthAdapter.getCurrentProvider().getAccessGrant().getSecret());
+            TwitterFactory tf = new TwitterFactory(cb.build());
+            Twitter twitter = tf.getInstance();
+            List<Status> statuses = twitter.getHomeTimeline();
             mPullToRefreshLayout.setRefreshComplete();
             googleCardsAdapter = new GoogleCardsAdapter(getSherlockActivity(), statuses);
             SwingBottomInAnimationAdapter swingBottomInAnimationAdapter = new SwingBottomInAnimationAdapter(googleCardsAdapter);
@@ -95,12 +95,32 @@ public class TwitterMainFeedFragment extends SherlockFragment {
             listView.setAdapter(swingBottomInAnimationAdapter);
             googleCardsAdapter.setData(statuses);
             Log.d("twitter", "twitter4j " + statuses.toString());
-        }catch (Exception e){
+        } catch (Exception e) {
             e.printStackTrace();
         }
     }
 
-    private void twitterSetup(){
+
+    private void twitterFeedRefresh() {
+        try {
+            ConfigurationBuilder cb = new ConfigurationBuilder();
+            cb.setDebugEnabled(true)
+                    .setOAuthConsumerKey(Constants.TWIT_CONSUMER_KEY)
+                    .setOAuthConsumerSecret(Constants.TWIT_CONSUMER_SECRET)
+                    .setOAuthAccessToken(mAuthAdapter.getCurrentProvider().getAccessGrant().getKey())
+                    .setOAuthAccessTokenSecret(mAuthAdapter.getCurrentProvider().getAccessGrant().getSecret());
+            TwitterFactory tf = new TwitterFactory(cb.build());
+            Twitter twitter = tf.getInstance();
+            List<Status> statuses = twitter.getHomeTimeline();
+            googleCardsAdapter.addRangeToTop(statuses);
+            googleCardsAdapter.notifyDataSetChanged();
+            mPullToRefreshLayout.setRefreshComplete();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    private void twitterSetup() {
         mAuthAdapter = new SocialAuthAdapter(new DialogListener() {
             @Override
             public void onComplete(Bundle bundle) {
@@ -137,8 +157,15 @@ public class TwitterMainFeedFragment extends SherlockFragment {
             mFeed = feed;
         }
 
-        public void setData(List<Status> feed){
+        public void setData(List<Status> feed) {
             mFeed = feed;
+        }
+
+        public void addRangeToTop(List<Status> feed) {
+
+            for (int i = 0; i < feed.size(); i++) {
+                mFeed.add(0, feed.get(i));
+            }
         }
 
         @Override

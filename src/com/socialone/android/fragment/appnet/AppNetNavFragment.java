@@ -70,6 +70,7 @@ public class AppNetNavFragment extends SherlockFragment{
 
         viewPager.setAdapter(pagerAdapter);
         viewPager.setOffscreenPageLimit(5);
+        viewPager.setCurrentItem(1);
         titlePageIndicator.setViewPager(viewPager);
         titlePageIndicator.setOnPageChangeListener(socialOPCL);
         titlePageIndicator.setOnCenterItemClickListener(new TitlePageIndicator.OnCenterItemClickListener() {

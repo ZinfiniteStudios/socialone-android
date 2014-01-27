@@ -83,9 +83,10 @@ public class AppNetFeedFragment extends SherlockFragment {
             @Override
             public void onSuccess(PostList responseData) {
                 final ArrayList<Post> places = responseData;
-                getSherlockActivity().runOnUiThread(new Runnable() {
+                getSherlockActivity().runOnUiThread(new Thread() {
                     @Override
                     public void run() {
+                        android.os.Process.setThreadPriority(android.os.Process.THREAD_PRIORITY_BACKGROUND);
                         mPullToRefreshLayout.setRefreshComplete();
                         googleCardsAdapter = new GoogleCardsAdapter(getSherlockActivity(), places);
                         SwingBottomInAnimationAdapter swingBottomInAnimationAdapter = new SwingBottomInAnimationAdapter(googleCardsAdapter);

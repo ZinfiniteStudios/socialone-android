@@ -2,7 +2,7 @@
 
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:oak="http://oak/oak/schema"
-    android:background="@color/translucent_white"
+    android:background="@drawable/card_bg"
     android:orientation="vertical"
     android:layout_width="match_parent"
     android:layout_height="200dp">

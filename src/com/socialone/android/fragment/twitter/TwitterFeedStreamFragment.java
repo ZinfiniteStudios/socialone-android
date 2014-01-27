@@ -41,7 +41,7 @@ import twitter4j.conf.ConfigurationBuilder;
 /**
  * Created by david.hodge on 1/13/14.
  */
-public class TwitterFeedStreamFragment extends SherlockFragment{
+public class TwitterFeedStreamFragment extends SherlockFragment {
 
     View view;
     ListView listView;
@@ -70,25 +70,25 @@ public class TwitterFeedStreamFragment extends SherlockFragment{
     }
 
 
-    private void setUpTwitStream(){
-        try{
-        Log.d("twitterstream", "setting stream up");
-        final List<Status> statuses = new ArrayList<Status>();
-        googleCardsAdapter = new GoogleCardsAdapter(getSherlockActivity(), statuses);
-        SwingBottomInAnimationAdapter swingBottomInAnimationAdapter = new SwingBottomInAnimationAdapter(googleCardsAdapter);
-        swingBottomInAnimationAdapter.setInitialDelayMillis(300);
-        swingBottomInAnimationAdapter.setAbsListView(listView);
-        listView.setAdapter(swingBottomInAnimationAdapter);
-        googleCardsAdapter.setData(statuses);
+    private void setUpTwitStream() {
+        try {
+            Log.d("twitterstream", "setting stream up");
+            final List<Status> statuses = new ArrayList<Status>();
+            googleCardsAdapter = new GoogleCardsAdapter(getSherlockActivity(), statuses);
+            SwingBottomInAnimationAdapter swingBottomInAnimationAdapter = new SwingBottomInAnimationAdapter(googleCardsAdapter);
+            swingBottomInAnimationAdapter.setInitialDelayMillis(300);
+            swingBottomInAnimationAdapter.setAbsListView(listView);
+            listView.setAdapter(swingBottomInAnimationAdapter);
+            googleCardsAdapter.setData(statuses);
 
-        ConfigurationBuilder cb = new ConfigurationBuilder();
-        cb.setDebugEnabled(true)
-                .setOAuthConsumerKey(Constants.TWIT_CONSUMER_KEY)
-                .setOAuthConsumerSecret(Constants.TWIT_CONSUMER_SECRET)
-                .setOAuthAccessToken(mAuthAdapter.getCurrentProvider().getAccessGrant().getKey())
-                .setOAuthAccessTokenSecret(mAuthAdapter.getCurrentProvider().getAccessGrant().getSecret());
-        TwitterStreamFactory twitterStreamFactory = new TwitterStreamFactory(cb.build());
-        TwitterStream twitterStream = twitterStreamFactory.getInstance();
+            ConfigurationBuilder cb = new ConfigurationBuilder();
+            cb.setDebugEnabled(true)
+                    .setOAuthConsumerKey(Constants.TWIT_CONSUMER_KEY)
+                    .setOAuthConsumerSecret(Constants.TWIT_CONSUMER_SECRET)
+                    .setOAuthAccessToken(mAuthAdapter.getCurrentProvider().getAccessGrant().getKey())
+                    .setOAuthAccessTokenSecret(mAuthAdapter.getCurrentProvider().getAccessGrant().getSecret());
+            TwitterStreamFactory twitterStreamFactory = new TwitterStreamFactory(cb.build());
+            TwitterStream twitterStream = twitterStreamFactory.getInstance();
             Log.d("twitterstream", "got twitter stream instance");
             UserStreamListener userStreamListener = new UserStreamListener() {
                 @Override
@@ -203,17 +203,14 @@ public class TwitterFeedStreamFragment extends SherlockFragment{
                     Log.d("twitterstream", e.toString());
                 }
             };
-            Log.d("twitterstream", "adding listner");
-        twitterStream.addListener(userStreamListener);
-            Log.d("twitterstream", "listener set, adding user");
-        twitterStream.user();
-            Log.d("twitterstream", "stream set");
-        }catch (Exception e){
-            Log.d("twitterstream", e.toString());
+            twitterStream.addListener(userStreamListener);
+            twitterStream.user();
+        } catch (Exception e) {
+            e.printStackTrace();
         }
     }
 
-    private void twitterSetup(){
+    private void twitterSetup() {
         mAuthAdapter = new SocialAuthAdapter(new DialogListener() {
             @Override
             public void onComplete(Bundle bundle) {
@@ -250,8 +247,15 @@ public class TwitterFeedStreamFragment extends SherlockFragment{
             mFeed = feed;
         }
 
-        public void setData(List<Status> feed){
+        public void setData(List<Status> feed) {
             mFeed = feed;
+        }
+
+        public void addRangeToTop(ArrayList<Status> feed) {
+
+            for (int i = 0; i < feed.size(); i++) {
+                mFeed.add(0, feed.get(i));
+            }
         }
 
         @Override
@@ -326,7 +330,6 @@ public class TwitterFeedStreamFragment extends SherlockFragment{
                     //TODO
                 }
             });
-//            setImageView(viewHolder, position);
 
             return view;
         }

@@ -77,6 +77,7 @@ public class AppNetInteractionsFragment extends SherlockFragment {
                 getSherlockActivity().runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
+                        android.os.Process.setThreadPriority(android.os.Process.THREAD_PRIORITY_BACKGROUND);
                         googleCardsAdapter = new GoogleCardsAdapter(getSherlockActivity(), places);
                         SwingBottomInAnimationAdapter swingBottomInAnimationAdapter = new SwingBottomInAnimationAdapter(googleCardsAdapter);
                         swingBottomInAnimationAdapter.setInitialDelayMillis(300);
