@@ -28,6 +28,7 @@
         android:duplicateParentState="true" />
 
     <oak.widget.TextViewWithFont
+        android:textColor="@color/light_text_color"
         android:id="@+id/text"
         android:layout_height="wrap_content"
         android:layout_width="fill_parent"

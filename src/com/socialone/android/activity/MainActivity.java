@@ -46,7 +46,7 @@ import com.socialone.android.fragment.UserProfileFragment;
 import com.socialone.android.fragment.appnet.AppNetNavFragment;
 import com.socialone.android.fragment.facebook.FacebookMainFeedFragment;
 import com.socialone.android.fragment.flickr.FlickrNavFragment;
-import com.socialone.android.fragment.foursquare.FourSquareFeedFragment;
+import com.socialone.android.fragment.foursquare.FoursquareNavFragment;
 import com.socialone.android.fragment.googeplus.GooglePlusFeedFragment;
 import com.socialone.android.fragment.instagram.InstagramFeedFragment;
 import com.socialone.android.fragment.tumblr.TumblrMainFeedFragment;
@@ -177,7 +177,7 @@ public class MainActivity extends SherlockFragmentActivity  {
                 mBlurImage);
         mActionBarDrawerToggle.syncState();
         mDrawerLayout.setDrawerListener(mActionBarDrawerToggle);
-        mDrawerLayout.setScrimColor(getResources().getColor(R.color.translucent_white));
+        mDrawerLayout.setScrimColor(getResources().getColor(R.color.translucent_black));
     }
 
     private void getUserInfo() {
@@ -302,7 +302,7 @@ public class MainActivity extends SherlockFragmentActivity  {
                 fragment = new TumblrMainFeedFragment();
                 break;
             case NAV_FOURSQUARE:
-                fragment = new FourSquareFeedFragment();
+                fragment = new FoursquareNavFragment();
                 break;
             case NAV_FLICKR:
                 fragment = new FlickrNavFragment();

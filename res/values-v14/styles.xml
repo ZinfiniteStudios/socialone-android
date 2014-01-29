@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <style name="Theme.Socialone" parent="@style/Theme.Sherlock">
+        <item name="android:actionBarItemBackground">@drawable/selectable_background_socialone</item>
+        <item name="android:popupMenuStyle">@style/PopupMenu.Socialone</item>
+        <item name="android:dropDownListViewStyle">@style/DropDownListView.Socialone</item>
+        <item name="android:actionBarTabStyle">@style/ActionBarTabStyle.Socialone</item>
+        <item name="android:actionDropDownStyle">@style/DropDownNav.Socialone</item>
+        <item name="android:actionBarStyle">@style/ActionBar.Solid.Socialone</item>
+        <item name="android:actionModeBackground">@drawable/cab_background_top_socialone</item>
+        <item name="android:actionModeSplitBackground">@drawable/cab_background_bottom_socialone</item>
+        <item name="android:actionModeCloseButtonStyle">@style/ActionButton.CloseMode.Socialone</item>
+
+
+    </style>
+
+    <style name="ActionBar.Solid.Socialone" parent="@style/Widget.Sherlock.ActionBar.Solid">
+        <item name="android:background">@drawable/ab_solid_socialone</item>
+        <item name="android:backgroundStacked">@drawable/ab_stacked_solid_socialone</item>
+        <item name="android:backgroundSplit">@drawable/ab_bottom_solid_socialone</item>
+        <item name="android:progressBarStyle">@style/ProgressBar.Socialone</item>
+    </style>
+
+    <style name="ActionBar.Transparent.Socialone" parent="@style/Widget.Sherlock.ActionBar">
+        <item name="android:background">@drawable/ab_transparent_socialone</item>
+        <item name="android:progressBarStyle">@style/ProgressBar.Socialone</item>
+    </style>
+
+    <!-- this style is only referenced in a Light.DarkActionBar based theme -->
+    <style name="Theme.Socialone.Widget" parent="@style/Theme.Sherlock">
+        <item name="android:popupMenuStyle">@style/PopupMenu.Socialone</item>
+        <item name="android:dropDownListViewStyle">@style/DropDownListView.Socialone</item>
+    </style>
+</resources>

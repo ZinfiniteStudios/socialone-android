@@ -10,7 +10,6 @@
     <ImageView
         android:id="@+id/insta_imageview"
         android:scaleType="centerCrop"
-        android:adjustViewBounds="true"
         android:layout_margin="8dp"
         android:layout_width="fill_parent"
         android:layout_height="200dp"/>
@@ -38,7 +37,8 @@
         oak:font="Roboto-Thin.ttf"
         android:id="@+id/insta_info"
         android:layout_marginBottom="10dp"
-        android:layout_marginLeft="16dp"
+        android:layout_marginRight="16dp"
+        android:layout_alignParentRight="true"
         android:layout_alignParentBottom="true"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"/>
@@ -46,9 +46,9 @@
     <com.socialone.android.viewcomponents.RelativeTimeTextView
         android:id="@+id/insta_time"
         android:layout_marginBottom="10dp"
-        android:layout_marginRight="16dp"
+        android:layout_marginLeft="16dp"
         android:layout_alignParentBottom="true"
-        android:layout_alignParentRight="true"
+        android:layout_alignParentLeft="true"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"/>
 

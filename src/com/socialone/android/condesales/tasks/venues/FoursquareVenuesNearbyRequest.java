@@ -46,7 +46,7 @@ public class FoursquareVenuesNearbyRequest extends
 		mProgress = new ProgressDialog(mActivity);
 		mProgress.setCancelable(false);
 		mProgress.setMessage("Getting venues nearby ...");
-		mProgress.show();
+//		mProgress.show();
 		super.onPreExecute();
 	}
 

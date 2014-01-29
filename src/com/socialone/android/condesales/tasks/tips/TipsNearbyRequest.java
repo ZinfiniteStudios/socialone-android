@@ -46,7 +46,7 @@ public class TipsNearbyRequest extends
 		mProgress = new ProgressDialog(mActivity);
 		mProgress.setCancelable(false);
 		mProgress.setMessage("Getting tips nearby ...");
-		mProgress.show();
+//		mProgress.show();
 		super.onPreExecute();
 	}
 

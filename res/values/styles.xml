@@ -48,7 +48,7 @@
     </style>
 
     <style name="CustomTitlePageIndicator">
-        <item name="android:background">@color/translucent_black</item>
+        <item name="android:background">@color/list_background</item>
         <item name="footerColor">#32CD99</item>
         <item name="footerLineHeight">1dp</item>
         <item name="footerIndicatorHeight">3dp</item>
@@ -86,5 +86,68 @@
     <style name="Widget.ProgressBar.PullToRefresh" parent="SmoothProgressBar">
         <item name="android:minHeight">@dimen/ptr_progress_bar_stroke_width</item>
     </style>
+
+
+
+
+    <!--FOR CUSTOM THEME-->
+    <style name="Theme.Socialone" parent="@style/Theme.Sherlock.Light.DarkActionBar">
+        <item name="actionBarItemBackground">@drawable/selectable_background_socialone</item>
+        <item name="popupMenuStyle">@style/PopupMenu.Socialone</item>
+        <item name="dropDownListViewStyle">@style/DropDownListView.Socialone</item>
+        <item name="actionBarTabStyle">@style/ActionBarTabStyle.Socialone</item>
+        <item name="actionDropDownStyle">@style/DropDownNav.Socialone</item>
+        <item name="actionBarStyle">@style/ActionBar.Solid.Socialone</item>
+        <item name="actionModeBackground">@drawable/cab_background_top_socialone</item>
+        <item name="actionModeSplitBackground">@drawable/cab_background_bottom_socialone</item>
+        <item name="actionModeCloseButtonStyle">@style/ActionButton.CloseMode.Socialone</item>
+
+
+    </style>
+
+    <style name="ActionBar.Solid.Socialone" parent="@style/Widget.Sherlock.ActionBar.Solid">
+        <item name="background">@drawable/ab_solid_socialone</item>
+        <item name="backgroundStacked">@drawable/ab_stacked_solid_socialone</item>
+        <item name="backgroundSplit">@drawable/ab_bottom_solid_socialone</item>
+        <item name="progressBarStyle">@style/ProgressBar.Socialone</item>
+    </style>
+
+    <style name="ActionBar.Transparent.Socialone" parent="@style/Widget.Sherlock.ActionBar">
+        <item name="background">@drawable/ab_transparent_socialone</item>
+        <item name="progressBarStyle">@style/ProgressBar.Socialone</item>
+    </style>
+
+    <style name="PopupMenu.Socialone" parent="@style/Widget.Sherlock.ListPopupWindow">
+        <item name="android:popupBackground">@drawable/menu_dropdown_panel_socialone</item>
+    </style>
+
+    <style name="DropDownListView.Socialone" parent="@style/Widget.Sherlock.ListView.DropDown">
+        <item name="android:listSelector">@drawable/selectable_background_socialone</item>
+    </style>
+
+    <style name="ActionBarTabStyle.Socialone" parent="@style/Widget.Sherlock.ActionBar.TabView">
+        <item name="android:background">@drawable/tab_indicator_ab_socialone</item>
+    </style>
+
+    <style name="DropDownNav.Socialone" parent="@style/Widget.Sherlock.Spinner.DropDown.ActionBar">
+        <item name="android:background">@drawable/spinner_background_ab_socialone</item>
+        <item name="android:popupBackground">@drawable/menu_dropdown_panel_socialone</item>
+        <item name="android:dropDownSelector">@drawable/selectable_background_socialone</item>
+    </style>
+
+    <style name="ProgressBar.Socialone" parent="@style/Widget.Sherlock.ProgressBar.Horizontal">
+        <item name="android:progressDrawable">@drawable/progress_horizontal_socialone</item>
+    </style>
+
+    <style name="ActionButton.CloseMode.Socialone" parent="@style/Widget.Sherlock.ActionButton.CloseMode">
+        <item name="android:background">@drawable/btn_cab_done_socialone</item>
+    </style>
+
+    <!-- this style is only referenced in a Light.DarkActionBar based theme -->
+    <style name="Theme.Socialone.Widget" parent="@style/Theme.Sherlock">
+        <item name="popupMenuStyle">@style/PopupMenu.Socialone</item>
+        <item name="dropDownListViewStyle">@style/DropDownListView.Socialone</item>
+    </style>
+
 
 </resources>

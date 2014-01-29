@@ -21,6 +21,7 @@ import com.socialone.android.library.actionbarsherlock.PullToRefreshLayout;
 import com.socialone.android.library.listeners.OnRefreshListener;
 import com.socialone.android.utils.Constants;
 import com.socialone.android.viewcomponents.RelativeTimeTextView;
+import com.socialone.android.viewcomponents.SmoothProgressBar;
 import com.squareup.picasso.Picasso;
 
 import org.brickred.socialauth.android.DialogListener;
@@ -45,6 +46,7 @@ public class TwitterMainFeedFragment extends SherlockFragment {
     GoogleCardsAdapter googleCardsAdapter;
     SocialAuthAdapter mAuthAdapter;
     private PullToRefreshLayout mPullToRefreshLayout;
+    SmoothProgressBar emptyView;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -57,6 +59,7 @@ public class TwitterMainFeedFragment extends SherlockFragment {
         setHasOptionsMenu(true);
         view = inflater.inflate(R.layout.social_checkin_list, container, false);
         listView = (ListView) view.findViewById(R.id.activity_googlecards_listview);
+        emptyView = (SmoothProgressBar) view.findViewById(R.id.empty_loader);
         mPullToRefreshLayout = (PullToRefreshLayout) view.findViewById(R.id.ptr_layout);
         return view;
     }
@@ -64,6 +67,7 @@ public class TwitterMainFeedFragment extends SherlockFragment {
     @Override
     public void onViewCreated(View view, Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
+        listView.setEmptyView(emptyView);
         twitterSetup();
         ActionBarPullToRefresh.from(getSherlockActivity())
                 .allChildrenArePullable()

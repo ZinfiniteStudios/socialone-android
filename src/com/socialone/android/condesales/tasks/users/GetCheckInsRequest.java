@@ -88,7 +88,7 @@ public class GetCheckInsRequest extends
 		mProgress = new ProgressDialog(mActivity);
 		mProgress.setCancelable(false);
 		mProgress.setMessage("Getting Checkins ...");
-		mProgress.show();
+//		mProgress.show();
 		super.onPreExecute();
 	}
 

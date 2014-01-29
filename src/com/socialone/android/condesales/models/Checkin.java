@@ -26,6 +26,8 @@ public class Checkin {
 
 	private User user;
 
+    private Source source;
+
 	public Score getScore() {
 		return score;
 	}
@@ -73,5 +75,9 @@ public class Checkin {
 	public Photos getPhotos() {
 		return photos;
 	}
+
+    public Source getSource(){
+        return source;
+    }
 
 }

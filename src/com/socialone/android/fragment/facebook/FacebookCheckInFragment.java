@@ -5,6 +5,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.location.Criteria;
 import android.location.Location;
+import android.location.LocationListener;
 import android.location.LocationManager;
 import android.os.Bundle;
 import android.util.Log;
@@ -14,7 +15,6 @@ import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -38,7 +38,7 @@ import java.util.List;
 /**
  * Created by david.hodge on 12/25/13.
  */
-public class FacebookCheckInFragment extends SherlockFragment{
+public class FacebookCheckInFragment extends SherlockFragment implements LocationListener{
 
     View view;
     ListView listView;
@@ -76,13 +76,24 @@ public class FacebookCheckInFragment extends SherlockFragment{
     @Override
     public void onViewCreated(View view, Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        getFacebookLocations();
+        getLocations();
     }
 
-    private void getFacebookLocations(){
+    private void getLocations(){
         locationManager = (LocationManager) getSherlockActivity().getSystemService(getSherlockActivity().LOCATION_SERVICE);
         String bestProvider = locationManager.getBestProvider(new Criteria(), false);
-        location = locationManager.getLastKnownLocation(bestProvider);
+        location = locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
+        getFacebookLocations(location);
+        if(location != null) {
+            Log.v("location", location.getLatitude() + " and " + location.getLongitude());
+            location = locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
+            getFacebookLocations(location);
+        }else {
+            locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 0, 0, this);
+        }
+    }
+
+    public void getFacebookLocations(Location location){
         session = ensureFacebookSessionFromCache(getSherlockActivity());
 //        Request locRequest = new Request.newPlacesSearchRequest(session, location, 100, 25, null, new Request.GraphPlaceListCallback())
         double lat = location.getLatitude(),lon=location.getLongitude();
@@ -116,8 +127,21 @@ public class FacebookCheckInFragment extends SherlockFragment{
         Request request1 = new Request(session, "/search", params,
                 HttpMethod.GET, callback);
         request1.executeAsync();
-
     }
+
+    public void onLocationChanged(Location location) {
+        Log.v("location", location.getLatitude() + " and " + location.getLongitude());
+        getFacebookLocations(location);
+        if (location != null) {
+            Log.v("location", location.getLatitude() + " and " + location.getLongitude());
+            locationManager.removeUpdates(this);
+            getFacebookLocations(location);
+        }
+    }
+
+    public void onProviderDisabled(String arg0) {}
+    public void onProviderEnabled(String arg0) {}
+    public void onStatusChanged(String arg0, int arg1, Bundle arg2) {}
 
 
     private void onSessionStateChange(Session session, SessionState state, Exception exception) {

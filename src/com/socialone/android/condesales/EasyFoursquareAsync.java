@@ -14,6 +14,7 @@ import com.socialone.android.condesales.listeners.CheckInListener;
 import com.socialone.android.condesales.listeners.FoursquareTrendingVenuesResquestListener;
 import com.socialone.android.condesales.listeners.FoursquareVenueDetailsResquestListener;
 import com.socialone.android.condesales.listeners.FoursquareVenuesResquestListener;
+import com.socialone.android.condesales.listeners.FriendsCheckInListener;
 import com.socialone.android.condesales.listeners.FriendsListener;
 import com.socialone.android.condesales.listeners.GetCheckInsListener;
 import com.socialone.android.condesales.listeners.GetNotificationsListener;
@@ -24,6 +25,7 @@ import com.socialone.android.condesales.tasks.checkins.CheckInRequest;
 import com.socialone.android.condesales.tasks.notifications.GetUserNotificationsRequest;
 import com.socialone.android.condesales.tasks.tips.TipsNearbyRequest;
 import com.socialone.android.condesales.tasks.users.GetCheckInsRequest;
+import com.socialone.android.condesales.tasks.users.GetFriendsCheckInsRequest;
 import com.socialone.android.condesales.tasks.users.GetFriendsRequest;
 import com.socialone.android.condesales.tasks.users.GetUserVenuesHistoryRequest;
 import com.socialone.android.condesales.tasks.users.SelfInfoRequest;
@@ -132,6 +134,12 @@ public class EasyFoursquareAsync {
 	 * @param criteria
 	 *            The criteria to your search request
 	 */
+
+    public void getFriendsCheckIns(FriendsCheckInListener listener, TipsCriteria checkInCriteria){
+        GetFriendsCheckInsRequest request = new GetFriendsCheckInsRequest(mActivity, listener, checkInCriteria);
+        request.execute(getAccessToken());
+    }
+
 	public void checkIn(CheckInListener listener, CheckInCriteria criteria) {
 		CheckInRequest request = new CheckInRequest(mActivity, listener,
 				criteria);

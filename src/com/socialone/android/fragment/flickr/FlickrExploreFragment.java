@@ -28,6 +28,7 @@ import com.socialone.android.library.listeners.OnRefreshListener;
 import com.socialone.android.utils.Constants;
 import com.socialone.android.utils.FlickrHelper;
 import com.socialone.android.viewcomponents.RelativeTimeTextView;
+import com.socialone.android.viewcomponents.SmoothProgressBar;
 import com.squareup.picasso.Picasso;
 
 import org.brickred.socialauth.android.DialogListener;
@@ -51,6 +52,7 @@ public class FlickrExploreFragment extends SherlockFragment {
     OAuth auth;
     User user;
     private PullToRefreshLayout mPullToRefreshLayout;
+    SmoothProgressBar emptyView;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -65,6 +67,7 @@ public class FlickrExploreFragment extends SherlockFragment {
         setHasOptionsMenu(true);
         view = inflater.inflate(R.layout.social_checkin_list, container, false);
         listView = (ListView) view.findViewById(R.id.activity_googlecards_listview);
+        emptyView = (SmoothProgressBar) view.findViewById(R.id.empty_loader);
         mPullToRefreshLayout = (PullToRefreshLayout) view.findViewById(R.id.ptr_layout);
 
         return view;
@@ -73,6 +76,7 @@ public class FlickrExploreFragment extends SherlockFragment {
     @Override
     public void onViewCreated(View view, Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
+        listView.setEmptyView(emptyView);
         flickrSetup();
 
         ActionBarPullToRefresh.from(getSherlockActivity())

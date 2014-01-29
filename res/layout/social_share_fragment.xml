@@ -3,6 +3,7 @@
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:socialone="http://socialone-android/schema"
     xmlns:oak="http://oak/oak/schema"
+    android:background="@color/list_background"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
@@ -43,6 +44,7 @@
             android:layout_height="wrap_content">
 
             <oak.widget.TextViewWithFont
+                android:textColor="@color/light_text_color"
                 android:layout_width="fill_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="8dp"
@@ -68,6 +70,7 @@
 
                 <oak.widget.TextViewWithFont
                     oak:font="Roboto-Light.ttf"
+                    android:textColor="@color/light_text_color"
                     android:layout_height="wrap_content"
                     android:layout_width="wrap_content"
                     android:layout_alignParentLeft="true"
@@ -104,6 +107,7 @@
 
                 <oak.widget.TextViewWithFont
                     oak:font="Roboto-Light.ttf"
+                    android:textColor="@color/light_text_color"
                     android:layout_height="wrap_content"
                     android:layout_width="wrap_content"
                     android:layout_alignParentLeft="true"
@@ -140,6 +144,7 @@
 
                 <oak.widget.TextViewWithFont
                     oak:font="Roboto-Light.ttf"
+                    android:textColor="@color/light_text_color"
                     android:layout_height="wrap_content"
                     android:layout_width="wrap_content"
                     android:layout_alignParentLeft="true"
@@ -176,6 +181,7 @@
 
                 <oak.widget.TextViewWithFont
                     oak:font="Roboto-Light.ttf"
+                    android:textColor="@color/light_text_color"
                     android:layout_height="wrap_content"
                     android:layout_width="wrap_content"
                     android:layout_alignParentLeft="true"
@@ -212,6 +218,7 @@
 
                 <oak.widget.TextViewWithFont
                     oak:font="Roboto-Light.ttf"
+                    android:textColor="@color/light_text_color"
                     android:layout_height="wrap_content"
                     android:layout_width="wrap_content"
                     android:layout_alignParentLeft="true"
@@ -248,6 +255,7 @@
 
                 <oak.widget.TextViewWithFont
                     oak:font="Roboto-Light.ttf"
+                    android:textColor="@color/light_text_color"
                     android:layout_height="wrap_content"
                     android:layout_width="wrap_content"
                     android:layout_alignParentLeft="true"
@@ -284,6 +292,7 @@
 
                 <oak.widget.TextViewWithFont
                     oak:font="Roboto-Light.ttf"
+                    android:textColor="@color/light_text_color"
                     android:layout_height="wrap_content"
                     android:layout_width="wrap_content"
                     android:layout_alignParentLeft="true"
@@ -320,6 +329,7 @@
 
                 <oak.widget.TextViewWithFont
                     oak:font="Roboto-Light.ttf"
+                    android:textColor="@color/light_text_color"
                     android:layout_height="wrap_content"
                     android:layout_width="wrap_content"
                     android:layout_alignParentLeft="true"
@@ -356,6 +366,7 @@
 
                 <oak.widget.TextViewWithFont
                     oak:font="Roboto-Light.ttf"
+                    android:textColor="@color/light_text_color"
                     android:layout_height="wrap_content"
                     android:layout_width="wrap_content"
                     android:layout_alignParentLeft="true"
@@ -383,6 +394,7 @@
             android:layout_height="wrap_content">
 
             <oak.widget.TextViewWithFont
+                android:textColor="@color/light_text_color"
                 android:layout_marginTop="4dp"
                 android:layout_width="fill_parent"
                 android:layout_height="wrap_content"
@@ -426,6 +438,7 @@
                 android:orientation="horizontal">
 
                 <oak.widget.TextViewWithFont
+                    android:textColor="@color/light_text_color"
                     android:layout_height="wrap_content"
                     android:layout_width="wrap_content"
                     android:layout_alignParentLeft="true"
@@ -549,6 +562,7 @@
                 <oak.widget.TextViewWithFont
                     android:id="@+id/text"
                     android:text="Photo"
+                    android:textColor="@color/light_text_color"
                     android:layout_marginTop="12dp"
                     android:textSize="18sp"
                     android:layout_gravity="center"
@@ -576,6 +590,7 @@
                 <oak.widget.TextViewWithFont
                     android:id="@+id/text"
                     android:text="Link"
+                    android:textColor="@color/light_text_color"
                     android:layout_marginTop="12dp"
                     android:textSize="18sp"
                     android:layout_gravity="center"
@@ -604,6 +619,7 @@
                 <oak.widget.TextViewWithFont
                     android:id="@+id/text"
                     android:text="Mood"
+                    android:textColor="@color/light_text_color"
                     android:layout_marginTop="12dp"
                     android:textSize="18sp"
                     android:layout_gravity="center"

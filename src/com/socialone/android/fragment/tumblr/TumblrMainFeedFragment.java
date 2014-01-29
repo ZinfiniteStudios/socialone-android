@@ -76,13 +76,13 @@ public class TumblrMainFeedFragment extends SherlockFragment {
         client = new JumblrClient(Constants.TUMBLR_CONSUMER_KEY, Constants.TUMBLR_CONSUMER_SECRET);
         client.setToken(prefs.getString(Constants.TUMBLR_ACCESS, null), prefs.getString(Constants.TUMBLR_SECRET, null));
         List<Post> posts = client.userDashboard();
-        mPullToRefreshLayout.setRefreshComplete();
         googleCardsAdapter = new GoogleCardsAdapter(getSherlockActivity(), posts);
         SwingBottomInAnimationAdapter swingBottomInAnimationAdapter = new SwingBottomInAnimationAdapter(googleCardsAdapter);
         swingBottomInAnimationAdapter.setInitialDelayMillis(300);
         swingBottomInAnimationAdapter.setAbsListView(listView);
         listView.setAdapter(swingBottomInAnimationAdapter);
         googleCardsAdapter.setData(posts);
+//        mPullToRefreshLayout.setRefreshComplete();
     }
 
     public class GoogleCardsAdapter extends BaseAdapter {

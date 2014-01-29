@@ -18,6 +18,11 @@
 
     <color name="app_main_color">#32CD99</color>
 
+    <color name="list_background">#171717</color>
+    <color name="nav_background">#313131</color>
+    
+    <color name="light_text_color">#F2F2F2</color>
+
     <integer-array name="ptr_colors">
         <item>@color/app_main_color</item>
         <item>@color/custom_red</item>

@@ -62,7 +62,7 @@ public class TwitterNavFragment extends SherlockFragment {
         mtitles.add("My Tweets");
         mtitles.add("Feed");
         mtitles.add("Mentions");
-        mtitles.add("ReTweets");
+        mtitles.add("Retweets");
         mtitles.add("Favorites");
         mtitles.add("Nearby");
         mtitles.add("Stream");
