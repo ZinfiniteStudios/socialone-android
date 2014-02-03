@@ -16,6 +16,7 @@
   <uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />
   <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
   <uses-permission android:name="android.permission.VIBRATE" />
+    <uses-permission android:name="android.permission.SEND_SMS" />
 
     <uses-permission android:name="android.permission.GET_ACCOUNTS" />
     <uses-permission android:name="android.permission.USE_CREDENTIALS" />
@@ -77,6 +78,8 @@
 
     <meta-data android:name="com.crashlytics.ApiKey" android:value="1a1c083d279aeeae6a4349cbdd6d9459cf95ecdb" />
 
+        <service android:name=".services.TwitterPostService" android:enabled="true" android:exported="true" />
+
       <!--<service android:name="com.parse.PushService" />-->
       <!--<receiver android:name="com.parse.ParseBroadcastReceiver">-->
           <!--<intent-filter>-->
@@ -94,6 +97,7 @@
 
         <activity android:name="com.socialone.android.fragment.SocialConnectFragment" />
         <activity android:name="com.socialone.android.activity.FlickrImageViewer" />
+        <activity android:name="com.socialone.android.activity.InstagramImageViewer" />
         <service android:name="com.socialone.android.fivehundredpx.api.services.UploadService" />
   </application>
 

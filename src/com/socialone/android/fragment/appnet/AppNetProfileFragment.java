@@ -10,7 +10,6 @@ import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.text.Html;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -31,9 +30,9 @@ import com.socialone.android.appnet.adnlib.data.Post;
 import com.socialone.android.appnet.adnlib.data.PostList;
 import com.socialone.android.appnet.adnlib.data.User;
 import com.socialone.android.appnet.adnlib.response.PostListResponseHandler;
-import com.socialone.android.appnet.adnlib.response.PostResponseHandler;
 import com.socialone.android.appnet.adnlib.response.UserResponseHandler;
 import com.socialone.android.utils.BlurTransformation;
+import com.socialone.android.utils.RoundTransformation;
 import com.socialone.android.viewcomponents.RelativeTimeTextView;
 import com.squareup.picasso.Picasso;
 import com.viewpagerindicator.TitlePageIndicator;
@@ -57,18 +56,13 @@ public class AppNetProfileFragment extends SherlockFragment {
     private ArrayList<String> mtitles;
     FragmentManager fm;
     PagerAdapter pagerAdapter;
-
+    AppNetAboutFragment appNetAboutFragment = new AppNetAboutFragment();
     AppNetFollowersFragment appNetFollowersFragment = new AppNetFollowersFragment();
     AppNetFollowingFragment appNetFollowingFragment = new AppNetFollowingFragment();
     ImageView userBackground;
     ImageView userProfile;
     TextView userName;
     TextView userRealName;
-    TextView userPosts;
-    TextView userFollowing;
-    TextView userFollowers;
-    TextView userFavorites;
-    TextView userDescription;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -85,11 +79,6 @@ public class AppNetProfileFragment extends SherlockFragment {
 
         userName = (TextView) view.findViewById(R.id.appnet_user_name_text);
         userRealName = (TextView) view.findViewById(R.id.appnet_real_name_text);
-        userPosts = (TextView) view.findViewById(R.id.appnet_post_count_text);
-        userFollowing = (TextView) view.findViewById(R.id.appnet_following_count_text);
-        userFollowers = (TextView) view.findViewById(R.id.appnet_follower_count_text);
-        userFavorites = (TextView) view.findViewById(R.id.appnet_fav_count_text);
-        userDescription = (TextView) view.findViewById(R.id.appnet_desc_text);
         userBackground = (ImageView) view.findViewById(R.id.appnet_background_image);
         userProfile = (ImageView) view.findViewById(R.id.appnet_profile_image);
 
@@ -97,10 +86,12 @@ public class AppNetProfileFragment extends SherlockFragment {
         titlePageIndicator = (TitlePageIndicator) view.findViewById(R.id.social_tpi);
 
         mtitles = new ArrayList<String>();
+        mtitles.add("About");
         mtitles.add("Followers");
         mtitles.add("Following");
 
         mFragments =  new ArrayList<Fragment>();
+        mFragments.add(appNetAboutFragment);
         mFragments.add(appNetFollowersFragment);
         mFragments.add(appNetFollowingFragment);
 
@@ -108,6 +99,7 @@ public class AppNetProfileFragment extends SherlockFragment {
 
         viewPager.setAdapter(pagerAdapter);
         viewPager.setOffscreenPageLimit(5);
+        viewPager.setCurrentItem(0);
         titlePageIndicator.setViewPager(viewPager);
         titlePageIndicator.setOnPageChangeListener(socialOPCL);
         titlePageIndicator.setOnCenterItemClickListener(new TitlePageIndicator.OnCenterItemClickListener() {
@@ -145,6 +137,7 @@ public class AppNetProfileFragment extends SherlockFragment {
                                 .load(responseData.getAvatarImage().getUrl())
                                 .resize(200, 200)
                                 .centerCrop()
+                                .transform(new RoundTransformation())
                                 .into(userProfile);
 
                         Picasso.with(getSherlockActivity())
@@ -156,11 +149,6 @@ public class AppNetProfileFragment extends SherlockFragment {
 
                         userName.setText(responseData.getUsername());
 //                        userRealName.setText(responseData.getType());
-                        userPosts.setText(responseData.getCounts().getPosts() + " post");
-                        userFollowing.setText(responseData.getCounts().getFollowing() + " following");
-                        userFollowers.setText(responseData.getCounts().getFollowers() + " followers");
-                        userFavorites.setText(responseData.getCounts().getStars() + " stars");
-                        userDescription.setText(responseData.getDescription().getText());
                     }
                 });
 
@@ -236,8 +224,6 @@ public class AppNetProfileFragment extends SherlockFragment {
                 viewHolder = new ViewHolder();
                 viewHolder.textView = (TextView) view.findViewById(R.id.social_checkin_name);
                 viewHolder.userImg = (ImageView) view.findViewById(R.id.user_image);
-                viewHolder.repostPost = (ImageView) view.findViewById(R.id.repost_post);
-                viewHolder.starPost = (ImageView) view.findViewById(R.id.star_post);
                 viewHolder.postTime = (RelativeTimeTextView) view.findViewById(R.id.post_time);
                 viewHolder.postClient = (TextView) view.findViewById(R.id.post_info_client);
                 viewHolder.postUser = (TextView) view.findViewById(R.id.post_info_user);
@@ -261,31 +247,6 @@ public class AppNetProfileFragment extends SherlockFragment {
                     .centerCrop()
                     .into(viewHolder.userImg);
 
-            viewHolder.starPost.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    client.starPost(post.getId(), new PostResponseHandler() {
-                        @Override
-                        public void onSuccess(Post responseData) {
-                            Log.d("post", "post has been starred!");
-                        }
-                    });
-                }
-            });
-
-            viewHolder.repostPost.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    client.repostPost(post.getId(), new PostResponseHandler() {
-                        @Override
-                        public void onSuccess(Post responseData) {
-                            Log.d("post", "post has been reposted!");
-                        }
-                    });
-                }
-            });
-//            setImageView(viewHolder, position);
-
             return view;
         }
 
@@ -295,8 +256,6 @@ public class AppNetProfileFragment extends SherlockFragment {
             TextView postClient;
             TextView postUser;
             ImageView userImg;
-            ImageView starPost;
-            ImageView repostPost;
         }
 
         public String stripHtml(String html) {

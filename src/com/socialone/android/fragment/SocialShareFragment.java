@@ -1,6 +1,8 @@
 package com.socialone.android.fragment;
 
+import android.app.AlertDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.database.Cursor;
@@ -11,9 +13,11 @@ import android.location.Location;
 import android.location.LocationManager;
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.Environment;
 import android.os.StrictMode;
 import android.preference.PreferenceManager;
 import android.provider.MediaStore;
+import android.telephony.SmsManager;
 import android.text.Editable;
 import android.text.TextUtils;
 import android.text.TextWatcher;
@@ -56,6 +60,7 @@ import com.socialone.android.appnet.adnlib.data.Post;
 import com.socialone.android.appnet.adnlib.response.PostResponseHandler;
 import com.socialone.android.fivehundredpx.api.auth.User;
 import com.socialone.android.fivehundredpx.api.services.UploadService;
+import com.socialone.android.services.TwitterPostService;
 import com.socialone.android.utils.Constants;
 import com.socialone.android.utils.Datastore;
 import com.socialone.android.utils.FlickrHelper;
@@ -69,6 +74,7 @@ import org.json.JSONObject;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
+import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
@@ -114,6 +120,7 @@ public class SocialShareFragment extends SherlockFragment {
     Switch locationSwtich;
     Switch fiveHundSwitch;
     Switch tumblrSwitch;
+    Switch smsSwitch;
 
     LinearLayout photoShareBtn;
     LinearLayout linkShareBtn;
@@ -133,6 +140,7 @@ public class SocialShareFragment extends SherlockFragment {
     CancelEditText shareField;
     Button shareImageBtn;
     Button shareBtn;
+    Button resetShares;
 
     Button sharePhotoCancelBtn;
     Button shareLinkCancelBtn;
@@ -164,6 +172,13 @@ public class SocialShareFragment extends SherlockFragment {
     User fiveUser;
     JumblrClient jumblrClient;
     SharedPreferences prefs;
+
+    //camera intent stuff
+    private static String root = null;
+    private static String imageFolderPath = null;
+    private String imageName = null;
+    private static Uri fileUri = null;
+    private static final int CAMERA_IMAGE_REQUEST = 1;
 
     private final TextWatcher mTextEditorWatcher = new TextWatcher() {
         public void beforeTextChanged(CharSequence s, int start, int count, int after) {
@@ -219,6 +234,7 @@ public class SocialShareFragment extends SherlockFragment {
         locationSwtich = (Switch) view.findViewById(R.id.location_switch);
         fiveHundSwitch = (Switch) view.findViewById(R.id.fivehund_switch);
         tumblrSwitch = (Switch) view.findViewById(R.id.tumblr_switch);
+        smsSwitch = (Switch) view.findViewById(R.id.sms_switch);
 
         photoShareBtn = (LinearLayout) view.findViewById(R.id.photo_share_btn);
         linkShareBtn = (LinearLayout) view.findViewById(R.id.link_share_btn);
@@ -234,6 +250,7 @@ public class SocialShareFragment extends SherlockFragment {
 
         photoShareImg = (ImageView) view.findViewById(R.id.social_share_photo_view);
         shareBtn = (Button) view.findViewById(R.id.social_share_button);
+        resetShares = (Button) view.findViewById(R.id.social_reset_button);
 
         shareLinkCancelBtn = (Button) view.findViewById(R.id.social_share_link_cancel_btn);
         sharePhotoCancelBtn = (Button) view.findViewById(R.id.social_share_photo_cancel_btn);
@@ -261,6 +278,13 @@ public class SocialShareFragment extends SherlockFragment {
             @Override
             public void onClick(View v) {
                 shareAllThings();
+            }
+        });
+
+        resetShares.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                resetShareOptions();
             }
         });
 
@@ -312,6 +336,23 @@ public class SocialShareFragment extends SherlockFragment {
         prefs = PreferenceManager.getDefaultSharedPreferences(getSherlockActivity());
     }
 
+    private void resetShareOptions() {
+        facebookSwitch.setChecked(false);
+        twitterSwitch.setChecked(false);
+        plusSwitch.setChecked(false);
+        appNetSwitch.setChecked(false);
+        myspaceSwitch.setChecked(false);
+        tumblrSwitch.setChecked(false);
+        flickrSwitch.setChecked(false);
+        linkedinSwitch.setChecked(false);
+        fiveHundSwitch.setChecked(false);
+        smsSwitch.setChecked(false);
+        locationSwtich.setChecked(false);
+        shareField.setText("");
+        photoShareImg.setImageBitmap(null);
+        photoShareImg.setImageDrawable(null);
+    }
+
     private void getUserLocation() {
         try {
             locationManager = (LocationManager) getSherlockActivity().getSystemService(getSherlockActivity().LOCATION_SERVICE);
@@ -325,13 +366,56 @@ public class SocialShareFragment extends SherlockFragment {
         }
     }
 
-    private void shareAddThings(){
+    private void addPhotoPicker() {
+        AlertDialog.Builder builder = new AlertDialog.Builder(getSherlockActivity());
+        builder.setMessage("This will end the activity");
+        builder.setCancelable(true);
+        builder.setPositiveButton("Camera", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                root = Environment.getExternalStorageDirectory().toString()
+                        + "/SocialOne_folder";
+                // Creating folders for Image
+                imageFolderPath = root + "/saved_images";
+                File imagesFolder = new File(imageFolderPath);
+                imagesFolder.mkdirs();
+                // Generating file name
+                imageName = "test.png";
+                // Creating image here
+                File image = new File(imageFolderPath, imageName);
+                fileUri = Uri.fromFile(image);
+                photoShareImg.setTag(imageFolderPath + File.separator + imageName);
+                Intent takePictureIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+                takePictureIntent.putExtra(MediaStore.EXTRA_OUTPUT, fileUri);
+                startActivityForResult(takePictureIntent,
+                        CAMERA_IMAGE_REQUEST);
+                dialog.dismiss();
+            }
+        });
+        builder.setNegativeButton("Gallery", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                Intent i = new Intent(Intent.ACTION_PICK, android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
+                getParentFragment().startActivityForResult(i, RESULT_LOAD_IMAGE);
+                photoShareLayout.setVisibility(View.VISIBLE);
+                dialog.dismiss();
+            }
+        });
+        builder.setNeutralButton("Cancel", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                dialog.dismiss();
+            }
+        });
+        AlertDialog dialog = builder.create();
+        dialog.show();
+    }
+
+    private void shareAddThings() {
         photoShareBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent i = new Intent(Intent.ACTION_PICK,android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
-                getParentFragment().startActivityForResult(i, RESULT_LOAD_IMAGE);
-                photoShareLayout.setVisibility(View.VISIBLE);
+                addPhotoPicker();
             }
         });
 
@@ -374,7 +458,7 @@ public class SocialShareFragment extends SherlockFragment {
 
     }
 
-    private void facebookShare(String string){
+    private void facebookShare(String string) {
         //For facebook sharing
 //        String userShareText = shareField.getText().toString();
         session = ensureFacebookSessionFromCache(mContext);
@@ -411,7 +495,7 @@ public class SocialShareFragment extends SherlockFragment {
             //If we're here then we're sharing to facebook!
 
 
-            if(addPhoto){
+            if (addPhoto) {
                 //text and image post
 
                 JSONObject privacy = new JSONObject();
@@ -461,7 +545,7 @@ public class SocialShareFragment extends SherlockFragment {
                                 Toast.LENGTH_LONG).show();
                     }
                 });
-            }else{
+            } else {
 
                 //just text post
                 Bundle postParams = new Bundle();
@@ -512,7 +596,7 @@ public class SocialShareFragment extends SherlockFragment {
         }
     }
 
-    private void twitterSetup(){
+    private void twitterSetup() {
         mAuthAdapter = new SocialAuthAdapter(new DialogListener() {
             @Override
             public void onComplete(Bundle bundle) {
@@ -539,59 +623,59 @@ public class SocialShareFragment extends SherlockFragment {
         mAuthAdapter.authorize(mContext, SocialAuthAdapter.Provider.TWITTER);
     }
 
-    private void twitterShare(String string){
+    private void twitterShare(String string) {
         final String share = string;
         byte[] data = null;
 
         //Note that at times this
-        if(addPhoto){
-            try{
+        if (addPhoto) {
+            try {
                 Bitmap bi = BitmapFactory.decodeFile(picturePath);
                 ByteArrayOutputStream baos = new ByteArrayOutputStream();
                 bi.compress(Bitmap.CompressFormat.JPEG, 50, baos);
                 data = baos.toByteArray();
                 ByteArrayInputStream bs = new ByteArrayInputStream(data);
-            Log.d("twitter", share);
-            cb = new ConfigurationBuilder();
-            cb.setDebugEnabled(true)
-                    .setOAuthConsumerKey(Constants.TWIT_CONSUMER_KEY)
-                    .setOAuthConsumerSecret(Constants.TWIT_CONSUMER_SECRET)
-                    .setOAuthAccessToken(mAuthAdapter.getCurrentProvider().getAccessGrant().getKey())
-                    .setOAuthAccessTokenSecret(mAuthAdapter.getCurrentProvider().getAccessGrant().getSecret());
-            TwitterFactory tf = new TwitterFactory(cb.build());
-            Twitter twitter = tf.getInstance();
-            StatusUpdate statusUpdate = new StatusUpdate(string);
-            if(locationSwtich.isChecked()){
-                statusUpdate.setLocation(new GeoLocation(location.getLatitude(), location.getLongitude()));
-                statusUpdate.setDisplayCoordinates(true);
-            }
+                Log.d("twitter", share);
+                cb = new ConfigurationBuilder();
+                cb.setDebugEnabled(true)
+                        .setOAuthConsumerKey(Constants.TWIT_CONSUMER_KEY)
+                        .setOAuthConsumerSecret(Constants.TWIT_CONSUMER_SECRET)
+                        .setOAuthAccessToken(mAuthAdapter.getCurrentProvider().getAccessGrant().getKey())
+                        .setOAuthAccessTokenSecret(mAuthAdapter.getCurrentProvider().getAccessGrant().getSecret());
+                TwitterFactory tf = new TwitterFactory(cb.build());
+                Twitter twitter = tf.getInstance();
+                StatusUpdate statusUpdate = new StatusUpdate(string);
+                if (locationSwtich.isChecked()) {
+                    statusUpdate.setLocation(new GeoLocation(location.getLatitude(), location.getLongitude()));
+                    statusUpdate.setDisplayCoordinates(true);
+                }
                 statusUpdate.setMedia("userimg.jpg", bs);
-            Status status = twitter.updateStatus(statusUpdate);
-            }catch (Exception e){
+                Status status = twitter.updateStatus(statusUpdate);
+            } catch (Exception e) {
                 Log.e("twitter", e.toString());
             }
-        }else {
+        } else {
 
-        try {
+            try {
 
 
-        Log.d("twitter", share);
-        cb = new ConfigurationBuilder();
-            cb.setDebugEnabled(true)
-                    .setOAuthConsumerKey(Constants.TWIT_CONSUMER_KEY)
-                    .setOAuthConsumerSecret(Constants.TWIT_CONSUMER_SECRET)
-                    .setOAuthAccessToken(mAuthAdapter.getCurrentProvider().getAccessGrant().getKey())
-                    .setOAuthAccessTokenSecret(mAuthAdapter.getCurrentProvider().getAccessGrant().getSecret());
-        TwitterFactory tf = new TwitterFactory(cb.build());
-        Twitter twitter = tf.getInstance();
-        StatusUpdate statusUpdate = new StatusUpdate(string);
-            if(locationSwtich.isChecked()){
-                statusUpdate.setLocation(new GeoLocation(location.getLatitude(), location.getLongitude()));
-                statusUpdate.setDisplayCoordinates(true);
-            }
-        Status status = twitter.updateStatus(statusUpdate);
-        }catch (Exception e){
-            Log.e("twitter", e.toString());
+                Log.d("twitter", share);
+                cb = new ConfigurationBuilder();
+                cb.setDebugEnabled(true)
+                        .setOAuthConsumerKey(Constants.TWIT_CONSUMER_KEY)
+                        .setOAuthConsumerSecret(Constants.TWIT_CONSUMER_SECRET)
+                        .setOAuthAccessToken(mAuthAdapter.getCurrentProvider().getAccessGrant().getKey())
+                        .setOAuthAccessTokenSecret(mAuthAdapter.getCurrentProvider().getAccessGrant().getSecret());
+                TwitterFactory tf = new TwitterFactory(cb.build());
+                Twitter twitter = tf.getInstance();
+                StatusUpdate statusUpdate = new StatusUpdate(string);
+                if (locationSwtich.isChecked()) {
+                    statusUpdate.setLocation(new GeoLocation(location.getLatitude(), location.getLongitude()));
+                    statusUpdate.setDisplayCoordinates(true);
+                }
+                Status status = twitter.updateStatus(statusUpdate);
+            } catch (Exception e) {
+                Log.e("twitter", e.toString());
             }
         }
 
@@ -650,7 +734,7 @@ public class SocialShareFragment extends SherlockFragment {
 //        }
     }
 
-    private void plusSetup(){
+    private void plusSetup() {
         plusAuthAdapter = new SocialAuthAdapter(new DialogListener() {
             @Override
             public void onComplete(Bundle bundle) {
@@ -677,7 +761,7 @@ public class SocialShareFragment extends SherlockFragment {
 
     }
 
-    private void plusShare(String string){
+    private void plusShare(String string) {
         plusAuthAdapter.updateStatus(string, new SocialAuthListener<Integer>() {
             @Override
             public void onExecute(String s, Integer status) {
@@ -698,10 +782,10 @@ public class SocialShareFragment extends SherlockFragment {
         }, true);
     }
 
-    private void appNetShare(String string){
+    private void appNetShare(String string) {
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getSherlockActivity());
         Post post = new Post(string);
-        if(locationSwtich.isChecked()){
+        if (locationSwtich.isChecked()) {
             HashMap<String, Object> list2 = new HashMap<String, Object>();
             list2.put("latitude", lat);
             list2.put("longitude", lon);
@@ -726,11 +810,11 @@ public class SocialShareFragment extends SherlockFragment {
         });
     }
 
-    private void myspaceShare(String string){
+    private void myspaceShare(String string) {
         //TODO
     }
 
-    private void linkedinSetup(){
+    private void linkedinSetup() {
 
         linkAuthAdapter = new SocialAuthAdapter(new DialogListener() {
             @Override
@@ -758,7 +842,7 @@ public class SocialShareFragment extends SherlockFragment {
 
     }
 
-    private void linkedinShare(String string){
+    private void linkedinShare(String string) {
 
         linkAuthAdapter.updateStatus(string, new SocialAuthListener<Integer>() {
             @Override
@@ -782,17 +866,17 @@ public class SocialShareFragment extends SherlockFragment {
         }, false);
     }
 
-    private void flickrSetup(){
+    private void flickrSetup() {
         flickrAuthAdapter = new SocialAuthAdapter(new DialogListener() {
             @Override
             public void onComplete(Bundle bundle) {
                 getSherlockActivity().runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
-                Log.d("flickr", "flickr complete");
-                f = FlickrHelper.getInstance().getFlickrAuthed(
-                        flickrAuthAdapter.getCurrentProvider().getAccessGrant().getKey(),
-                        flickrAuthAdapter.getCurrentProvider().getAccessGrant().getSecret());
+                        Log.d("flickr", "flickr complete");
+                        f = FlickrHelper.getInstance().getFlickrAuthed(
+                                flickrAuthAdapter.getCurrentProvider().getAccessGrant().getKey(),
+                                flickrAuthAdapter.getCurrentProvider().getAccessGrant().getSecret());
                     }
                 });
             }
@@ -816,7 +900,7 @@ public class SocialShareFragment extends SherlockFragment {
         flickrAuthAdapter.authorize(mContext, SocialAuthAdapter.Provider.FLICKR);
     }
 
-    private void flickrShare(String string){
+    private void flickrShare(String string) {
 
         byte[] data = null;
 
@@ -827,7 +911,7 @@ public class SocialShareFragment extends SherlockFragment {
         try {
             f.getUploader().upload("image.jpg", data, new UploadMetaData());
 
-        }catch (Exception e){
+        } catch (Exception e) {
             Log.d("flickr", e.toString());
         }
 
@@ -856,7 +940,8 @@ public class SocialShareFragment extends SherlockFragment {
     }
 
     private boolean mIsBound;
-    private void fiveHundShare(){
+
+    private void fiveHundShare() {
         byte[] data = null;
         Bitmap bi = BitmapFactory.decodeFile(picturePath);
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
@@ -877,15 +962,15 @@ public class SocialShareFragment extends SherlockFragment {
 
     }
 
-    private void tumblrShare(String string){
+    private void tumblrShare(String string) {
         jumblrClient = new JumblrClient(Constants.TUMBLR_CONSUMER_KEY, Constants.TUMBLR_CONSUMER_SECRET);
         jumblrClient.setToken(prefs.getString(Constants.TUMBLR_ACCESS, null), prefs.getString(Constants.TUMBLR_SECRET, null));
-        try{
+        try {
             Map<String, String> detail = new HashMap<String, String>();
             detail.put("quote", string);
             detail.put("type", "quote");
             jumblrClient.postCreate(jumblrClient.user().getName(), detail);
-        }catch (Exception e){
+        } catch (Exception e) {
             Log.e("tumblr", e.toString());
         }
     }
@@ -895,35 +980,88 @@ public class SocialShareFragment extends SherlockFragment {
         Log.d("500px", "image upload completed");
     }
 
-    public void shareAllThings(){
+    public void shareAllThings() {
         String userShareText = shareField.getText().toString();
 
-        if(facebookSwitch.isChecked()){
-            Toast.makeText(getSherlockActivity(),
-                    "sharing " + userShareText + " to facebook",
-                    Toast.LENGTH_LONG).show();
-            facebookShare(userShareText);
-        }
+        if (facebookSwitch.isChecked()) {
 
-        if(twitterSwitch.isChecked()){
-            if(userShareText.length() > 140){
+            if (smsSwitch.isChecked()) {
+                int phoneNo = 32655;
+                String sms = userShareText;
+                try {
+                    SmsManager smsManager = SmsManager.getDefault();
+                    smsManager.sendTextMessage(Integer.toString(phoneNo), null, sms, null, null);
+                    Toast.makeText(getSherlockActivity(), "SMS Sent!",
+                            Toast.LENGTH_LONG).show();
+                } catch (Exception e) {
+                    Toast.makeText(getSherlockActivity(),
+                            "SMS failed, please try again later!",
+                            Toast.LENGTH_LONG).show();
+                    e.printStackTrace();
+                }
+            } else {
                 Toast.makeText(getSherlockActivity(),
-                        "Sharing to Twitter requires 140 or less characters",
+                        "sharing " + userShareText + " to facebook",
                         Toast.LENGTH_LONG).show();
-            }else{
-                Toast.makeText(getSherlockActivity(),
-                    "sharing " + userShareText + " to twitter",
-                    Toast.LENGTH_LONG).show();
-                twitterShare(userShareText);
+                facebookShare(userShareText);
             }
         }
 
-        if(plusSwitch.isChecked()){
-            Intent shareIntent = new PlusShare.Builder(mContext)
-                    .setType("text/plain")
-                    .setText(userShareText)
-                    .getIntent();
-            startActivityForResult(shareIntent, 0);
+        if (twitterSwitch.isChecked()) {
+
+            if (smsSwitch.isChecked()) {
+                int phoneNo = 40404;
+                String sms = userShareText;
+
+                try {
+                    SmsManager smsManager = SmsManager.getDefault();
+                    smsManager.sendTextMessage(Integer.toString(phoneNo), null, sms, null, null);
+                    Toast.makeText(getSherlockActivity(), "SMS Sent!",
+                            Toast.LENGTH_LONG).show();
+                } catch (Exception e) {
+                    Toast.makeText(getSherlockActivity(),
+                            "SMS failed, please try again later!",
+                            Toast.LENGTH_LONG).show();
+                    e.printStackTrace();
+                }
+            } else {
+                Intent twitterShare = new Intent(getSherlockActivity(), TwitterPostService.class);
+                twitterShare.putExtra("share_text", userShareText);
+                if (addPhoto) {
+                    twitterShare.putExtra("addPhoto", addPhoto);
+                    twitterShare.putExtra("picturePath", picturePath);
+                }
+                if (locationSwtich.isChecked()) {
+                    twitterShare.putExtra("addLocation", true);
+                }
+                getSherlockActivity().startService(twitterShare);
+            }
+        }
+
+        if (plusSwitch.isChecked()) {
+
+            if (smsSwitch.isChecked()) {
+                int phoneNo = 33669;
+                String sms = userShareText;
+
+                try {
+                    SmsManager smsManager = SmsManager.getDefault();
+                    smsManager.sendTextMessage(Integer.toString(phoneNo), null, sms, null, null);
+                    Toast.makeText(getSherlockActivity(), "SMS Sent!",
+                            Toast.LENGTH_LONG).show();
+                } catch (Exception e) {
+                    Toast.makeText(getSherlockActivity(),
+                            "SMS failed, please try again later!",
+                            Toast.LENGTH_LONG).show();
+                    e.printStackTrace();
+                }
+            } else {
+                Intent shareIntent = new PlusShare.Builder(mContext)
+                        .setType("text/plain")
+                        .setText(userShareText)
+                        .getIntent();
+                startActivityForResult(shareIntent, 0);
+            }
 
             //plus share builder
 //            PlusShare.Builder builder = new PlusShare.Builder(this, monPlusClient);
@@ -935,59 +1073,61 @@ public class SocialShareFragment extends SherlockFragment {
 //            Intent shareIntent = builder.getIntent();
 //            startActivityForResult(shareIntent, SHAREGPLUS_REQUEST_CODE);
 
-              //example of using sms
-//            String phoneNo = 33669;
-//            String sms = "example message";
-//
-//            try {
-//                SmsManager smsManager = SmsManager.getDefault();
-//                smsManager.sendTextMessage(phoneNo, null, sms, null, null);
-//                Toast.makeText(getApplicationContext(), "SMS Sent!",
-//                        Toast.LENGTH_LONG).show();
-//            } catch (Exception e) {
-//                Toast.makeText(getApplicationContext(),
-//                        "SMS faild, please try again later!",
-//                        Toast.LENGTH_LONG).show();
-//                e.printStackTrace();
-//            }
-
-            plusShare(userShareText);
+//            plusShare(userShareText);
         }
 
-        if(appNetSwitch.isChecked()){
-            if(userShareText.length() > 256){
+        if (appNetSwitch.isChecked()) {
+            if (userShareText.length() > 256) {
                 Toast.makeText(getSherlockActivity(),
                         "Sharing to App.net requires 256 or less characters",
                         Toast.LENGTH_LONG).show();
-            }else{
+            } else {
                 Toast.makeText(getSherlockActivity(),
-                    "sharing " + userShareText + " to app.net",
-                    Toast.LENGTH_LONG).show();
+                        "sharing " + userShareText + " to app.net",
+                        Toast.LENGTH_LONG).show();
                 appNetShare(userShareText);
             }
         }
 
-        if(myspaceSwitch.isChecked()){
-            myspaceShare(userShareText);
+        if (myspaceSwitch.isChecked()) {
+
+            if (smsSwitch.isChecked()) {
+                int phoneNo = 69772;
+                String sms = "shout " + userShareText;
+
+                try {
+                    SmsManager smsManager = SmsManager.getDefault();
+                    smsManager.sendTextMessage(Integer.toString(phoneNo), null, sms, null, null);
+                    Toast.makeText(getSherlockActivity(), "SMS Sent!",
+                            Toast.LENGTH_LONG).show();
+                }catch (Exception e) {
+                    Toast.makeText(getSherlockActivity(),
+                            "SMS failed, please try again later!",
+                            Toast.LENGTH_LONG).show();
+                    e.printStackTrace();
+                }
+            } else {
+                myspaceShare(userShareText);
+            }
         }
 
-        if(linkedinSwitch.isChecked()){
+        if (linkedinSwitch.isChecked()) {
             linkedinShare(userShareText);
         }
 
-        if(flickrSwitch.isChecked()){
+        if (flickrSwitch.isChecked()) {
             flickrShare(userShareText);
         }
 
-        if(fiveHundSwitch.isChecked()){
+        if (fiveHundSwitch.isChecked()) {
             fiveHundShare();
         }
 
-        if(tumblrSwitch.isChecked()){
+        if (tumblrSwitch.isChecked()) {
             tumblrShare(userShareText);
         }
 
-
+        resetShareOptions();
 //        shareField.getText().clear();
 
     }
@@ -1006,7 +1146,7 @@ public class SocialShareFragment extends SherlockFragment {
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        switch (item.getItemId()){
+        switch (item.getItemId()) {
             case R.id.menu_share:
                 shareAllThings();
                 break;
@@ -1028,7 +1168,7 @@ public class SocialShareFragment extends SherlockFragment {
             });
             meRequest.executeAndWait();
         } else if (state.isClosed()) {
-            Toast.makeText(getSherlockActivity(), "error",Toast.LENGTH_SHORT).show();
+            Toast.makeText(getSherlockActivity(), "error", Toast.LENGTH_SHORT).show();
         }
     }
 
@@ -1074,24 +1214,24 @@ public class SocialShareFragment extends SherlockFragment {
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         Log.d("photo", "activity for result called");
-        try{
-        if (!TextUtils.isEmpty(data.getData().toString())) {
-            Log.d("photo", "got dat photo");
-            selectedImage = data.getData();
-            String[] filePathColumn = { MediaStore.Images.Media.DATA };
-            Cursor cursor = getSherlockActivity().getContentResolver().query(selectedImage, filePathColumn, null, null, null);
-            cursor.moveToFirst();
-            int columnIndex = cursor.getColumnIndex(filePathColumn[0]);
-            picturePath = cursor.getString(columnIndex);
-            cursor.close();
-            Log.d("photo", picturePath);
+        try {
+            if (!TextUtils.isEmpty(data.getData().toString())) {
+                Log.d("photo", "got dat photo");
+                selectedImage = data.getData();
+                String[] filePathColumn = {MediaStore.Images.Media.DATA};
+                Cursor cursor = getSherlockActivity().getContentResolver().query(selectedImage, filePathColumn, null, null, null);
+                cursor.moveToFirst();
+                int columnIndex = cursor.getColumnIndex(filePathColumn[0]);
+                picturePath = cursor.getString(columnIndex);
+                cursor.close();
+                Log.d("photo", picturePath);
 //            photoShareImg.setImageBitmap(BitmapFactory.decodeFile(picturePath));
-            photoShareImg.setImageBitmap(getThumbnail(selectedImage));
-            addPhoto = true;
-        }else{
-            Log.d("photo", "result fail");
-            addPhoto = false;
-            photoShareLayout.setVisibility(View.GONE);
+                photoShareImg.setImageBitmap(getThumbnail(selectedImage));
+                addPhoto = true;
+            } else {
+                Log.d("photo", "result fail");
+                addPhoto = false;
+                photoShareLayout.setVisibility(View.GONE);
 //            Uri selectedImage = data.getData();
 //            String[] filePathColumn = { MediaStore.Images.Media.DATA };
 //            Cursor cursor = getSherlockActivity().getContentResolver().query(selectedImage, filePathColumn, null, null, null);
@@ -1100,8 +1240,8 @@ public class SocialShareFragment extends SherlockFragment {
 //            picturePath = cursor.getString(columnIndex);
 //            cursor.close();
 //            photoShareImg.setImageBitmap(BitmapFactory.decodeFile(picturePath));
-        }
-        }catch (Exception e){
+            }
+        } catch (Exception e) {
             addPhoto = false;
             e.printStackTrace();
             photoShareLayout.setVisibility(View.GONE);
@@ -1154,11 +1294,11 @@ public class SocialShareFragment extends SherlockFragment {
         return true;
     }
 
-    public static Session ensureFacebookSessionFromCache(Context context){
-                Session activeSession = Session.getActiveSession();
-                if (activeSession == null || !activeSession.getState().isOpened()) {
-                        activeSession = Session.openActiveSessionFromCache(context);
-                    }
-                return activeSession;
-            }
+    public static Session ensureFacebookSessionFromCache(Context context) {
+        Session activeSession = Session.getActiveSession();
+        if (activeSession == null || !activeSession.getState().isOpened()) {
+            activeSession = Session.openActiveSessionFromCache(context);
+        }
+        return activeSession;
+    }
 }

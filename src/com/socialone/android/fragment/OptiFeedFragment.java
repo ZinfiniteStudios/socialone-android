@@ -36,7 +36,6 @@ import com.socialone.android.appnet.adnlib.AppDotNetClient;
 import com.socialone.android.appnet.adnlib.data.Post;
 import com.socialone.android.appnet.adnlib.data.PostList;
 import com.socialone.android.appnet.adnlib.response.PostListResponseHandler;
-import com.socialone.android.appnet.adnlib.response.PostResponseHandler;
 import com.socialone.android.utils.Constants;
 import com.socialone.android.viewcomponents.RelativeTimeTextView;
 import com.squareup.picasso.Picasso;
@@ -276,8 +275,6 @@ public class OptiFeedFragment extends SherlockFragment {
                 viewHolder.userRealName = (TextView) view.findViewById(R.id.user_real_name);
                 viewHolder.userTwitName = (TextView) view.findViewById(R.id.user_twitter_name);
                 viewHolder.userImg = (ImageView) view.findViewById(R.id.user_image);
-                viewHolder.repostPost = (ImageView) view.findViewById(R.id.repost_post);
-                viewHolder.starPost = (ImageView) view.findViewById(R.id.star_post);
                 viewHolder.postTime = (RelativeTimeTextView) view.findViewById(R.id.post_time);
                 viewHolder.postClient = (TextView) view.findViewById(R.id.post_info_client);
                 viewHolder.postUser = (TextView) view.findViewById(R.id.post_info_user);
@@ -303,21 +300,6 @@ public class OptiFeedFragment extends SherlockFragment {
                     .centerCrop()
                     .into(viewHolder.userImg);
 
-            viewHolder.starPost.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    //todo
-                }
-            });
-
-            viewHolder.repostPost.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    //TODO
-                }
-            });
-//            setImageView(viewHolder, position);
-
             return view;
         }
 
@@ -329,8 +311,6 @@ public class OptiFeedFragment extends SherlockFragment {
             TextView postClient;
             TextView postUser;
             ImageView userImg;
-            ImageView starPost;
-            ImageView repostPost;
         }
 
         public String stripHtml(String html) {
@@ -382,8 +362,6 @@ public class OptiFeedFragment extends SherlockFragment {
                 viewHolder = new ViewHolder();
                 viewHolder.textView = (TextView) view.findViewById(R.id.social_checkin_name);
                 viewHolder.userImg = (ImageView) view.findViewById(R.id.user_image);
-                viewHolder.repostPost = (ImageView) view.findViewById(R.id.repost_post);
-                viewHolder.starPost = (ImageView) view.findViewById(R.id.star_post);
                 viewHolder.postTime = (RelativeTimeTextView) view.findViewById(R.id.post_time);
                 viewHolder.postClient = (TextView) view.findViewById(R.id.post_info_client);
                 viewHolder.postUser = (TextView) view.findViewById(R.id.post_info_user);
@@ -407,31 +385,6 @@ public class OptiFeedFragment extends SherlockFragment {
                     .centerCrop()
                     .into(viewHolder.userImg);
 
-            viewHolder.starPost.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    client.starPost(post.getId(), new PostResponseHandler() {
-                        @Override
-                        public void onSuccess(Post responseData) {
-                            Log.d("post", "post has been starred!");
-                        }
-                    });
-                }
-            });
-
-            viewHolder.repostPost.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    client.repostPost(post.getId(), new PostResponseHandler() {
-                        @Override
-                        public void onSuccess(Post responseData) {
-                            Log.d("post", "post has been reposted!");
-                        }
-                    });
-                }
-            });
-//            setImageView(viewHolder, position);
-
             return view;
         }
 
@@ -441,8 +394,6 @@ public class OptiFeedFragment extends SherlockFragment {
             TextView postClient;
             TextView postUser;
             ImageView userImg;
-            ImageView starPost;
-            ImageView repostPost;
         }
 
         public String stripHtml(String html) {

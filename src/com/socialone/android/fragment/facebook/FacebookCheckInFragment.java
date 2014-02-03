@@ -96,10 +96,9 @@ public class FacebookCheckInFragment extends SherlockFragment implements Locatio
     public void getFacebookLocations(Location location){
         session = ensureFacebookSessionFromCache(getSherlockActivity());
 //        Request locRequest = new Request.newPlacesSearchRequest(session, location, 100, 25, null, new Request.GraphPlaceListCallback())
-        double lat = location.getLatitude(),lon=location.getLongitude();
         Bundle params = new Bundle();
         params.putString("type", "place");
-        params.putString("center", lat + "," + lon);
+        params.putString("center", location.getLatitude() + "," + location.getLongitude());
         params.putString("distance", "5000");
         params.putString("limit", "40");
 

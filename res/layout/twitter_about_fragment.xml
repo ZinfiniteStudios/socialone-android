@@ -1,0 +1,83 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <LinearLayout
+        android:orientation="vertical"
+        android:layout_margin="10dp"
+        android:background="@drawable/card_bg"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <oak.widget.TextViewWithFont
+            android:id="@+id/twitter_user_desc"
+            android:padding="4dp"
+            android:text="Android dev blah blah blah blah blah"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" />
+
+        <oak.widget.TextViewWithFont
+            android:id="@+id/twitter_user_tweet_count"
+            android:padding="4dp"
+            android:text="Tweets - 750"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" />
+
+        <oak.widget.TextViewWithFont
+            android:id="@+id/twitter_user_following"
+            android:padding="4dp"
+            android:text="Following - 130"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" />
+
+        <oak.widget.TextViewWithFont
+            android:id="@+id/twitter_user_followers"
+            android:padding="4dp"
+            android:text="followers - 130"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" />
+
+        <oak.widget.TextViewWithFont
+            android:id="@+id/twitter_user_favorites"
+            android:padding="4dp"
+            android:text="Favorites - 3"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" />
+
+        <oak.widget.TextViewWithFont
+            android:id="@+id/twitter_user_listed"
+            android:padding="4dp"
+            android:text="Listed - 1"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" />
+    </LinearLayout>
+
+
+    <LinearLayout
+        android:layout_alignParentBottom="true"
+        android:orientation="vertical"
+        android:layout_margin="10dp"
+        android:background="@drawable/card_bg"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <oak.widget.TextViewWithFont
+            android:id="@+id/twitter_user_location"
+            android:padding="4dp"
+            android:text="Charlottesville, VA"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" />
+
+        <com.google.android.gms.maps.MapView
+            android:background="@drawable/card_bg"
+            android:layout_margin="8dp"
+            android:id="@+id/checkin_map_fragment"
+            android:layout_height="100dp"
+            android:layout_width="fill_parent" />
+
+    </LinearLayout>
+
+</RelativeLayout>

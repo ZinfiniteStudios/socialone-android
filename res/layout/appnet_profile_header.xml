@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:oak="http://oak/oak/schema"
     android:orientation="vertical"
     android:layout_width="match_parent"
     android:layout_height="fill_parent">
@@ -9,22 +10,40 @@
         android:id="@+id/appnet_profile_layout"
         android:orientation="vertical"
         android:layout_width="match_parent"
-        android:layout_height="200dp">
+        android:layout_height="100dp">
 
         <ImageView
             android:id="@+id/appnet_background_image"
             android:scaleType="centerCrop"
             android:layout_width="fill_parent"
-            android:layout_height="200dp" />
+            android:layout_height="100dp" />
+
+        <ImageView
+            android:id="@+id/appnet_profile_image"
+            android:layout_margin="12dp"
+            android:layout_width="75dp"
+            android:layout_height="75dp" />
 
         <LinearLayout
+            android:layout_marginBottom="12dp"
+            android:layout_alignParentBottom="true"
+            android:layout_toRightOf="@+id/appnet_profile_image"
             android:id="@+id/appnet_top_header"
-            android:background="@color/translucent_black"
-            android:orientation="horizontal"
+            android:orientation="vertical"
             android:layout_width="fill_parent"
             android:layout_height="wrap_content">
 
             <oak.widget.TextViewWithFont
+                oak:font="Roboto-Light.ttf"
+                android:layout_marginLeft="10dp"
+                android:id="@+id/twitter_real_name_text"
+                android:layout_toRightOf="@+id/appnet_profile_image"
+                android:text="David Hodge"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content" />
+
+            <oak.widget.TextViewWithFont
+                oak:font="Roboto-Thin.ttf"
                 android:layout_marginLeft="10dp"
                 android:id="@+id/appnet_user_name_text"
                 android:layout_toRightOf="@+id/appnet_profile_image"
@@ -33,81 +52,9 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content" />
 
-            <oak.widget.TextViewWithFont
-                android:layout_marginLeft="10dp"
-                android:id="@+id/twitter_real_name_text"
-                android:layout_toRightOf="@+id/appnet_profile_image"
-                android:text="David Hodge"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content" />
-
         </LinearLayout>
 
 
-        <LinearLayout
-            android:layout_centerInParent="true"
-            android:layout_marginTop="20dp"
-            android:padding="10dp"
-            android:orientation="horizontal"
-            android:background="@color/translucent_black"
-            android:layout_below="@+id/appnet_top_header"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content">
-            <ImageView
-                android:id="@+id/appnet_profile_image"
-                android:layout_margin="12dp"
-                android:layout_width="75dp"
-                android:layout_height="75dp" />
-
-            <LinearLayout
-                android:orientation="vertical"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content">
-
-                <oak.widget.TextViewWithFont
-                    android:id="@+id/appnet_post_count_text"
-                    android:layout_toRightOf="@+id/appnet_profile_image"
-                    android:layout_below="@+id/appnet_top_header"
-                    android:layout_marginTop="8dp"
-                    android:text="785 tweets"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content" />
-
-                <oak.widget.TextViewWithFont
-                    android:id="@+id/appnet_follower_count_text"
-                    android:layout_toRightOf="@+id/appnet_profile_image"
-                    android:layout_below="@+id/appnet_post_count_text"
-                    android:text="100 followers"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content" />
-
-                <oak.widget.TextViewWithFont
-                    android:id="@+id/appnet_following_count_text"
-                    android:layout_toRightOf="@+id/appnet_profile_image"
-                    android:layout_below="@+id/appnet_follower_count_text"
-                    android:text="35 following"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content" />
-
-                <oak.widget.TextViewWithFont
-                    android:id="@+id/appnet_fav_count_text"
-                    android:layout_toRightOf="@+id/appnetp_profile_image"
-                    android:layout_below="@+id/appnet_following_count_text"
-                    android:text="4 favorites"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content" />
-            </LinearLayout>
-
-        </LinearLayout>
-
-
-        <oak.widget.TextViewWithFont
-            android:background="@color/translucent_black"
-            android:id="@+id/appnet_desc_text"
-            android:text="Android dev, 22 years old, blah blah blah"
-            android:layout_alignParentBottom="true"
-            android:layout_width="fill_parent"
-            android:layout_height="wrap_content" />
     </RelativeLayout>
 
     <com.viewpagerindicator.TitlePageIndicator

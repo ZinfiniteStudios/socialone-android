@@ -2,6 +2,8 @@
 <resources>
 
     <style name="MainTheme" parent="Theme.Sherlock.Light.DarkActionBar">
+        <item name="android:windowBackground">@color/list_background</item>
+        <item name="android:textColor">@color/light_text_color</item>
         <!--<item name="android:windowTranslucentNavigation">true</item>-->
         <!--<item name="android:fitsSystemWindows">true</item>-->
     </style>

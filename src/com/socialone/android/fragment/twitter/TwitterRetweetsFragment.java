@@ -158,8 +158,6 @@ public class TwitterRetweetsFragment extends SherlockFragment {
                 viewHolder.userRealName = (TextView) view.findViewById(R.id.user_real_name);
                 viewHolder.userTwitName = (TextView) view.findViewById(R.id.user_twitter_name);
                 viewHolder.userImg = (ImageView) view.findViewById(R.id.user_image);
-                viewHolder.repostPost = (ImageView) view.findViewById(R.id.repost_post);
-                viewHolder.starPost = (ImageView) view.findViewById(R.id.star_post);
                 viewHolder.postTime = (RelativeTimeTextView) view.findViewById(R.id.post_time);
                 viewHolder.postClient = (TextView) view.findViewById(R.id.post_info_client);
                 viewHolder.postUser = (TextView) view.findViewById(R.id.post_info_user);
@@ -186,21 +184,6 @@ public class TwitterRetweetsFragment extends SherlockFragment {
                     .centerCrop()
                     .into(viewHolder.userImg);
 
-            viewHolder.starPost.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    //todo
-                }
-            });
-
-            viewHolder.repostPost.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    //TODO
-                }
-            });
-//            setImageView(viewHolder, position);
-
             return view;
         }
 
@@ -212,8 +195,6 @@ public class TwitterRetweetsFragment extends SherlockFragment {
             TextView postClient;
             TextView postUser;
             ImageView userImg;
-            ImageView starPost;
-            ImageView repostPost;
         }
 
         public String stripHtml(String html) {

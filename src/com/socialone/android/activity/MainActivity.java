@@ -3,6 +3,7 @@ package com.socialone.android.activity;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
+import android.content.IntentSender;
 import android.content.res.Configuration;
 import android.graphics.Bitmap;
 import android.graphics.drawable.Drawable;
@@ -18,6 +19,7 @@ import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
+import android.util.Log;
 import android.view.ActionProvider;
 import android.view.ContextMenu;
 import android.view.SubMenu;
@@ -37,6 +39,9 @@ import com.facebook.SessionState;
 import com.facebook.UiLifecycleHelper;
 import com.facebook.model.GraphUser;
 import com.google.analytics.tracking.android.EasyTracker;
+import com.google.android.gms.common.ConnectionResult;
+import com.google.android.gms.common.GooglePlayServicesClient;
+import com.google.android.gms.plus.PlusClient;
 import com.nineoldandroids.view.ViewHelper;
 import com.socialone.android.R;
 import com.socialone.android.fragment.AboutFragment;
@@ -64,7 +69,7 @@ import com.squareup.picasso.Picasso;
 /**
  * Created by david.hodge on 12/18/13.
  */
-public class MainActivity extends SherlockFragmentActivity  {
+public class MainActivity extends SherlockFragmentActivity implements GooglePlayServicesClient.OnConnectionFailedListener {
 
     DrawerLayout mDrawerLayout;
     FrameLayout mContent;
@@ -93,6 +98,10 @@ public class MainActivity extends SherlockFragmentActivity  {
     String userHeaderImageLink;
     String userName;
     String userLocation;
+
+    PlusClient plusClient;
+    private static final int REQUEST_CODE_RESOLVE_ERR = 9000;
+    private ConnectionResult mConnectionResult;
 
     public static final int NAV_SHARE = R.id.nav_item_share;
     public static final int NAV_OPTI = R.id.nav_item_optifeed;
@@ -156,6 +165,21 @@ public class MainActivity extends SherlockFragmentActivity  {
         if (savedInstanceState == null) {
             setContentFragment(NAV_SHARE);
         }
+
+//        plusClient = new PlusClient.Builder(this, new GooglePlayServicesClient.ConnectionCallbacks() {
+//            @Override
+//            public void onConnected(Bundle bundle) {
+//                Toast.makeText(mContext, "Welcome from G+ " + plusClient.getCurrentPerson().getName().getGivenName(), Toast.LENGTH_LONG).show();
+//            }
+//
+//            @Override
+//            public void onDisconnected() {
+//                Log.e("google_place", "g+ login error");
+//            }
+//        }, this).setActions("http://schemas.google.com/AddActivity", "http://schemas.google.com/CheckInActivity")
+//                .setScopes(Scopes.PLUS_LOGIN, Scopes.PLUS_PROFILE, Scopes.APP_STATE).build();
+//
+//        plusClient.connect();
     }
 
     @Override
@@ -322,13 +346,6 @@ public class MainActivity extends SherlockFragmentActivity  {
         ft.replace(R.id.fragment_container, fragment).addToBackStack("tag");
         ft.addToBackStack(null);
         ft.commit();
-    }
-
-    @Override
-    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        uiHelper.onActivityResult(requestCode, resultCode, data);
-        Fragment fragment = getSupportFragmentManager().findFragmentById(R.id.fragment_container);
-        fragment.onActivityResult(requestCode, resultCode, data);
     }
 
     @Override
@@ -616,18 +633,6 @@ public class MainActivity extends SherlockFragmentActivity  {
     }
 
     @Override
-    public void onStart() {
-        super.onStart();
-        EasyTracker.getInstance().activityStart(this); // Add this method.
-    }
-
-    @Override
-    public void onStop() {
-        super.onStop();
-        EasyTracker.getInstance().activityStop(this); // Add this method.
-    }
-
-    @Override
     public void onResume() {
         super.onResume();
         uiHelper.onResume();
@@ -754,5 +759,47 @@ public class MainActivity extends SherlockFragmentActivity  {
             mBlurImage.setVisibility(View.GONE);
             mBlurImage.setImageBitmap(null);
         }
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+//        if (requestCode == REQUEST_CODE_RESOLVE_ERR && resultCode == RESULT_OK) {
+//            mConnectionResult = null;
+//            plusClient.connect();
+//        }
+        uiHelper.onActivityResult(requestCode, resultCode, data);
+        Fragment fragment = getSupportFragmentManager().findFragmentById(R.id.fragment_container);
+        fragment.onActivityResult(requestCode, resultCode, data);
+    }
+
+    @Override
+    public void onConnectionFailed(ConnectionResult connectionResult) {
+        if (connectionResult.hasResolution()) {
+            Log.e("google_place", "result has resolution");
+            try {
+                connectionResult.startResolutionForResult(this, REQUEST_CODE_RESOLVE_ERR);
+                Log.e("google_place", "trying....");
+            } catch (IntentSender.SendIntentException e) {
+                plusClient.connect();
+                Log.e("google_place", e.toString());
+            }
+        }
+        mConnectionResult = connectionResult;
+        Log.e("google_place", connectionResult.toString());
+
+    }
+
+    @Override
+    public void onStart() {
+        super.onStart();
+        EasyTracker.getInstance().activityStart(this); // Add this method.
+//        plusClient.connect();
+    }
+
+    @Override
+    public void onStop() {
+        super.onStop();
+        EasyTracker.getInstance().activityStop(this); // Add this method.
+//        plusClient.disconnect();
     }
 }

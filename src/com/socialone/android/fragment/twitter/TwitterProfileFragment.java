@@ -28,6 +28,7 @@ import com.crashlytics.android.Crashlytics;
 import com.socialone.android.R;
 import com.socialone.android.utils.BlurTransformation;
 import com.socialone.android.utils.Constants;
+import com.socialone.android.utils.RoundTransformation;
 import com.socialone.android.viewcomponents.RelativeTimeTextView;
 import com.squareup.picasso.Picasso;
 import com.viewpagerindicator.TitlePageIndicator;
@@ -64,6 +65,7 @@ public class TwitterProfileFragment extends SherlockFragment {
     private ArrayList<String> mtitles;
     FragmentManager fm;
     PagerAdapter pagerAdapter;
+    TwitterAboutFragment twitterAboutFragment = new TwitterAboutFragment();
     TwitterFollowersFragment twitterFollowersFragment = new TwitterFollowersFragment();
     TwitterFollowingFragment twitterFollowingFragment = new TwitterFollowingFragment();
 
@@ -71,11 +73,6 @@ public class TwitterProfileFragment extends SherlockFragment {
     ImageView userProfile;
     TextView userName;
     TextView userRealName;
-    TextView userTweets;
-    TextView userFollowing;
-    TextView userFollowers;
-    TextView userFavorites;
-    TextView userDescription;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -90,11 +87,6 @@ public class TwitterProfileFragment extends SherlockFragment {
 
         userName = (TextView) view.findViewById(R.id.twitter_user_name_text);
         userRealName = (TextView) view.findViewById(R.id.twitter_real_name_text);
-        userTweets = (TextView) view.findViewById(R.id.twitter_tweet_count_text);
-        userFollowing = (TextView) view.findViewById(R.id.twitter_following_count_text);
-        userFollowers = (TextView) view.findViewById(R.id.twitter_follower_count_text);
-        userFavorites = (TextView) view.findViewById(R.id.twitter_fav_count_text);
-        userDescription = (TextView) view.findViewById(R.id.twitter_desc_text);
         userBackground = (ImageView) view.findViewById(R.id.twitter_background_image);
         userProfile = (ImageView) view.findViewById(R.id.twitter_profile_image);
 
@@ -102,10 +94,12 @@ public class TwitterProfileFragment extends SherlockFragment {
         titlePageIndicator = (TitlePageIndicator) view.findViewById(R.id.social_tpi);
 
         mtitles = new ArrayList<String>();
+        mtitles.add("About");
         mtitles.add("Followers");
         mtitles.add("Following");
 
         mFragments =  new ArrayList<Fragment>();
+        mFragments.add(twitterAboutFragment);
         mFragments.add(twitterFollowersFragment);
         mFragments.add(twitterFollowingFragment);
 
@@ -113,7 +107,7 @@ public class TwitterProfileFragment extends SherlockFragment {
 
         viewPager.setAdapter(pagerAdapter);
         viewPager.setOffscreenPageLimit(5);
-        viewPager.setCurrentItem(1);
+        viewPager.setCurrentItem(0);
         titlePageIndicator.setViewPager(viewPager);
         titlePageIndicator.setOnPageChangeListener(socialOPCL);
         titlePageIndicator.setOnCenterItemClickListener(new TitlePageIndicator.OnCenterItemClickListener() {
@@ -163,6 +157,7 @@ public class TwitterProfileFragment extends SherlockFragment {
                     .load(user.getOriginalProfileImageURL())
                     .resize(200, 200)
                     .centerCrop()
+                    .transform(new RoundTransformation())
                     .into(userProfile);
 
             Picasso.with(getSherlockActivity())
@@ -172,14 +167,8 @@ public class TwitterProfileFragment extends SherlockFragment {
                     .transform(new BlurTransformation(getSherlockActivity()))
                     .into(userBackground);
 
-            userName.setText(user.getScreenName());
+            userName.setText("@" + user.getScreenName());
             userRealName.setText(user.getName());
-            userTweets.setText(Integer.toString(user.getStatusesCount()) + " tweets");
-            userFollowers.setText(Integer.toString(user.getFollowersCount()) + " followers");
-            userFollowing.setText(Integer.toString(user.getFriendsCount()) + " following");
-            userFavorites.setText(Integer.toString(user.getFavouritesCount()) + " favorites");
-            userDescription.setText(user.getDescription());
-            Log.d("twitter user", user.getDescription());
         }catch (Exception e){
             e.printStackTrace();
         }
@@ -257,8 +246,6 @@ public class TwitterProfileFragment extends SherlockFragment {
                 viewHolder.userRealName = (TextView) view.findViewById(R.id.user_real_name);
                 viewHolder.userTwitName = (TextView) view.findViewById(R.id.user_twitter_name);
                 viewHolder.userImg = (ImageView) view.findViewById(R.id.user_image);
-                viewHolder.repostPost = (ImageView) view.findViewById(R.id.repost_post);
-                viewHolder.starPost = (ImageView) view.findViewById(R.id.star_post);
                 viewHolder.postTime = (RelativeTimeTextView) view.findViewById(R.id.post_time);
                 viewHolder.postClient = (TextView) view.findViewById(R.id.post_info_client);
                 viewHolder.postUser = (TextView) view.findViewById(R.id.post_info_user);
@@ -284,21 +271,6 @@ public class TwitterProfileFragment extends SherlockFragment {
                     .centerCrop()
                     .into(viewHolder.userImg);
 
-            viewHolder.starPost.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    //todo
-                }
-            });
-
-            viewHolder.repostPost.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    //TODO
-                }
-            });
-//            setImageView(viewHolder, position);
-
             return view;
         }
 
@@ -310,8 +282,6 @@ public class TwitterProfileFragment extends SherlockFragment {
             TextView postClient;
             TextView postUser;
             ImageView userImg;
-            ImageView starPost;
-            ImageView repostPost;
         }
 
         public String stripHtml(String html) {

@@ -9,6 +9,8 @@ import android.util.Base64;
 import android.util.Log;
 
 import com.crashlytics.android.Crashlytics;
+import com.socialone.android.places.PlacesSettings;
+import com.socialone.android.utils.Constants;
 import com.socialone.android.utils.Datastore;
 import com.uservoice.uservoicesdk.Config;
 import com.uservoice.uservoicesdk.UserVoice;
@@ -36,6 +38,7 @@ public class MainApp extends Application {
         Config config = new Config("socialone.uservoice.com");
         UserVoice.init(config, this);
         mContext = getApplicationContext();
+        PlacesSettings.getInstance().setApiKey(Constants.GOOGLE_KEY);
 //        try {
 //            int newVersionCode = getPackageManager()
 //                    .getPackageInfo(getPackageName(), 0).versionCode;

@@ -1,6 +1,7 @@
 package com.socialone.android.fragment.instagram;
 
 import android.content.Context;
+import android.content.Intent;
 import android.os.Bundle;
 import android.text.Html;
 import android.util.Log;
@@ -15,6 +16,7 @@ import android.widget.TextView;
 import com.actionbarsherlock.app.SherlockFragment;
 import com.haarman.listviewanimations.swinginadapters.prepared.SwingBottomInAnimationAdapter;
 import com.socialone.android.R;
+import com.socialone.android.activity.InstagramImageViewer;
 import com.socialone.android.jinstagram.Instagram;
 import com.socialone.android.jinstagram.auth.model.Token;
 import com.socialone.android.jinstagram.auth.oauth.InstagramService;
@@ -188,8 +190,12 @@ public class InstagramFeedFragment extends SherlockFragment {
             viewHolder.userRealName.setText(feed.getUser().getFullName());
             viewHolder.userTwitName.setText(feed.getUser().getUserName());
 
+            try{
             Long referenceTime = Long.parseLong(feed.getCaption().getCreatedTime());
             viewHolder.postTime.setReferenceTime(new Date(referenceTime * 1000).getTime());
+            }catch (Exception e){
+                Log.d("instagram", e.toString());
+            }
             viewHolder.instaInfo.setText(Integer.toString(feed.getLikes().getCount()) + " likes");
             //TODO add on click to these to open the respective client or user profile
 //            viewHolder.postClient.setText("via " + stripHtml(feed.getSource()));
@@ -199,6 +205,15 @@ public class InstagramFeedFragment extends SherlockFragment {
             Picasso.with(mContext)
                     .load(imageData.getImageUrl())
                     .into(viewHolder.userImg);
+
+            viewHolder.userImg.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    Intent photoViewerIntent = new Intent(getSherlockActivity(), InstagramImageViewer.class);
+                    photoViewerIntent.putExtra("photoid", feed.getId());
+                    startActivity(photoViewerIntent);
+                }
+            });
 
             return view;
         }

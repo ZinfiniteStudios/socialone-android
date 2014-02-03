@@ -58,6 +58,8 @@ public class Constants {
     public static final String TWIT_ACCESS_TOKEN = "twit.token";
     public static final String TWIT_ACCESS_SECRET = "twit.secret";
 
+    public static final String GOOGLE_KEY = "AIzaSyDOYgDEO6DPDeQxFF-zqjwAarG8Kna5j2g";
+
     String permissions[] = {
             "user_about_me",
             "user_activities",

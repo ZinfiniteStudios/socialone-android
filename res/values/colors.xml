@@ -25,6 +25,6 @@
 
     <integer-array name="ptr_colors">
         <item>@color/app_main_color</item>
-        <item>@color/custom_red</item>
+        <item>@color/translucent_white</item>
     </integer-array>
 </resources>

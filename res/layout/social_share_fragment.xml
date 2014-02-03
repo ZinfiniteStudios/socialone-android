@@ -3,7 +3,6 @@
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:socialone="http://socialone-android/schema"
     xmlns:oak="http://oak/oak/schema"
-    android:background="@color/list_background"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
@@ -22,6 +21,7 @@
             android:layout_weight="1"
             android:id="@+id/social_reset_button"
             android:text="Reset"
+            android:textColor="@color/light_text_color"
             android:layout_margin="4dp"
             android:layout_width="match_parent"
             android:layout_height="56dp" />
@@ -30,6 +30,7 @@
                 android:layout_weight="1"
                 android:id="@+id/social_share_button"
                 android:text="Share"
+                android:textColor="@color/light_text_color"
                 android:layout_margin="4dp"
                 android:layout_width="match_parent"
                 android:layout_height="56dp" />
@@ -415,6 +416,8 @@
                     <oak.widget.CancelEditText
                         android:id="@+id/share_details_text"
                         android:layout_height="wrap_content"
+                        android:textColor="@color/light_text_color"
+                        android:layout_marginLeft="10dp"
                         android:layout_width="0px"
                         android:layout_weight="1"
                         android:hint="@string/share_details_text_hint" />
@@ -425,6 +428,7 @@
                         android:layout_height="wrap_content"
                         android:layout_margin="4dp"
                         android:textSize="12sp"
+                        android:textColor="@color/light_text_color"
                         android:text="0" />
 
                 </LinearLayout>
@@ -443,11 +447,36 @@
                     android:layout_width="wrap_content"
                     android:layout_alignParentLeft="true"
                     android:layout_centerInParent="true"
-                    android:layout_marginLeft="8dp"
+                    android:layout_marginLeft="20dp"
                     android:text="@string/share_details_add_location" />
 
                 <Switch
                     android:id="@+id/location_switch"
+                    android:layout_height="wrap_content"
+                    android:layout_width="wrap_content"
+                    android:layout_marginRight="8dp"
+                    android:layout_centerInParent="true"
+                    android:layout_alignParentRight="true" />
+
+            </RelativeLayout>
+
+            <RelativeLayout
+                android:id="@+id/location_share_layout"
+                android:layout_width="fill_parent"
+                android:layout_height="48dp"
+                android:orientation="horizontal">
+
+                <oak.widget.TextViewWithFont
+                    android:textColor="@color/light_text_color"
+                    android:layout_height="wrap_content"
+                    android:layout_width="wrap_content"
+                    android:layout_alignParentLeft="true"
+                    android:layout_centerInParent="true"
+                    android:layout_marginLeft="20dp"
+                    android:text="Post via SMS" />
+
+                <Switch
+                    android:id="@+id/sms_switch"
                     android:layout_height="wrap_content"
                     android:layout_width="wrap_content"
                     android:layout_marginRight="8dp"

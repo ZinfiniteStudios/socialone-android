@@ -90,7 +90,7 @@ public class DefaultHeaderTransformer extends HeaderTransformer {
 
         // Default Labels to display
         mPullRefreshLabel = activity.getString(R.string.pull_to_refresh_pull_label);
-        mRefreshingLabel = activity.getString(R.string.pull_to_refresh_refreshing_label);
+        mRefreshingLabel = "Refreshing....";
         mReleaseLabel = activity.getString(R.string.pull_to_refresh_release_label);
 
         mAnimationDuration = activity.getResources()
@@ -378,7 +378,7 @@ public class DefaultHeaderTransformer extends HeaderTransformer {
                     new SmoothProgressDrawable.Builder(mHeaderProgressBar.getContext())
                             .interpolator(new AccelerateDecelerateInterpolator())
                             .sectionsCount(2)
-                            .separatorLength(6)
+                            .separatorLength(4)
                             .width(2)
                             .speed(1)
                             .reversed(true)

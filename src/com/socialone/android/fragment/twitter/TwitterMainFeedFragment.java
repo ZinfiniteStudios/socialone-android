@@ -5,13 +5,18 @@ import android.os.Bundle;
 import android.text.Html;
 import android.text.util.Linkify;
 import android.util.Log;
+import android.view.ActionMode;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
 import android.widget.BaseAdapter;
 import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.actionbarsherlock.app.SherlockFragment;
 import com.haarman.listviewanimations.swinginadapters.prepared.SwingBottomInAnimationAdapter;
@@ -30,9 +35,16 @@ import org.brickred.socialauth.android.SocialAuthError;
 
 import java.util.List;
 
+import twitter4j.AsyncTwitter;
+import twitter4j.AsyncTwitterFactory;
+import twitter4j.ResponseList;
 import twitter4j.Status;
 import twitter4j.Twitter;
+import twitter4j.TwitterAdapter;
+import twitter4j.TwitterException;
 import twitter4j.TwitterFactory;
+import twitter4j.TwitterListener;
+import twitter4j.TwitterMethod;
 import twitter4j.conf.ConfigurationBuilder;
 
 /**
@@ -47,11 +59,36 @@ public class TwitterMainFeedFragment extends SherlockFragment {
     SocialAuthAdapter mAuthAdapter;
     private PullToRefreshLayout mPullToRefreshLayout;
     SmoothProgressBar emptyView;
+    List<Status> feed;
+    ActionMode.Callback modeCallBack;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setHasOptionsMenu(true);
+
+        modeCallBack = new ActionMode.Callback() {
+            @Override
+            public boolean onCreateActionMode(ActionMode mode, Menu menu) {
+                mode.getMenuInflater().inflate(R.menu.social_share_menu, menu);
+                return false;
+            }
+
+            @Override
+            public boolean onPrepareActionMode(ActionMode mode, Menu menu) {
+                return false;
+            }
+
+            @Override
+            public boolean onActionItemClicked(ActionMode mode, MenuItem item) {
+                return false;
+            }
+
+            @Override
+            public void onDestroyActionMode(ActionMode mode) {
+
+            }
+        };
     }
 
     @Override
@@ -78,6 +115,21 @@ public class TwitterMainFeedFragment extends SherlockFragment {
                     }
                 })
                 .setup(mPullToRefreshLayout);
+
+        listView.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
+            @Override
+            public boolean onItemLongClick(AdapterView<?> parent, View view, int position, long id) {
+                getSherlockActivity().startActionMode(modeCallBack);
+                Log.d("twitter", "long item click");
+                return true;
+            }
+        });
+    }
+
+    public boolean onCreateActionMode(ActionMode mode, Menu menu) {
+        mode.setTitle("Options");
+        mode.getMenuInflater().inflate(R.menu.social_share_menu, menu);
+        return true;
     }
 
     private void setUpTwit4j() {
@@ -88,17 +140,38 @@ public class TwitterMainFeedFragment extends SherlockFragment {
                     .setOAuthConsumerSecret(Constants.TWIT_CONSUMER_SECRET)
                     .setOAuthAccessToken(mAuthAdapter.getCurrentProvider().getAccessGrant().getKey())
                     .setOAuthAccessTokenSecret(mAuthAdapter.getCurrentProvider().getAccessGrant().getSecret());
-            TwitterFactory tf = new TwitterFactory(cb.build());
-            Twitter twitter = tf.getInstance();
-            List<Status> statuses = twitter.getHomeTimeline();
-            mPullToRefreshLayout.setRefreshComplete();
-            googleCardsAdapter = new GoogleCardsAdapter(getSherlockActivity(), statuses);
-            SwingBottomInAnimationAdapter swingBottomInAnimationAdapter = new SwingBottomInAnimationAdapter(googleCardsAdapter);
-            swingBottomInAnimationAdapter.setInitialDelayMillis(300);
-            swingBottomInAnimationAdapter.setAbsListView(listView);
-            listView.setAdapter(swingBottomInAnimationAdapter);
-            googleCardsAdapter.setData(statuses);
-            Log.d("twitter", "twitter4j " + statuses.toString());
+
+            TwitterListener twitterListener = new TwitterAdapter() {
+
+                @Override
+                public void onException(TwitterException te, TwitterMethod method) {
+                    super.onException(te, method);
+                    Log.d("twitterfeed", te.toString());
+                }
+
+                @Override
+                public void gotHomeTimeline(final ResponseList<Status> statuses) {
+                    super.gotHomeTimeline(statuses);
+                    getSherlockActivity().runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            feed = statuses;
+                            googleCardsAdapter = new GoogleCardsAdapter(getSherlockActivity(), feed);
+                            SwingBottomInAnimationAdapter swingBottomInAnimationAdapter = new SwingBottomInAnimationAdapter(googleCardsAdapter);
+                            swingBottomInAnimationAdapter.setInitialDelayMillis(300);
+                            swingBottomInAnimationAdapter.setAbsListView(listView);
+                            listView.setAdapter(swingBottomInAnimationAdapter);
+                            googleCardsAdapter.notifyDataSetChanged();
+                            mPullToRefreshLayout.setRefreshComplete();
+                        }
+                    });
+                }
+            };
+
+            AsyncTwitterFactory factory = new AsyncTwitterFactory(cb.build());
+            AsyncTwitter asyncTwitter = factory.getInstance();
+            asyncTwitter.addListener(twitterListener);
+            asyncTwitter.getHomeTimeline();
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -150,6 +223,7 @@ public class TwitterMainFeedFragment extends SherlockFragment {
         mAuthAdapter.authorize(getSherlockActivity(), SocialAuthAdapter.Provider.TWITTER);
     }
 
+
     public class GoogleCardsAdapter extends BaseAdapter {
 
         private Context mContext;
@@ -199,7 +273,7 @@ public class TwitterMainFeedFragment extends SherlockFragment {
 
         @Override
         public View getView(int position, View convertView, ViewGroup parent) {
-            ViewHolder viewHolder;
+            final ViewHolder viewHolder;
             View view = convertView;
             if (view == null) {
                 view = LayoutInflater.from(mContext).inflate(R.layout.twitter_feed_item, parent, false);
@@ -209,8 +283,6 @@ public class TwitterMainFeedFragment extends SherlockFragment {
                 viewHolder.userRealName = (TextView) view.findViewById(R.id.user_real_name);
                 viewHolder.userTwitName = (TextView) view.findViewById(R.id.user_twitter_name);
                 viewHolder.userImg = (ImageView) view.findViewById(R.id.user_image);
-                viewHolder.repostPost = (ImageView) view.findViewById(R.id.repost_post);
-                viewHolder.starPost = (ImageView) view.findViewById(R.id.star_post);
                 viewHolder.postTime = (RelativeTimeTextView) view.findViewById(R.id.post_time);
                 viewHolder.postClient = (TextView) view.findViewById(R.id.post_info_client);
                 viewHolder.postUser = (TextView) view.findViewById(R.id.post_info_user);
@@ -237,20 +309,20 @@ public class TwitterMainFeedFragment extends SherlockFragment {
                     .centerCrop()
                     .into(viewHolder.userImg);
 
-            viewHolder.starPost.setOnClickListener(new View.OnClickListener() {
+            viewHolder.userImg.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    //todo
+                    Toast.makeText(getSherlockActivity(), feed.getUser().getProfileBackgroundColor().toString(), Toast.LENGTH_LONG).show();
                 }
             });
 
-            viewHolder.repostPost.setOnClickListener(new View.OnClickListener() {
+
+            view.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    //TODO
+                    //TODO tweet details
                 }
             });
-//            setImageView(viewHolder, position);
 
             return view;
         }
@@ -263,8 +335,6 @@ public class TwitterMainFeedFragment extends SherlockFragment {
             TextView postClient;
             TextView postUser;
             ImageView userImg;
-            ImageView starPost;
-            ImageView repostPost;
         }
 
         public String stripHtml(String html) {

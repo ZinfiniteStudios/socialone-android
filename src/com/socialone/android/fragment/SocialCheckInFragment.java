@@ -46,6 +46,8 @@ import com.socialone.android.appnet.adnlib.response.PostResponseHandler;
 import com.socialone.android.fragment.appnet.AppNetCheckInFragment;
 import com.socialone.android.fragment.facebook.FacebookCheckInFragment;
 import com.socialone.android.fragment.foursquare.FourSquareCheckInFragment;
+import com.socialone.android.fragment.googeplus.GooglePlacesFragment;
+import com.socialone.android.fragment.twitter.TwitterCheckInFragment;
 import com.socialone.android.utils.Datastore;
 import com.viewpagerindicator.TitlePageIndicator;
 
@@ -82,10 +84,11 @@ public class SocialCheckInFragment extends SherlockFragment {
     private ArrayList<String> mtitles;
     FragmentManager fm;
     PagerAdapter pagerAdapter;
-    GoogleCheckInFragment googleCheckInFragment = new GoogleCheckInFragment();
+    GooglePlacesFragment googleCheckInFragment = new GooglePlacesFragment();
     FacebookCheckInFragment facebookCheckInFragment = new FacebookCheckInFragment();
     FourSquareCheckInFragment fourSquareCheckInFragment = new FourSquareCheckInFragment();
     AppNetCheckInFragment appNetCheckInFragment = new AppNetCheckInFragment();
+    TwitterCheckInFragment twitterCheckInFragment = new TwitterCheckInFragment();
 
     MapView mapView;
     Bundle bundle;
@@ -164,15 +167,10 @@ public class SocialCheckInFragment extends SherlockFragment {
             mFragments.add(appNetCheckInFragment);
         }
 
-//        mtitles.add(getString(R.string.facebook));
-//        mtitles.add(getString(R.string.four_square));
-//        mtitles.add(getString(R.string.google_plus));
-//        mtitles.add(getString(R.string.app_net));
-//
-//        mFragments.add(facebookCheckInFragment);
-//        mFragments.add(fourSquareCheckInFragment);
-//        mFragments.add(googleCheckInFragment);
-//        mFragments.add(appNetCheckInFragment);
+//        if(prefs.getBoolean("twitter", false)){
+            mtitles.add(getString(R.string.twitter));
+            mFragments.add(twitterCheckInFragment);
+//        }
 
         pagerAdapter = new PagerAdapter(getSherlockActivity(), mtitles, mFragments);
 
@@ -393,6 +391,8 @@ public class SocialCheckInFragment extends SherlockFragment {
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         uiHelper.onActivityResult(requestCode, resultCode, data);
+        Fragment fragment = getChildFragmentManager().findFragmentById(googleCheckInFragment.getId());
+        fragment.onActivityResult(requestCode, resultCode, data);
     }
 
     @Override
