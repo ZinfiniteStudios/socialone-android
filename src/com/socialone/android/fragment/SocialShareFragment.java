@@ -29,6 +29,7 @@ import android.widget.Button;
 import android.widget.CompoundButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.PopupMenu;
 import android.widget.RelativeLayout;
 import android.widget.Switch;
 import android.widget.TextView;
@@ -52,6 +53,18 @@ import com.google.analytics.tracking.android.EasyTracker;
 import com.google.android.gms.plus.PlusShare;
 import com.googlecode.flickrjandroid.Flickr;
 import com.googlecode.flickrjandroid.uploader.UploadMetaData;
+import com.jabistudio.androidjhlabs.filter.ChannelMixFilter;
+import com.jabistudio.androidjhlabs.filter.ContrastFilter;
+import com.jabistudio.androidjhlabs.filter.DespeckleFilter;
+import com.jabistudio.androidjhlabs.filter.GainFilter;
+import com.jabistudio.androidjhlabs.filter.GrayscaleFilter;
+import com.jabistudio.androidjhlabs.filter.KaleidoscopeFilter;
+import com.jabistudio.androidjhlabs.filter.SharpenFilter;
+import com.jabistudio.androidjhlabs.filter.SmartBlurFilter;
+import com.jabistudio.androidjhlabs.filter.SolarizeFilter;
+import com.jabistudio.androidjhlabs.filter.util.AndroidUtils;
+import com.loopj.android.http.AsyncHttpResponseHandler;
+import com.socialone.android.MainApp;
 import com.socialone.android.R;
 import com.socialone.android.appnet.adnlib.Annotations;
 import com.socialone.android.appnet.adnlib.AppDotNetClient;
@@ -61,6 +74,7 @@ import com.socialone.android.appnet.adnlib.response.PostResponseHandler;
 import com.socialone.android.fivehundredpx.api.auth.User;
 import com.socialone.android.fivehundredpx.api.services.UploadService;
 import com.socialone.android.services.TwitterPostService;
+import com.socialone.android.tools.TumblrClient;
 import com.socialone.android.utils.Constants;
 import com.socialone.android.utils.Datastore;
 import com.socialone.android.utils.FlickrHelper;
@@ -135,6 +149,7 @@ public class SocialShareFragment extends SherlockFragment {
     ImageView moodShare;
 
     ImageView photoShareImg;
+    ImageView photoShareFilterMenu;
 
     TextView shareTextCount;
     CancelEditText shareField;
@@ -172,6 +187,17 @@ public class SocialShareFragment extends SherlockFragment {
     User fiveUser;
     JumblrClient jumblrClient;
     SharedPreferences prefs;
+
+    PopupMenu popupMenu;
+    private final static int CONTRAST = 1;
+    private final static int GAIN = 2;
+    private final static int GREYSCALE = 3;
+    private final static int SOLARIZE = 4;
+    private final static int SMARTBLUR = 5;
+    private final static int KALEIDOSCOPE = 6;
+    private final static int SHARPEN = 7;
+    private final static int DESPECK = 8;
+    private final static int CHANNELMIX = 9;
 
     //camera intent stuff
     private static String root = null;
@@ -249,6 +275,7 @@ public class SocialShareFragment extends SherlockFragment {
         moodShare = (ImageView) view.findViewById(R.id.mood_share_icon);
 
         photoShareImg = (ImageView) view.findViewById(R.id.social_share_photo_view);
+        photoShareFilterMenu = (ImageView) view.findViewById(R.id.social_photo_filter_picker);
         shareBtn = (Button) view.findViewById(R.id.social_share_button);
         resetShares = (Button) view.findViewById(R.id.social_reset_button);
 
@@ -261,6 +288,60 @@ public class SocialShareFragment extends SherlockFragment {
         shareField.addTextChangedListener(mTextEditorWatcher);
 
         shareAddThings();
+
+        popupMenu = new PopupMenu(getSherlockActivity(), photoShareFilterMenu);
+        popupMenu.getMenu().add(android.view.Menu.NONE, CONTRAST, android.view.Menu.NONE,  "Contrast");
+        popupMenu.getMenu().add(android.view.Menu.NONE, GAIN, android.view.Menu.NONE, "Gain");
+        popupMenu.getMenu().add(android.view.Menu.NONE, GREYSCALE, android.view.Menu.NONE, "Greyscale");
+        popupMenu.getMenu().add(android.view.Menu.NONE, SOLARIZE, android.view.Menu.NONE, "Solarize");
+        popupMenu.getMenu().add(android.view.Menu.NONE, SMARTBLUR, android.view.Menu.NONE, "Smart Blur");
+        popupMenu.getMenu().add(android.view.Menu.NONE, KALEIDOSCOPE, android.view.Menu.NONE, "Kaleidoscope");
+        popupMenu.getMenu().add(android.view.Menu.NONE, SHARPEN, android.view.Menu.NONE, "Sharpen");
+        popupMenu.getMenu().add(android.view.Menu.NONE, DESPECK, android.view.Menu.NONE, "Despeckle");
+        popupMenu.getMenu().add(android.view.Menu.NONE, CHANNELMIX, android.view.Menu.NONE, "Channel Mix");
+
+        photoShareFilterMenu.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                popupMenu.show();
+            }
+        });
+
+        popupMenu.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
+            @Override
+            public boolean onMenuItemClick(android.view.MenuItem item) {
+                switch (item.getItemId()) {
+                    case CONTRAST:
+                        contrastImage();
+                        break;
+                    case GAIN:
+                        gainImage();
+                        break;
+                    case GREYSCALE:
+                        greyscaleImage();
+                        break;
+                    case SOLARIZE:
+                        solarizeImage();
+                        break;
+                    case SMARTBLUR:
+                        smartBlurImage();
+                        break;
+                    case KALEIDOSCOPE:
+                        kaleidoscopeFilter();
+                        break;
+                    case SHARPEN:
+                        sharpenImage();
+                        break;
+                    case DESPECK:
+                        despeckleImage();
+                        break;
+                    case CHANNELMIX:
+                        channelMixImage();
+                        break;
+                }
+                return false;
+            }
+        });
 
         photoShare.setColorFilter(getResources().getColor(R.color.white));
         linkShare.setColorFilter(getResources().getColor(R.color.white));
@@ -318,6 +399,23 @@ public class SocialShareFragment extends SherlockFragment {
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
                 fiveUser = new User();
+            }
+        });
+
+        photoShareImg.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                photoShareImg.buildDrawingCache();
+                Bitmap mOrigBitmap = photoShareImg.getDrawingCache();
+                SolarizeFilter solarFilter = new SolarizeFilter();
+                int[] src = AndroidUtils.bitmapToIntArray(mOrigBitmap);
+                int width = mOrigBitmap.getWidth();
+                int height = mOrigBitmap.getHeight();
+                //int[] dest = invertFilter.filter(src, width, height);
+                int[] dest = solarFilter.filter(src, width, height);
+
+                Bitmap destBitmap = Bitmap.createBitmap(dest, width, height, Bitmap.Config.ARGB_8888);
+                photoShareImg.setImageBitmap(destBitmap);
             }
         });
         return view;
@@ -963,8 +1061,6 @@ public class SocialShareFragment extends SherlockFragment {
     }
 
     private void tumblrShare(String string) {
-        jumblrClient = new JumblrClient(Constants.TUMBLR_CONSUMER_KEY, Constants.TUMBLR_CONSUMER_SECRET);
-        jumblrClient.setToken(prefs.getString(Constants.TUMBLR_ACCESS, null), prefs.getString(Constants.TUMBLR_SECRET, null));
         try {
             Map<String, String> detail = new HashMap<String, String>();
             detail.put("quote", string);
@@ -1124,6 +1220,24 @@ public class SocialShareFragment extends SherlockFragment {
         }
 
         if (tumblrSwitch.isChecked()) {
+            photoShareImg.setDrawingCacheEnabled(true);
+            Bitmap tumblrBitmap = photoShareImg.getDrawingCache();
+            jumblrClient = new JumblrClient(Constants.TUMBLR_CONSUMER_KEY, Constants.TUMBLR_CONSUMER_SECRET);
+            jumblrClient.setToken(prefs.getString(Constants.TUMBLR_ACCESS, null), prefs.getString(Constants.TUMBLR_SECRET, null));
+            TumblrClient tumblrClient = MainApp.getClient();
+            tumblrClient.createPhotoPost(jumblrClient.user().getName(), tumblrBitmap, new AsyncHttpResponseHandler() {
+                @Override
+                public void onSuccess(int arg0, String arg1) {
+                   Toast.makeText(getSherlockActivity(), "Image posted to tumblr", Toast.LENGTH_LONG).show();
+
+                }
+
+                @Override
+                public void onFailure(Throwable arg0, String arg1) {
+                    Toast.makeText(getSherlockActivity(), arg1, Toast.LENGTH_LONG).show();
+                }
+            });
+
             tumblrShare(userShareText);
         }
 
@@ -1225,8 +1339,8 @@ public class SocialShareFragment extends SherlockFragment {
                 picturePath = cursor.getString(columnIndex);
                 cursor.close();
                 Log.d("photo", picturePath);
-//            photoShareImg.setImageBitmap(BitmapFactory.decodeFile(picturePath));
-                photoShareImg.setImageBitmap(getThumbnail(selectedImage));
+                photoShareImg.setImageBitmap(BitmapFactory.decodeFile(picturePath));
+//                photoShareImg.setImageBitmap(selectedImage);
                 addPhoto = true;
             } else {
                 Log.d("photo", "result fail");
@@ -1301,4 +1415,131 @@ public class SocialShareFragment extends SherlockFragment {
         }
         return activeSession;
     }
+
+    public void solarizeImage(){
+        photoShareImg.buildDrawingCache();
+        Bitmap mOrigBitmap = photoShareImg.getDrawingCache();
+        SolarizeFilter solarFilter = new SolarizeFilter();
+        int[] src = AndroidUtils.bitmapToIntArray(mOrigBitmap);
+        int width = mOrigBitmap.getWidth();
+        int height = mOrigBitmap.getHeight();
+        //int[] dest = invertFilter.filter(src, width, height);
+        int[] dest = solarFilter.filter(src, width, height);
+
+        Bitmap destBitmap = Bitmap.createBitmap(dest, width, height, Bitmap.Config.ARGB_8888);
+        photoShareImg.setImageBitmap(destBitmap);
+    }
+
+    public void contrastImage(){
+        photoShareImg.buildDrawingCache();
+        Bitmap mOrigBitmap = photoShareImg.getDrawingCache();
+        ContrastFilter contrastFilter = new ContrastFilter();
+        int[] src = AndroidUtils.bitmapToIntArray(mOrigBitmap);
+        int width = mOrigBitmap.getWidth();
+        int height = mOrigBitmap.getHeight();
+        //int[] dest = invertFilter.filter(src, width, height);
+        int[] dest = contrastFilter.filter(src, width, height);
+
+        Bitmap destBitmap = Bitmap.createBitmap(dest, width, height, Bitmap.Config.ARGB_8888);
+        photoShareImg.setImageBitmap(destBitmap);
+    }
+
+    public void gainImage(){
+        photoShareImg.buildDrawingCache();
+        Bitmap mOrigBitmap = photoShareImg.getDrawingCache();
+        GainFilter gainFilter = new GainFilter();
+        int[] src = AndroidUtils.bitmapToIntArray(mOrigBitmap);
+        int width = mOrigBitmap.getWidth();
+        int height = mOrigBitmap.getHeight();
+        //int[] dest = invertFilter.filter(src, width, height);
+        int[] dest = gainFilter.filter(src, width, height);
+
+        Bitmap destBitmap = Bitmap.createBitmap(dest, width, height, Bitmap.Config.ARGB_8888);
+        photoShareImg.setImageBitmap(destBitmap);
+    }
+
+    public void greyscaleImage(){
+        photoShareImg.buildDrawingCache();
+        Bitmap mOrigBitmap = photoShareImg.getDrawingCache();
+        GrayscaleFilter grayscaleFilter = new GrayscaleFilter();
+        int[] src = AndroidUtils.bitmapToIntArray(mOrigBitmap);
+        int width = mOrigBitmap.getWidth();
+        int height = mOrigBitmap.getHeight();
+        //int[] dest = invertFilter.filter(src, width, height);
+        int[] dest = grayscaleFilter.filter(src, width, height);
+
+        Bitmap destBitmap = Bitmap.createBitmap(dest, width, height, Bitmap.Config.ARGB_8888);
+        photoShareImg.setImageBitmap(destBitmap);
+    }
+
+    public void sharpenImage(){
+        photoShareImg.buildDrawingCache();
+        Bitmap mOrigBitmap = photoShareImg.getDrawingCache();
+        SharpenFilter sharpenFilters = new SharpenFilter();
+        int[] src = AndroidUtils.bitmapToIntArray(mOrigBitmap);
+        int width = mOrigBitmap.getWidth();
+        int height = mOrigBitmap.getHeight();
+        //int[] dest = invertFilter.filter(src, width, height);
+        int[] dest = sharpenFilters.filter(src, width, height);
+
+        Bitmap destBitmap = Bitmap.createBitmap(dest, width, height, Bitmap.Config.ARGB_8888);
+        photoShareImg.setImageBitmap(destBitmap);
+    }
+
+    public void smartBlurImage(){
+        photoShareImg.buildDrawingCache();
+        Bitmap mOrigBitmap = photoShareImg.getDrawingCache();
+        SmartBlurFilter smartBlurFilter = new SmartBlurFilter();
+        int[] src = AndroidUtils.bitmapToIntArray(mOrigBitmap);
+        int width = mOrigBitmap.getWidth();
+        int height = mOrigBitmap.getHeight();
+        //int[] dest = invertFilter.filter(src, width, height);
+        int[] dest = smartBlurFilter.filter(src, width, height);
+
+        Bitmap destBitmap = Bitmap.createBitmap(dest, width, height, Bitmap.Config.ARGB_8888);
+        photoShareImg.setImageBitmap(destBitmap);
+    }
+
+    public void kaleidoscopeFilter(){
+        photoShareImg.buildDrawingCache();
+        Bitmap mOrigBitmap = photoShareImg.getDrawingCache();
+        KaleidoscopeFilter kaleidoscopeFilter = new KaleidoscopeFilter();
+        int[] src = AndroidUtils.bitmapToIntArray(mOrigBitmap);
+        int width = mOrigBitmap.getWidth();
+        int height = mOrigBitmap.getHeight();
+        //int[] dest = invertFilter.filter(src, width, height);
+        int[] dest = kaleidoscopeFilter.filter(src, width, height);
+
+        Bitmap destBitmap = Bitmap.createBitmap(dest, width, height, Bitmap.Config.ARGB_8888);
+        photoShareImg.setImageBitmap(destBitmap);
+    }
+
+    public void channelMixImage(){
+        photoShareImg.buildDrawingCache();
+        Bitmap mOrigBitmap = photoShareImg.getDrawingCache();
+        ChannelMixFilter channelMixFilter = new ChannelMixFilter();
+        int[] src = AndroidUtils.bitmapToIntArray(mOrigBitmap);
+        int width = mOrigBitmap.getWidth();
+        int height = mOrigBitmap.getHeight();
+        //int[] dest = invertFilter.filter(src, width, height);
+        int[] dest = channelMixFilter.filter(src, width, height);
+
+        Bitmap destBitmap = Bitmap.createBitmap(dest, width, height, Bitmap.Config.ARGB_8888);
+        photoShareImg.setImageBitmap(destBitmap);
+    }
+
+    public void despeckleImage(){
+        photoShareImg.buildDrawingCache();
+        Bitmap mOrigBitmap = photoShareImg.getDrawingCache();
+        DespeckleFilter despeckleFilter = new DespeckleFilter();
+        int[] src = AndroidUtils.bitmapToIntArray(mOrigBitmap);
+        int width = mOrigBitmap.getWidth();
+        int height = mOrigBitmap.getHeight();
+        //int[] dest = invertFilter.filter(src, width, height);
+        int[] dest = despeckleFilter.filter(src, width, height);
+
+        Bitmap destBitmap = Bitmap.createBitmap(dest, width, height, Bitmap.Config.ARGB_8888);
+        photoShareImg.setImageBitmap(destBitmap);
+    }
+
 }

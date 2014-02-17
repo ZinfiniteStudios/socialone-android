@@ -9,19 +9,20 @@ import android.view.View;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
 
-import com.actionbarsherlock.app.SherlockActivity;
 import com.androauth.api.TumblrApi;
 import com.androauth.oauth.OAuth10Service;
 import com.androauth.oauth.OAuth10Token;
 import com.androauth.oauth.OAuthService;
+import com.codepath.oauth.OAuthLoginActivity;
 import com.socialone.android.R;
+import com.socialone.android.tools.TumblrClient;
 import com.socialone.android.utils.Constants;
 import com.twotoasters.android.hoot.HootResult;
 
 /**
  * Created by david.hodge on 1/7/14.
  */
-public class TumblrAuthActivity extends SherlockActivity {
+public class TumblrAuthActivity extends OAuthLoginActivity<TumblrClient> {
     OAuth10Service service;
 
     public final static String PARAMETER_CONSUMER_KEY = Constants.TUMBLR_CONSUMER_KEY;
@@ -31,6 +32,11 @@ public class TumblrAuthActivity extends SherlockActivity {
     private String consumerKey;
     private String consumerSecret;
     private String callbackUrl;
+//    private OnLoginHandler loginHandler;
+//
+//    public interface OnLoginHandler {
+//        public void onLogin();
+//    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -71,6 +77,12 @@ public class TumblrAuthActivity extends SherlockActivity {
         });
         service.setApiCallback(callbackUrl);
         service.start();
+
+        getClient().connect();
+
+//        if (TumblrAuthActivity.this instanceof OnLoginHandler) {
+//            loginHandler = (OnLoginHandler) TumblrAuthActivity.this;
+//        }
     }
 
     @SuppressLint("SetJavaScriptEnabled")
@@ -110,5 +122,38 @@ public class TumblrAuthActivity extends SherlockActivity {
         edit.putBoolean("tumblr", true);
         edit.commit();
         this.finish();
+    }
+
+    @Override
+    public void onLoginSuccess() {
+        Log.d("DEBUG", "on login success");
+        this.finish();
+//        getClient().getUserInfo(new JsonHttpResponseHandler() {
+//            @Override
+//            public void onSuccess(int code, JSONObject response) {
+//                try {
+//                    JSONObject jsonUser = response.getJSONObject("response")
+//                            .getJSONObject("user");
+//                    TumblrUser.setCurrentUser(TumblrUser.fromJson(jsonUser));
+////                    if (loginHandler != null) {
+////                        loginHandler.onLogin();
+////                    }
+//                } catch (JSONException e) {
+//                    e.printStackTrace();
+//                }
+//
+//                Log.d("DEBUG", response.toString());
+//            }
+//
+//            @Override
+//            public void onFailure(Throwable error) {
+//                Log.d("DEBUG", error.toString());
+//            }
+//        });
+    }
+
+    @Override
+    public void onLoginFailure(Exception e) {
+        Log.d("DEBUG", e.toString());
     }
 }

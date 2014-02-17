@@ -11,7 +11,7 @@ public class Constants {
     public static final String TWITTER_CALLBACK = "https://social.zinfinitestudios.com/v1/callback/";
     public static final String INSTAGRAM_CALLBACK = "http://social.zinfinitestudios.com/v1/callback/";
     public static final String FOURSQUARE_CALLBACK = "http://social.zinfinitestudios.com/v1/callback/";
-    public static final String TUMBLR_CALLBACK = "http://social.zinfinitestudios.com/v1/callback/";
+    public static final String TUMBLR_CALLBACK = "oauth://socialone";
     public static final String APPNET_CALLBACK = "http://social.zinfinitestudios.com/v1/callback/";
     public static final String LINKEDIN_CALLBACK = "http://social.zinfinitestudios.com/v1/callback/";
     public static final String FLICKR_CALLBACK = "http://www.flickr.com/auth-72157639298400395";

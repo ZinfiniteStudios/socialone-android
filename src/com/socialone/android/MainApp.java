@@ -2,6 +2,7 @@ package com.socialone.android;
 
 import android.app.Application;
 import android.content.Context;
+import android.content.SharedPreferences;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 import android.content.pm.Signature;
@@ -10,6 +11,7 @@ import android.util.Log;
 
 import com.crashlytics.android.Crashlytics;
 import com.socialone.android.places.PlacesSettings;
+import com.socialone.android.tools.TumblrClient;
 import com.socialone.android.utils.Constants;
 import com.socialone.android.utils.Datastore;
 import com.uservoice.uservoicesdk.Config;
@@ -26,11 +28,29 @@ public class MainApp extends Application {
     Datastore mDataStore;
     private static Context mContext;
 
+    private static MainApp instance;
+
+    public static MainApp getInstance() {
+        return instance;
+    }
+
+    public static TumblrClient getClient() {
+        return (TumblrClient) TumblrClient.getInstance(TumblrClient.class,
+                instance);
+    }
+
+    public static SharedPreferences getSharedPreferences() {
+        if (instance != null) {
+            return instance.getSharedPreferences("socialone", 0);
+        }
+        return null;
+    }
 
     @Override
     public void onCreate() {
         super.onCreate();
         Log.i(TAG, "onCreate");
+        MainApp.instance = this;
         Crashlytics.start(this);
 //        Parse.initialize(this, "qAC53f5OOSOSrWNS5rSPzqZRSyZdfBxbvLQg1zFH", "2DcrC6RA6a3zZ1HKgKKZmjf37aEUWiNGEWpY2cda");
 //        PushService.setDefaultPushCallback(this, MainActivity.class);
@@ -39,6 +59,7 @@ public class MainApp extends Application {
         UserVoice.init(config, this);
         mContext = getApplicationContext();
         PlacesSettings.getInstance().setApiKey(Constants.GOOGLE_KEY);
+
 //        try {
 //            int newVersionCode = getPackageManager()
 //                    .getPackageInfo(getPackageName(), 0).versionCode;

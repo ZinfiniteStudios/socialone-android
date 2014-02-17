@@ -149,5 +149,8 @@
         <item name="dropDownListViewStyle">@style/DropDownListView.Socialone</item>
     </style>
 
+    <style name="MyApp.PopupMenu" parent="android:Widget.Holo.Light.ListPopupWindow">
+        <item name="android:popupBackground">@color/nav_background</item>
+    </style>
 
 </resources>

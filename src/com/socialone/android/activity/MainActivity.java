@@ -214,9 +214,9 @@ public class MainActivity extends SherlockFragmentActivity implements GooglePlay
                     userProfileImageLink = Constants.FACEBOOK_GRAPH + user.getId() + "/picture?type=large";
                     userHeaderImageLink = Constants.FACEBOOK_GRAPH + user.getId() + "/picture?type=large";
                     userName = user.getName();
-                    if(user.getLocation() != null){
+                    if (user.getLocation() != null) {
                         userLocation = user.getLocation().getCity() + " " + user.getLocation().getState();
-                    }else{
+                    } else {
                         userLocation = "Location Unavail";
                     }
 
@@ -673,7 +673,7 @@ public class MainActivity extends SherlockFragmentActivity implements GooglePlay
 //        //To change body of implemented methods use File | Settings | File Templates.
 //    }
 
-    public static Session ensureFacebookSessionFromCache(Context context){
+    public static Session ensureFacebookSessionFromCache(Context context) {
         Session activeSession = Session.getActiveSession();
         if (activeSession == null || !activeSession.getState().isOpened()) {
             activeSession = Session.openActiveSessionFromCache(context);
@@ -698,8 +698,7 @@ public class MainActivity extends SherlockFragmentActivity implements GooglePlay
             super.onDrawerSlide(drawerView, slideOffset);
             if (slideOffset > 0.0f) {
                 setBlurAlpha(slideOffset);
-            }
-            else {
+            } else {
                 clearBlurImage();
             }
         }
@@ -712,7 +711,7 @@ public class MainActivity extends SherlockFragmentActivity implements GooglePlay
 
         private void setBlurAlpha(float slideOffset) {
 //            if (mBlurImage.getVisibility() != View.VISIBLE) {
-                setBlurImage();
+            setBlurImage();
 //            }
             ViewHelper.setAlpha(mBlurImage, slideOffset);
         }

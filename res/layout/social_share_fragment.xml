@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<ScrollView
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:socialone="http://socialone-android/schema"
     xmlns:oak="http://oak/oak/schema"
     android:layout_width="match_parent"
@@ -17,14 +16,14 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content">
 
-        <oak.widget.ButtonWithFont
-            android:layout_weight="1"
-            android:id="@+id/social_reset_button"
-            android:text="Reset"
-            android:textColor="@color/light_text_color"
-            android:layout_margin="4dp"
-            android:layout_width="match_parent"
-            android:layout_height="56dp" />
+            <oak.widget.ButtonWithFont
+                android:layout_weight="1"
+                android:id="@+id/social_reset_button"
+                android:text="Reset"
+                android:textColor="@color/light_text_color"
+                android:layout_margin="4dp"
+                android:layout_width="match_parent"
+                android:layout_height="56dp" />
 
             <oak.widget.ButtonWithFont
                 android:layout_weight="1"
@@ -35,7 +34,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="56dp" />
 
-    </LinearLayout>
+        </LinearLayout>
 
         <LinearLayout
             android:layout_margin="8dp"
@@ -405,34 +404,32 @@
             <View style="@style/HeaderDivider" />
 
 
+            <LinearLayout
+                android:layout_height="wrap_content"
+                android:layout_width="fill_parent"
+                android:layout_marginRight="4dp"
+                android:layout_marginLeft="4dp"
+                android:orientation="horizontal">
 
-                <LinearLayout
+                <oak.widget.CancelEditText
+                    android:id="@+id/share_details_text"
                     android:layout_height="wrap_content"
-                    android:layout_width="fill_parent"
-                    android:layout_marginRight="4dp"
-                    android:layout_marginLeft="4dp"
-                    android:orientation="horizontal">
+                    android:textColor="@color/light_text_color"
+                    android:layout_marginLeft="10dp"
+                    android:layout_width="0px"
+                    android:layout_weight="1"
+                    android:hint="@string/share_details_text_hint" />
 
-                    <oak.widget.CancelEditText
-                        android:id="@+id/share_details_text"
-                        android:layout_height="wrap_content"
-                        android:textColor="@color/light_text_color"
-                        android:layout_marginLeft="10dp"
-                        android:layout_width="0px"
-                        android:layout_weight="1"
-                        android:hint="@string/share_details_text_hint" />
+                <oak.widget.TextViewWithFont
+                    android:id="@+id/share_text_count"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_margin="4dp"
+                    android:textSize="12sp"
+                    android:textColor="@color/light_text_color"
+                    android:text="0" />
 
-                    <oak.widget.TextViewWithFont
-                        android:id="@+id/share_text_count"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_margin="4dp"
-                        android:textSize="12sp"
-                        android:textColor="@color/light_text_color"
-                        android:text="0" />
-
-                </LinearLayout>
-
+            </LinearLayout>
 
 
             <RelativeLayout
@@ -527,12 +524,28 @@
                 android:layout_width="match_parent"
                 android:layout_height="200dp" />
 
-            <oak.widget.ButtonWithFont
-                android:id="@+id/social_share_photo_cancel_btn"
-                android:text="Cancel"
+            <LinearLayout
+                android:orientation="horizontal"
                 android:layout_width="match_parent"
-                android:layout_height="48dp" />
+                android:layout_height="48dp">
 
+                <oak.widget.ButtonWithFont
+                    android:id="@+id/social_share_photo_cancel_btn"
+                    android:text="Cancel"
+                    android:layout_weight="1"
+                    android:layout_width="match_parent"
+                    android:layout_height="48dp" />
+
+                <ImageView
+                    android:id="@+id/social_photo_filter_picker"
+                    android:layout_margin="12dp"
+                    android:layout_gravity="center"
+                    android:background="@color/translucent_white"
+                    android:src="@drawable/ic_menu_overflow"
+                    android:layout_width="32dp"
+                    android:layout_height="32dp" />
+
+            </LinearLayout>
         </LinearLayout>
 
         <LinearLayout
@@ -597,7 +610,7 @@
                     android:layout_gravity="center"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    oak:font="Roboto-Thin.ttf"/>
+                    oak:font="Roboto-Thin.ttf" />
 
             </LinearLayout>
 
@@ -625,7 +638,7 @@
                     android:layout_gravity="center"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    oak:font="Roboto-Thin.ttf"/>
+                    oak:font="Roboto-Thin.ttf" />
 
             </LinearLayout>
 
@@ -654,7 +667,7 @@
                     android:layout_gravity="center"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    oak:font="Roboto-Thin.ttf"/>
+                    oak:font="Roboto-Thin.ttf" />
 
             </LinearLayout>
 
