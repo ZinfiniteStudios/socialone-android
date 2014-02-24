@@ -14,8 +14,6 @@ import com.socialone.android.places.PlacesSettings;
 import com.socialone.android.tools.TumblrClient;
 import com.socialone.android.utils.Constants;
 import com.socialone.android.utils.Datastore;
-import com.uservoice.uservoicesdk.Config;
-import com.uservoice.uservoicesdk.UserVoice;
 
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
@@ -52,11 +50,12 @@ public class MainApp extends Application {
         Log.i(TAG, "onCreate");
         MainApp.instance = this;
         Crashlytics.start(this);
+        //TODO fix Uservoice shit
 //        Parse.initialize(this, "qAC53f5OOSOSrWNS5rSPzqZRSyZdfBxbvLQg1zFH", "2DcrC6RA6a3zZ1HKgKKZmjf37aEUWiNGEWpY2cda");
 //        PushService.setDefaultPushCallback(this, MainActivity.class);
 //        ParseInstallation.getCurrentInstallation().saveInBackground();
-        Config config = new Config("socialone.uservoice.com");
-        UserVoice.init(config, this);
+//        Config config = new Config("socialone.uservoice.com");
+//        UserVoice.init(config, this);
         mContext = getApplicationContext();
         PlacesSettings.getInstance().setApiKey(Constants.GOOGLE_KEY);
 

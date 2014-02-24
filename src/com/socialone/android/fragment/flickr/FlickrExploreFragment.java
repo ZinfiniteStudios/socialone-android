@@ -43,7 +43,6 @@ import java.util.List;
  */
 public class FlickrExploreFragment extends SherlockFragment {
 
-
     View view;
     ListView listView;
     GoogleCardsAdapter googleCardsAdapter;

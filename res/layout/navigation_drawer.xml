@@ -115,6 +115,11 @@
                 android:id="@+id/nav_item_foursquare"
                 socialone:itemText="Foursquare" />
 
+            <com.socialone.android.viewcomponents.NavDrawerItem
+                style="@style/NavDrawerItem"
+                android:id="@+id/nav_item_linkdin"
+                socialone:itemText="LinkdIn" />
+
 
             <com.socialone.android.viewcomponents.NavDrawerItem
                 style="@style/NavDrawerItem"

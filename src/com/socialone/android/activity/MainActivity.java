@@ -50,6 +50,7 @@ import com.socialone.android.fragment.SocialFragment;
 import com.socialone.android.fragment.UserProfileFragment;
 import com.socialone.android.fragment.appnet.AppNetNavFragment;
 import com.socialone.android.fragment.facebook.FacebookMainFeedFragment;
+import com.socialone.android.fragment.fivehund.FiveHundEditorFragment;
 import com.socialone.android.fragment.flickr.FlickrNavFragment;
 import com.socialone.android.fragment.foursquare.FoursquareNavFragment;
 import com.socialone.android.fragment.googeplus.GooglePlusFeedFragment;
@@ -117,6 +118,8 @@ public class MainActivity extends SherlockFragmentActivity implements GooglePlay
     public static final int NAV_ABOUT = R.id.nav_item_about;
     public static final int NAV_PROFILE = R.id.drawer_user_profile;
     public static final int NAV_TUMBLR = R.id.nav_item_tumblr;
+    public static final int NAV_FIVEHUN = R.id.nav_item_fivehundred;
+    public static final int NAV_LINKEDIN = R.id.nav_item_linkdin;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -333,6 +336,9 @@ public class MainActivity extends SherlockFragmentActivity implements GooglePlay
                 break;
             case NAV_ABOUT:
                 fragment = new AboutFragment();
+                break;
+            case NAV_FIVEHUN:
+                fragment = new FiveHundEditorFragment();
                 break;
             default:
                 return;
