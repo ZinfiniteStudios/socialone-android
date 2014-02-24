@@ -51,6 +51,7 @@ import com.socialone.android.fragment.UserProfileFragment;
 import com.socialone.android.fragment.appnet.AppNetNavFragment;
 import com.socialone.android.fragment.facebook.FacebookMainFeedFragment;
 import com.socialone.android.fragment.fivehund.FiveHundEditorFragment;
+import com.socialone.android.fragment.fivehund.FiveHundNavFragment;
 import com.socialone.android.fragment.flickr.FlickrNavFragment;
 import com.socialone.android.fragment.foursquare.FoursquareNavFragment;
 import com.socialone.android.fragment.googeplus.GooglePlusFeedFragment;
@@ -338,7 +339,7 @@ public class MainActivity extends SherlockFragmentActivity implements GooglePlay
                 fragment = new AboutFragment();
                 break;
             case NAV_FIVEHUN:
-                fragment = new FiveHundEditorFragment();
+                fragment = new FiveHundNavFragment();
                 break;
             default:
                 return;

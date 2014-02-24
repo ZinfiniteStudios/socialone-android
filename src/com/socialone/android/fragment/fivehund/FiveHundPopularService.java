@@ -7,12 +7,12 @@ import retrofit.http.GET;
 /**
  * Created by david.hodge on 2/24/14.
  */
-interface FiveHundEditorService {
-    @GET("/v1/photos?feature=editors&sort=rating&image_size=5&rpp=40")
+public interface FiveHundPopularService {
+    @GET("/v1/photos?feature=popular&sort=rating&image_size=5&rpp=40")
     PhotosResponse getPopularPhotos();
 
     static class PhotosResponse {
-       ArrayList<Photo> photos;
+        ArrayList<Photo> photos;
     }
 
     static class Photo {
