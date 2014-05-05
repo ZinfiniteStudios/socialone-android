@@ -11,6 +11,14 @@
         android:layout_width="fill_parent"
         android:layout_height="wrap_content" />
 
+    <oak.widget.CheckBoxWithFont
+        android:id="@+id/twitter_share_box"
+        android:layout_marginLeft="8dp"
+        android:layout_marginRight="8dp"
+        android:text="Share to Twitter"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" />
+
     <LinearLayout
         android:layout_margin="8dp"
         android:weightSum="2"

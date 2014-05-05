@@ -177,7 +177,17 @@ public class FourSquareNearbyFeedFragment extends SherlockFragment {
             viewHolder.textView.setText(post.getUser().getFirstName() + " @ " + post.getVenue().getName());
             viewHolder.postTime.setReferenceTime(new Date(post.getCreatedAt()*1000).getTime());
             //TODO add on click to these to open the respective client or user profile
-            viewHolder.postClient.setText(post.getVenue().getLocation().getAddress());
+            try {
+                Log.d("socialone", post.getVenue().getLocation().getAddress());
+                viewHolder.postClient.setText(post.getVenue().getLocation().getAddress());
+            }catch (NullPointerException e){
+                if(post.getVenue().getLocation().getCity() != null) {
+                    viewHolder.postClient.setText(post.getVenue().getLocation().getCity() + ", " + post.getVenue().getLocation().getState());
+                }else{
+                    viewHolder.postClient.setText(post.getVenue().getLocation().getState() + ", " + post.getVenue().getLocation().getCountry());
+                }
+            }
+
            viewHolder.postUser.setText(post.getText());
 
             Picasso.with(mContext)

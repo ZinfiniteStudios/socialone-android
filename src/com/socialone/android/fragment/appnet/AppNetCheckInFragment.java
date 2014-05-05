@@ -3,17 +3,23 @@ package com.socialone.android.fragment.appnet;
 import android.app.Dialog;
 import android.content.Context;
 import android.content.SharedPreferences;
-import android.location.Criteria;
+import android.graphics.Color;
 import android.location.Location;
 import android.location.LocationManager;
 import android.os.Bundle;
+import android.os.StrictMode;
 import android.preference.PreferenceManager;
+import android.text.Spannable;
+import android.text.SpannableString;
+import android.text.style.ForegroundColorSpan;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.Button;
+import android.widget.CheckBox;
+import android.widget.CompoundButton;
 import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.TextView;
@@ -31,11 +37,23 @@ import com.socialone.android.appnet.adnlib.data.PlaceList;
 import com.socialone.android.appnet.adnlib.data.Post;
 import com.socialone.android.appnet.adnlib.response.PlaceListResponseHandler;
 import com.socialone.android.appnet.adnlib.response.PostResponseHandler;
+import com.socialone.android.services.LocationService;
+import com.socialone.android.utils.Constants;
+
+import org.brickred.socialauth.android.DialogListener;
+import org.brickred.socialauth.android.SocialAuthAdapter;
+import org.brickred.socialauth.android.SocialAuthError;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 
 import oauth.signpost.OAuth;
+import twitter4j.GeoLocation;
+import twitter4j.Status;
+import twitter4j.StatusUpdate;
+import twitter4j.Twitter;
+import twitter4j.TwitterFactory;
+import twitter4j.conf.ConfigurationBuilder;
 
 /**
  * Created by david.hodge on 12/30/13.
@@ -56,10 +74,18 @@ public class AppNetCheckInFragment extends SherlockFragment {
     Button cancelCheckinBtn;
     Button checkinBtn;
 
+    LocationService locationService;
+
+    TwitterFactory tf;
+    Twitter twitter;
+    SocialAuthAdapter mAuthAdapter;
+
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
+        locationService = new LocationService(getSherlockActivity());
+        StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder().permitAll().build();
+        StrictMode.setThreadPolicy(policy);
     }
 
     @Override
@@ -78,11 +104,7 @@ public class AppNetCheckInFragment extends SherlockFragment {
 
     private void getUserLocation() {
         try {
-            locationManager = (LocationManager) getSherlockActivity().getSystemService(getSherlockActivity().LOCATION_SERVICE);
-            String bestProvider = locationManager.getBestProvider(new Criteria(), false);
-            location = locationManager.getLastKnownLocation(bestProvider);
-//            lat = Double.toString(location.getLatitude());
-//            lon = Double.toString(location.getLongitude());
+            location = locationService.getLocation();
             SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getSherlockActivity());
             client = new AppDotNetClient(prefs.getString(OAuth.OAUTH_TOKEN, null));
             PlaceSearchQueryParameters placeSearchQueryParameters = new PlaceSearchQueryParameters(location.getLatitude(), location.getLongitude());
@@ -110,7 +132,7 @@ public class AppNetCheckInFragment extends SherlockFragment {
         }
     }
 
-    public void checkinDialog(Place place){
+    public void checkinDialog(final Place place){
         final String placeName = place.getName();
         final String placeId = place.getFactualId();
         final String placeAdd = place.getAddress();
@@ -120,6 +142,48 @@ public class AppNetCheckInFragment extends SherlockFragment {
         checkinMessge =  (EditText) dialog.findViewById(R.id.checkin_message);
         cancelCheckinBtn = (Button) dialog.findViewById(R.id.checkin_message_cancel);
         checkinBtn = (Button) dialog.findViewById(R.id.checkin_message_checkin);
+
+        final CheckBox twitterCheckbox = (CheckBox) dialog.findViewById(R.id.twitter_share_box);
+
+        twitterCheckbox.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                if(isChecked){
+
+                    mAuthAdapter = new SocialAuthAdapter(new DialogListener() {
+                        @Override
+                        public void onComplete(Bundle bundle) {
+                            ConfigurationBuilder cb = new ConfigurationBuilder();
+                            cb.setDebugEnabled(true)
+                                    .setOAuthConsumerKey(Constants.TWIT_CONSUMER_KEY)
+                                    .setOAuthConsumerSecret(Constants.TWIT_CONSUMER_SECRET)
+                                    .setOAuthAccessToken(mAuthAdapter.getCurrentProvider().getAccessGrant().getKey())
+                                    .setOAuthAccessTokenSecret(mAuthAdapter.getCurrentProvider().getAccessGrant().getSecret());
+                            tf = new TwitterFactory(cb.build());
+                            twitter = tf.getInstance();
+                        }
+
+                        @Override
+                        public void onError(SocialAuthError socialAuthError) {
+                            Log.e("twitter", "auth adapter " + socialAuthError.getMessage());
+                        }
+
+                        @Override
+                        public void onCancel() {
+                            //stub
+                        }
+
+                        @Override
+                        public void onBack() {
+                            //stub
+                        }
+                    });
+
+                    mAuthAdapter.addCallBack(SocialAuthAdapter.Provider.TWITTER, Constants.TWITTER_CALLBACK);
+                    mAuthAdapter.authorize(getSherlockActivity(), SocialAuthAdapter.Provider.TWITTER);
+                }
+            }
+        });
 
         cancelCheckinBtn.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -157,10 +221,27 @@ public class AppNetCheckInFragment extends SherlockFragment {
                     }
                 });
 
+                if(twitterCheckbox.isChecked()){
+                    try {
+                        StatusUpdate statusUpdate = new StatusUpdate("I'm at " + place.getName() + " via @SocialOne_App");
+                        statusUpdate.setPlaceId(place.getFactualId());
+                        GeoLocation geoLocation = new GeoLocation(location.getLatitude(), location.getLongitude());
+                        statusUpdate.setLocation(geoLocation);
+                        statusUpdate.setDisplayCoordinates(true);
+                        statusUpdate.placeId(place.getFactualId());
+                        Status status = twitter.updateStatus(statusUpdate);
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
+                }
+
             };
         });
 
-        dialog.setTitle(placeName);
+        SpannableString str = new SpannableString(placeName);
+        str.setSpan(new ForegroundColorSpan(Color.BLACK), 0, placeName.length(), Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
+
+        dialog.setTitle(str);
         dialog.show();
     }
 
@@ -209,6 +290,8 @@ public class AppNetCheckInFragment extends SherlockFragment {
                 viewHolder = new ViewHolder();
                 viewHolder.textView = (TextView) view.findViewById(R.id.social_checkin_name);
                 viewHolder.checkBox = (Button) view.findViewById(R.id.social_checkin_checkbox);
+                viewHolder.locAddr = (TextView) view.findViewById(R.id.social_checkin_address);
+                viewHolder.mapbtn = (Button) view.findViewById(R.id.social_checkin_map_btn);
 
                 view.setTag(viewHolder);
 
@@ -224,7 +307,14 @@ public class AppNetCheckInFragment extends SherlockFragment {
                     checkinDialog(place);
                 }
             });
-//            setImageView(viewHolder, position);
+
+            viewHolder.locAddr.setText(place.getAddress());
+            viewHolder.mapbtn.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    //TODO
+                }
+            });
 
             return view;
         }
@@ -232,6 +322,9 @@ public class AppNetCheckInFragment extends SherlockFragment {
         public class ViewHolder {
             TextView textView;
             Button checkBox;
+
+            TextView locAddr;
+            Button mapbtn;
         }
     }
 }

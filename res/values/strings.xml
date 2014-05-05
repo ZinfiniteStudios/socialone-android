@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="hello">Hello socialone-android!</string>
-    <string name="app_name">SocialOne</string>
+    <string name="app_name">SocialOne Beta</string>
     <string name="app_id">1395812680657016</string>
     <string name="critter_id">5276171197c8f2351e000001</string>
     <string name="furry_id">XKDQSB8WT6DX8QG373WM</string>
@@ -14,7 +14,7 @@
     <string name="px_consumer_secret">A7UzErJdSOo99IQuTJhhYZbFEZn6KbySaF9RbUF7</string>
     <string name="flickr_key">87d0ccf46bf73b10709e03d78edb0d25</string>
     <string name="flickr_secret">5d1ee0b6ac5c67e9</string>
-    <string name="version_dynamic">Version %1$s</string>
+    <string name="version_dynamic">v %1$s</string>
 
     <string name="navigation_drawer_open">Open navigation drawer</string>
     <string name="drawer_open">Open navigation drawer</string>
@@ -52,4 +52,11 @@
     <string name="dialog_vote">Take me there!</string>
 
     <string name="just_now">Just now!</string>
+
+    <!--  Strings for possible PreferenceActivity Back/Next buttons -->
+    <string name="back_button_label">Back</string>
+    <string name="next_button_label">Next</string>
+
+    <!-- Optional button to Skip a PreferenceActivity [CHAR LIMIT=20] -->
+    <string name="skip_button_label">Skip</string>
 </resources>

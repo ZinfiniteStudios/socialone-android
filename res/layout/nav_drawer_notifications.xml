@@ -7,10 +7,10 @@
     android:layout_width="350dp"
     android:layout_height="match_parent">
 
-    <fragment
-        android:id="@+id/noti_frag"
-        android:name="com.socialone.android.fragment.NotificationFragment"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent" />
+    <!--<fragment-->
+        <!--android:id="@+id/noti_frag"-->
+        <!--android:name="com.socialone.android.fragment.NotificationFragment"-->
+        <!--android:layout_width="match_parent"-->
+        <!--android:layout_height="match_parent" />-->
 
 </LinearLayout>

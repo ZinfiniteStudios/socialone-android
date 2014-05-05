@@ -2,16 +2,23 @@ package com.socialone.android.fragment.foursquare;
 
 import android.app.Dialog;
 import android.content.Context;
-import android.location.Criteria;
+import android.graphics.Color;
 import android.location.Location;
 import android.location.LocationManager;
 import android.os.Bundle;
+import android.os.StrictMode;
+import android.text.Spannable;
+import android.text.SpannableString;
+import android.text.style.ForegroundColorSpan;
+import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.Button;
+import android.widget.CheckBox;
+import android.widget.CompoundButton;
 import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.TextView;
@@ -27,11 +34,22 @@ import com.socialone.android.condesales.listeners.CheckInListener;
 import com.socialone.android.condesales.listeners.FoursquareVenuesResquestListener;
 import com.socialone.android.condesales.models.Checkin;
 import com.socialone.android.condesales.models.Venue;
+import com.socialone.android.services.LocationService;
+import com.socialone.android.utils.Constants;
+import com.socialone.android.utils.MimicryAdapter;
 
+import org.brickred.socialauth.android.DialogListener;
 import org.brickred.socialauth.android.SocialAuthAdapter;
+import org.brickred.socialauth.android.SocialAuthError;
 
 import java.util.ArrayList;
 import java.util.Iterator;
+
+import twitter4j.GeoLocation;
+import twitter4j.StatusUpdate;
+import twitter4j.Twitter;
+import twitter4j.TwitterFactory;
+import twitter4j.conf.ConfigurationBuilder;
 
 /**
  * Created by david.hodge on 12/25/13.
@@ -51,10 +69,18 @@ public class FourSquareCheckInFragment extends SherlockFragment {
     Button cancelCheckinBtn;
     Button checkinBtn;
 
+    LocationService locationService;
+
+    TwitterFactory tf;
+    Twitter twitter;
+    SocialAuthAdapter mAuthAdapter;
+
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
+        locationService = new LocationService(getSherlockActivity());
+        StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder().permitAll().build();
+        StrictMode.setThreadPolicy(policy);
     }
 
     @Override
@@ -73,67 +99,131 @@ public class FourSquareCheckInFragment extends SherlockFragment {
     }
 
     private void getUserLocation() {
-            locationManager = (LocationManager) getSherlockActivity().getSystemService(getSherlockActivity().LOCATION_SERVICE);
-            String bestProvider = locationManager.getBestProvider(new Criteria(), false);
-            location = locationManager.getLastKnownLocation(bestProvider);
+//            locationManager = (LocationManager) getSherlockActivity().getSystemService(getSherlockActivity().LOCATION_SERVICE);
+//            String bestProvider = locationManager.getBestProvider(new Criteria(), false);
+//            location = locationManager.getLastKnownLocation(bestProvider);
+        location = locationService.getLocation();
 //            lat = Double.toString(location.getLatitude());
 //            lon = Double.toString(location.getLongitude());
-            easyFoursquareAsync = new EasyFoursquareAsync(getSherlockActivity());
-            easyFoursquareAsync.requestAccess(new AccessTokenRequestListener() {
-                @Override
-                public void onAccessGrant(String accessToken) {
-                    VenuesCriteria criteria = new VenuesCriteria();
-                    criteria.setLocation(location);
-                    criteria.setQuantity(40);
-                    easyFoursquareAsync.getVenuesNearby(new FoursquareVenuesResquestListener() {
-                        @Override
-                        public void onVenuesFetched(ArrayList<Venue> venues) {
-                            final ArrayList<Venue> venueArrayList = venues;
-                            getSherlockActivity().runOnUiThread(new Runnable() {
-                                @Override
-                                public void run() {
+        easyFoursquareAsync = new EasyFoursquareAsync(getSherlockActivity());
+        easyFoursquareAsync.requestAccess(new AccessTokenRequestListener() {
+            @Override
+            public void onAccessGrant(String accessToken) {
+                VenuesCriteria criteria = new VenuesCriteria();
+                criteria.setLocation(location);
+                criteria.setQuantity(40);
+                easyFoursquareAsync.getVenuesNearby(new FoursquareVenuesResquestListener() {
+                    @Override
+                    public void onVenuesFetched(ArrayList<Venue> venues) {
+                        final ArrayList<Venue> venueArrayList = venues;
+                        getSherlockActivity().runOnUiThread(new Runnable() {
+                            @Override
+                            public void run() {
+                                DisplayMetrics metrics = new DisplayMetrics();
+                                getActivity().getWindowManager().getDefaultDisplay().getMetrics(metrics);
+                                float scaleFactor = metrics.density;
+                                int widthPixels = metrics.widthPixels;
+                                int heightPixels = metrics.heightPixels;
+
+                                float widthDp = widthPixels / scaleFactor;
+                                float heightDp = heightPixels / scaleFactor;
+
+                                float smallestWidth = Math.min(widthDp, heightDp);
+
+
+                                if (smallestWidth > 720) {
                                     googleCardsAdapter = new GoogleCardsAdapter(getSherlockActivity(), venueArrayList);
-                                    SwingBottomInAnimationAdapter swingBottomInAnimationAdapter =  new SwingBottomInAnimationAdapter(googleCardsAdapter);
+                                    SwingBottomInAnimationAdapter swingBottomInAnimationAdapter = new SwingBottomInAnimationAdapter(googleCardsAdapter);
+                                    swingBottomInAnimationAdapter.setInitialDelayMillis(300);
+                                    swingBottomInAnimationAdapter.setAbsListView(listView);
+                                    listView.setAdapter(swingBottomInAnimationAdapter);
+                                    final MimicryAdapter adapter = new MimicryAdapter(getSherlockActivity(), 2, swingBottomInAnimationAdapter);
+                                    listView.setAdapter(adapter);
+                                    googleCardsAdapter.setData(venueArrayList);
+                                } else {
+                                    googleCardsAdapter = new GoogleCardsAdapter(getSherlockActivity(), venueArrayList);
+                                    SwingBottomInAnimationAdapter swingBottomInAnimationAdapter = new SwingBottomInAnimationAdapter(googleCardsAdapter);
                                     swingBottomInAnimationAdapter.setInitialDelayMillis(300);
                                     swingBottomInAnimationAdapter.setAbsListView(listView);
                                     listView.setAdapter(swingBottomInAnimationAdapter);
                                     googleCardsAdapter.setData(venueArrayList);
                                 }
-                            });
-                            Log.d("places", "response " + venues.toString());
-                            Iterator<Venue> itr = venues.listIterator();
-                            int z=0,x=0,increment=0;
-                            while (itr.hasNext()){
-                                String data = itr.next().getName();
-                                Log.d("places",z + " " + data);
-                                z++;
                             }
+                        });
+                        Log.d("places", "response " + venues.toString());
+                        Iterator<Venue> itr = venues.listIterator();
+                        int z = 0, x = 0, increment = 0;
+                        while (itr.hasNext()) {
+                            String data = itr.next().getName();
+                            Log.d("places", z + " " + data);
+                            z++;
                         }
+                    }
 
-                        @Override
-                        public void onError(String errorMsg) {
+                    @Override
+                    public void onError(String errorMsg) {
 
-                        }
-                    }, criteria);
-                }
+                    }
+                }, criteria);
+            }
 
-                @Override
-                public void onError(String errorMsg) {
+            @Override
+            public void onError(String errorMsg) {
 
-                }
-            });
+            }
+        });
     }
 
-    public void checkinDialog(Venue place){
+    public void checkinDialog(final Venue place) {
         final String placeName = place.getName();
         final String placeId = place.getId();
 
         dialog = new Dialog(getSherlockActivity());
         dialog.setContentView(R.layout.checkin_dialog);
-        checkinMessge =  (EditText) dialog.findViewById(R.id.checkin_message);
+        checkinMessge = (EditText) dialog.findViewById(R.id.checkin_message);
         cancelCheckinBtn = (Button) dialog.findViewById(R.id.checkin_message_cancel);
         checkinBtn = (Button) dialog.findViewById(R.id.checkin_message_checkin);
 
+        final CheckBox twitterCheckbox = (CheckBox) dialog.findViewById(R.id.twitter_share_box);
+
+        twitterCheckbox.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+//                if(isChecked){
+
+                mAuthAdapter = new SocialAuthAdapter(new DialogListener() {
+                    @Override
+                    public void onComplete(Bundle bundle) {
+                        ConfigurationBuilder cb = new ConfigurationBuilder();
+                        cb.setDebugEnabled(true)
+                                .setOAuthConsumerKey(Constants.TWIT_CONSUMER_KEY)
+                                .setOAuthConsumerSecret(Constants.TWIT_CONSUMER_SECRET)
+                                .setOAuthAccessToken(mAuthAdapter.getCurrentProvider().getAccessGrant().getKey())
+                                .setOAuthAccessTokenSecret(mAuthAdapter.getCurrentProvider().getAccessGrant().getSecret());
+                        tf = new TwitterFactory(cb.build());
+                        twitter = tf.getInstance();
+                    }
+
+                    @Override
+                    public void onError(SocialAuthError socialAuthError) {
+                        Log.e("twitter", "auth adapter " + socialAuthError.getMessage());
+                    }
+
+                    @Override
+                    public void onCancel() {
+                        //stub
+                    }
+
+                    @Override
+                    public void onBack() {
+                        //stub
+                    }
+                });
+                mAuthAdapter.addCallBack(SocialAuthAdapter.Provider.TWITTER, Constants.TWITTER_CALLBACK);
+                mAuthAdapter.authorize(getSherlockActivity(), SocialAuthAdapter.Provider.TWITTER);
+            }
+//            }
+        });
         cancelCheckinBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -145,6 +235,7 @@ public class FourSquareCheckInFragment extends SherlockFragment {
             @Override
             public void onClick(View v) {
                 CheckInCriteria checkInCriteria = new CheckInCriteria();
+                checkInCriteria.setLocation(location);
                 checkInCriteria.setShout(checkinMessge.getText().toString());
                 checkInCriteria.setVenueId(placeId);
                 easyFoursquareAsync.checkIn(new CheckInListener() {
@@ -160,10 +251,26 @@ public class FourSquareCheckInFragment extends SherlockFragment {
                     }
                 }, checkInCriteria);
 
+                if (twitterCheckbox.isChecked()) {
+                    try {
+                        StatusUpdate statusUpdate = new StatusUpdate("I'm at " + place.getName() + " via @SocialOne_App");
+                        statusUpdate.setPlaceId(place.getId());
+                        GeoLocation geoLocation = new GeoLocation(location.getLatitude(), location.getLongitude());
+                        statusUpdate.setLocation(geoLocation);
+                        statusUpdate.setDisplayCoordinates(true);
+                        statusUpdate.placeId(place.getId());
+                        twitter.updateStatus(statusUpdate);
+                    } catch (Exception e) {
+                        Log.e("twitter", e.toString());
+                    }
+                }
+
             }
         });
 
-        dialog.setTitle(placeName);
+        SpannableString str = new SpannableString(placeName);
+        str.setSpan(new ForegroundColorSpan(Color.BLACK), 0, placeName.length(), Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
+        dialog.setTitle(str);
         dialog.show();
     }
 
@@ -179,7 +286,7 @@ public class FourSquareCheckInFragment extends SherlockFragment {
             mAppPlace = appPlace;
         }
 
-        public void setData(ArrayList<Venue> appPlace){
+        public void setData(ArrayList<Venue> appPlace) {
             mAppPlace = appPlace;
         }
 
@@ -212,6 +319,8 @@ public class FourSquareCheckInFragment extends SherlockFragment {
                 viewHolder = new ViewHolder();
                 viewHolder.textView = (TextView) view.findViewById(R.id.social_checkin_name);
                 viewHolder.checkBox = (Button) view.findViewById(R.id.social_checkin_checkbox);
+                viewHolder.locAddr = (TextView) view.findViewById(R.id.social_checkin_address);
+                viewHolder.mapbtn = (Button) view.findViewById(R.id.social_checkin_map_btn);
 
                 view.setTag(viewHolder);
 
@@ -228,7 +337,25 @@ public class FourSquareCheckInFragment extends SherlockFragment {
                     checkinDialog(place);
                 }
             });
-//            setImageView(viewHolder, position);
+
+            try {
+                Log.d("social", place.getLocation().getAddress());
+                viewHolder.locAddr.setText(place.getLocation().getAddress());
+            } catch (Exception e) {
+                if (place.getLocation().getCity() != null) {
+                    viewHolder.locAddr.setText(place.getLocation().getCity() + ", " + place.getLocation().getState());
+                } else {
+                    viewHolder.locAddr.setText(place.getLocation().getState() + ", " + place.getLocation().getCountry());
+                }
+            }
+
+
+            viewHolder.mapbtn.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    //TODO
+                }
+            });
 
             return view;
         }
@@ -236,6 +363,9 @@ public class FourSquareCheckInFragment extends SherlockFragment {
         public class ViewHolder {
             TextView textView;
             Button checkBox;
+
+            TextView locAddr;
+            Button mapbtn;
         }
     }
 }

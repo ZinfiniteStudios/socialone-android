@@ -978,6 +978,10 @@ public class AppDotNetClient {
         execute(new AppDotNetApiRequest(responseHandler, queryParameters, ENDPOINT_PLACES, "search"));
     }
 
+    public void retrieveCheckins(PlaceSearchQueryParameters queryParameters, PlaceListResponseHandler responseHandler) {
+        execute(new AppDotNetApiRequest(responseHandler, queryParameters, ENDPOINT_PLACES, "search"));
+    }
+
     /*
      * STREAM MARKER
      */

@@ -31,12 +31,6 @@ import com.facebook.UiLifecycleHelper;
 import com.google.analytics.tracking.android.EasyTracker;
 import com.google.analytics.tracking.android.GoogleAnalytics;
 import com.google.analytics.tracking.android.Tracker;
-import com.google.android.gms.maps.CameraUpdateFactory;
-import com.google.android.gms.maps.GoogleMap;
-import com.google.android.gms.maps.MapView;
-import com.google.android.gms.maps.MapsInitializer;
-import com.google.android.gms.maps.model.CameraPosition;
-import com.google.android.gms.maps.model.LatLng;
 import com.socialone.android.R;
 import com.socialone.android.appnet.adnlib.Annotations;
 import com.socialone.android.appnet.adnlib.AppDotNetClient;
@@ -48,6 +42,7 @@ import com.socialone.android.fragment.facebook.FacebookCheckInFragment;
 import com.socialone.android.fragment.foursquare.FourSquareCheckInFragment;
 import com.socialone.android.fragment.googeplus.GooglePlacesFragment;
 import com.socialone.android.fragment.twitter.TwitterCheckInFragment;
+import com.socialone.android.services.LocationService;
 import com.socialone.android.utils.Datastore;
 import com.viewpagerindicator.TitlePageIndicator;
 
@@ -90,11 +85,11 @@ public class SocialCheckInFragment extends SherlockFragment {
     AppNetCheckInFragment appNetCheckInFragment = new AppNetCheckInFragment();
     TwitterCheckInFragment twitterCheckInFragment = new TwitterCheckInFragment();
 
-    MapView mapView;
+//    MapView mapView;
     Bundle bundle;
     GoogleAnalytics mGaInstance;
     Tracker mGaTracker;
-    GoogleMap mMap;
+//    GoogleMap mMap;
 
     String lat;
     String lon;
@@ -109,6 +104,7 @@ public class SocialCheckInFragment extends SherlockFragment {
     Session session;
 
     AppDotNetClient client;
+    LocationService locationService;
 
 
     @Override
@@ -118,7 +114,7 @@ public class SocialCheckInFragment extends SherlockFragment {
         setHasOptionsMenu(true);
 
         mContext = getSherlockActivity();
-
+        locationService = new LocationService(mContext);
         uiHelper = new UiLifecycleHelper(getSherlockActivity(), new Session.StatusCallback() {
             @Override
             public void call(Session session, SessionState state, Exception exception) {
@@ -132,12 +128,6 @@ public class SocialCheckInFragment extends SherlockFragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         view = inflater.inflate(R.layout.social_checkin_fragment, container, false);
-
-        try {
-            MapsInitializer.initialize(getActivity());
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
 
         viewPager = (ViewPager) view.findViewById(R.id.checkin_view_pager);
         titlePageIndicator = (TitlePageIndicator) view.findViewById(R.id.checkin_tpi);
@@ -157,20 +147,15 @@ public class SocialCheckInFragment extends SherlockFragment {
             mFragments.add(fourSquareCheckInFragment);
         }
 
-        if(prefs.getBoolean("googleplus", false)){
-            mtitles.add(getString(R.string.google_plus));
-            mFragments.add(googleCheckInFragment);
-        }
+//        if(prefs.getBoolean("googleplus", false)){
+//            mtitles.add(getString(R.string.google_plus));
+//            mFragments.add(googleCheckInFragment);
+//        }
 
         if(prefs.getBoolean("appnet", false)){
             mtitles.add(getString(R.string.app_net));
             mFragments.add(appNetCheckInFragment);
         }
-
-//        if(prefs.getBoolean("twitter", false)){
-            mtitles.add(getString(R.string.twitter));
-            mFragments.add(twitterCheckInFragment);
-//        }
 
         pagerAdapter = new PagerAdapter(getSherlockActivity(), mtitles, mFragments);
 
@@ -189,9 +174,9 @@ public class SocialCheckInFragment extends SherlockFragment {
 
         FragmentManager fm = getChildFragmentManager();
 
-        mapView = (MapView) view.findViewById(R.id.checkin_map_fragment);
-        mapView.onCreate(bundle);
-        setUpMapIfNeeded(view);
+//        mapView = (MapView) view.findViewById(R.id.checkin_map_fragment);
+//        mapView.onCreate(bundle);
+//        setUpMapIfNeeded(view);
 
         return view;
     }
@@ -218,37 +203,38 @@ public class SocialCheckInFragment extends SherlockFragment {
         checkinBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                HashMap<String, Object> list2 = new HashMap<String, Object>();
-                //TODO fill out all info as needed here
-                list2.put("id", java.util.UUID.randomUUID());
-                list2.put("address", address);
-                list2.put("name", checkinMessge.getText().toString());
-                list2.put("country_code", countryCode);
-                list2.put("latitude", location.getLatitude());
-                list2.put("longitude", location.getLongitude());
-                list2.put("postcode", postalCode);
-                list2.put("region", region);
-
-
-                Post post = new Post();
-                Annotation annotation = new Annotation();
-                annotation.setType(Annotations.OHAI_LOCATION);
-                annotation.setValue(list2);
-
-                post.setText(checkinMessge.getText().toString());
-                post.addAnnotation(annotation);
-                client.createPost(post, new PostResponseHandler() {
-                    @Override
-                    public void onSuccess(Post responseData) {
-                        dialog.dismiss();
-                    }
-
-                    @Override
-                    public void onError(Exception error) {
-                        super.onError(error);
-                        Log.d("checkin", error.getLocalizedMessage());
-                    }
-                });
+                getCompleteAddressString(locationService.getLatitude(), locationService.getLongitude());
+//                HashMap<String, Object> list2 = new HashMap<String, Object>();
+//                //TODO fill out all info as needed here
+//                list2.put("id", java.util.UUID.randomUUID());
+//                list2.put("address", address);
+//                list2.put("name", checkinMessge.getText().toString());
+//                list2.put("country_code", countryCode);
+//                list2.put("latitude", locationService.getLatitude());
+//                list2.put("longitude", locationService.getLongitude());
+//                list2.put("postcode", postalCode);
+//                list2.put("region", region);
+//
+//
+//                Post post = new Post();
+//                Annotation annotation = new Annotation();
+//                annotation.setType(Annotations.OHAI_LOCATION);
+//                annotation.setValue(list2);
+//
+//                post.setText(checkinMessge.getText().toString());
+//                post.addAnnotation(annotation);
+//                client.createPost(post, new PostResponseHandler() {
+//                    @Override
+//                    public void onSuccess(Post responseData) {
+//                        dialog.dismiss();
+//                    }
+//
+//                    @Override
+//                    public void onError(Exception error) {
+//                        super.onError(error);
+//                        Log.d("checkin", error.getLocalizedMessage());
+//                    }
+//                });
 
             };
         });
@@ -275,6 +261,39 @@ public class SocialCheckInFragment extends SherlockFragment {
                     strReturnedAddress.append(returnedAddress.getAddressLine(i)).append("\n");
                 }
                 strAdd = strReturnedAddress.toString();
+
+                HashMap<String, Object> list2 = new HashMap<String, Object>();
+                //TODO fill out all info as needed here
+                list2.put("id", java.util.UUID.randomUUID());
+                list2.put("address", address);
+                list2.put("name", checkinMessge.getText().toString());
+                list2.put("country_code", countryCode);
+                list2.put("latitude", locationService.getLatitude());
+                list2.put("longitude", locationService.getLongitude());
+                list2.put("postcode", postalCode);
+                list2.put("region", region);
+
+
+                Post post = new Post();
+                Annotation annotation = new Annotation();
+                annotation.setType(Annotations.OHAI_LOCATION);
+                annotation.setValue(list2);
+
+                post.setText(checkinMessge.getText().toString());
+                post.addAnnotation(annotation);
+                client.createPost(post, new PostResponseHandler() {
+                    @Override
+                    public void onSuccess(Post responseData) {
+                        dialog.dismiss();
+                    }
+
+                    @Override
+                    public void onError(Exception error) {
+                        super.onError(error);
+                        Log.d("checkin", error.getLocalizedMessage());
+                    }
+                });
+
                 Log.w("My Current loction address", "" + strReturnedAddress.toString());
             } else {
                 Log.w("My Current loction address", "No Address returned!");
@@ -295,36 +314,36 @@ public class SocialCheckInFragment extends SherlockFragment {
             lat = Double.toString(location.getLatitude());
             lon = Double.toString(location.getLongitude());
             getCompleteAddressString(location.getLatitude(), location.getLongitude());
-            final CameraPosition HOME =
-                    new CameraPosition.Builder().target(new LatLng(location.getLatitude(), location.getLongitude()))
-                            .zoom(17)
-                            .bearing(-100)
-                            .tilt(25)
-                            .build();
-            mMap.animateCamera(CameraUpdateFactory.newCameraPosition(HOME));
+//            final CameraPosition HOME =
+//                    new CameraPosition.Builder().target(new LatLng(location.getLatitude(), location.getLongitude()))
+//                            .zoom(17)
+//                            .bearing(-100)
+//                            .tilt(25)
+//                            .build();
+//            mMap.animateCamera(CameraUpdateFactory.newCameraPosition(HOME));
         } catch (Exception e) {
             e.printStackTrace();
             Crashlytics.logException(e);
         }
     }
 
-    private void setUpMap() {
-        mMap.setIndoorEnabled(true);
-        mMap.setMyLocationEnabled(true);
-        mMap.setMapType(GoogleMap.MAP_TYPE_HYBRID);
-        mMap.getUiSettings().setZoomControlsEnabled(false);
-        getUserLocation();
-//        mMap.moveCamera(CameraUpdateFactory.newCameraPosition(HOME));
-    }
-
-    private void setUpMapIfNeeded(View view) {
-        if (mMap == null) {
-            mMap = ((MapView) view.findViewById(R.id.checkin_map_fragment)).getMap();
-            if (mMap != null) {
-                setUpMap();
-            }
-        }
-    }
+//    private void setUpMap() {
+//        mMap.setIndoorEnabled(true);
+//        mMap.setMyLocationEnabled(true);
+//        mMap.setMapType(GoogleMap.MAP_TYPE_HYBRID);
+//        mMap.getUiSettings().setZoomControlsEnabled(false);
+//        getUserLocation();
+////        mMap.moveCamera(CameraUpdateFactory.newCameraPosition(HOME));
+//    }
+//
+//    private void setUpMapIfNeeded(View view) {
+//        if (mMap == null) {
+//            mMap = ((MapView) view.findViewById(R.id.checkin_map_fragment)).getMap();
+//            if (mMap != null) {
+//                setUpMap();
+//            }
+//        }
+//    }
 
     class PagerAdapter extends FragmentPagerAdapter {
         Context context;
@@ -404,28 +423,28 @@ public class SocialCheckInFragment extends SherlockFragment {
     @Override
     public void onResume() {
         super.onResume();
-        mapView.onResume();
+//        mapView.onResume();
         uiHelper.onResume();
     }
 
     @Override
     public void onPause() {
         super.onPause();
-        mapView.onPause();
+//        mapView.onPause();
         uiHelper.onPause();
     }
 
     @Override
     public void onDestroy() {
         super.onDestroy();
-        mapView.onDestroy();
+//        mapView.onDestroy();
         uiHelper.onDestroy();
     }
 
     @Override
     public void onLowMemory() {
         super.onLowMemory();
-        mapView.onLowMemory();
+//        mapView.onLowMemory();
     }
 
     @Override

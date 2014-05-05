@@ -8,13 +8,12 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content">
 
-    <com.google.android.gms.maps.MapView
-            android:id="@+id/checkin_map_fragment"
-            android:layout_height="145dp"
-            android:layout_width="fill_parent" />
+    <!--<com.google.android.gms.maps.MapView-->
+            <!--android:id="@+id/checkin_map_fragment"-->
+            <!--android:layout_height="145dp"-->
+            <!--android:layout_width="fill_parent" />-->
 
         <com.viewpagerindicator.TitlePageIndicator
-            android:layout_marginTop="115dp"
             android:id="@+id/checkin_tpi"
             style="@style/CheckinTitlePageIndicator"
             android:layout_width="fill_parent"

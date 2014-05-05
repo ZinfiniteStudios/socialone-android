@@ -52,16 +52,17 @@ public class SocialFragment extends SherlockFragment {
         titlePageIndicator = (TitlePageIndicator) view.findViewById(R.id.social_tpi);
 
         mtitles = new ArrayList<String>();
-        mtitles.add(getString(R.string.fragment_share));
+//        mtitles.add(getString(R.string.fragment_share));
         mtitles.add(getString(R.string.fragment_check));
 
         mFragments =  new ArrayList<Fragment>();
-        mFragments.add(socialShareFragment);
+//        mFragments.add(socialShareFragment);
         mFragments.add(socialCheckInFragment);
 
         pagerAdapter = new PagerAdapter(getSherlockActivity(), mtitles, mFragments);
 
         viewPager.setAdapter(pagerAdapter);
+        titlePageIndicator.setVisibility(View.GONE);
         titlePageIndicator.setViewPager(viewPager);
         titlePageIndicator.setOnPageChangeListener(socialOPCL);
         titlePageIndicator.setOnCenterItemClickListener(new TitlePageIndicator.OnCenterItemClickListener() {

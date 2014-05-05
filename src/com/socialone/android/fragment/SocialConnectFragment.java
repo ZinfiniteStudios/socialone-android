@@ -20,6 +20,7 @@ import com.actionbarsherlock.view.MenuItem;
 import com.facebook.Request;
 import com.facebook.Response;
 import com.facebook.Session;
+import com.facebook.SessionLoginBehavior;
 import com.facebook.SessionState;
 import com.facebook.UiLifecycleHelper;
 import com.facebook.model.GraphUser;
@@ -156,6 +157,7 @@ public class SocialConnectFragment extends RoboSherlockFragmentActivity
                         edit.putBoolean("foursquare", true);
                         edit.commit();
                         Log.d("4sq", "welcome to 4sq");
+                        Toast.makeText(SocialConnectFragment.this, "Connected to Foursquare!", Toast.LENGTH_LONG).show();
                         easyFoursquareAsync.getUserInfo(new UserInfoRequestListener() {
                             @Override
                             public void onUserInfoFetched(com.socialone.android.condesales.models.User user) {
@@ -193,16 +195,15 @@ public class SocialConnectFragment extends RoboSherlockFragmentActivity
                 Arrays.asList("user_photos", "read_stream", "user_status", "friends_photos",
                         "friends_status", "friends_birthday", "basic_info", "user_location"));
 
+        facebookBtn.setLoginBehavior(SessionLoginBehavior.SUPPRESS_SSO);
 //        Session session = Utils.ensureFacebookSessionFromCache(getBaseContext());
         session = Session.getActiveSession();
-        Request meRequest = Request.newMeRequest(session, new Request.GraphUserCallback() {
+        final Request meRequest = Request.newMeRequest(session, new Request.GraphUserCallback() {
             @Override
             public void onCompleted(GraphUser user, Response response) {
-                if (user != null) {
-                    edit.putBoolean("facebook", true);
-                    edit.commit();
-                    Toast.makeText(SocialConnectFragment.this, "Welcome " + user.getName(), Toast.LENGTH_SHORT).show();
-                }
+                edit.putBoolean("facebook", true);
+                edit.commit();
+                Toast.makeText(SocialConnectFragment.this, "Connected to Facebook", Toast.LENGTH_SHORT).show();
             }
         });
         meRequest.executeAsync();
@@ -215,7 +216,7 @@ public class SocialConnectFragment extends RoboSherlockFragmentActivity
         twitterLoginAdapter.setListener(new LoginListener() {
             @Override
             public void onComplete(Bundle bundle) {
-                Toast.makeText(SocialConnectFragment.this, "twitter connected", Toast.LENGTH_LONG).show();
+                Toast.makeText(SocialConnectFragment.this, "Connected to Twitter!", Toast.LENGTH_LONG).show();
             }
 
             @Override

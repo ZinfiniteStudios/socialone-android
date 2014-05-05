@@ -4,11 +4,14 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentSender;
+import android.content.SharedPreferences;
 import android.content.res.Configuration;
 import android.graphics.Bitmap;
+import android.graphics.PorterDuff;
 import android.graphics.drawable.Drawable;
 import android.os.Build;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.renderscript.Allocation;
 import android.renderscript.Element;
 import android.renderscript.RenderScript;
@@ -19,6 +22,8 @@ import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
+import android.text.Spannable;
+import android.text.SpannableString;
 import android.util.Log;
 import android.view.ActionProvider;
 import android.view.ContextMenu;
@@ -32,6 +37,12 @@ import android.widget.Toast;
 import com.actionbarsherlock.app.ActionBar;
 import com.actionbarsherlock.app.SherlockFragmentActivity;
 import com.actionbarsherlock.view.MenuItem;
+import com.amazon.device.ads.AdError;
+import com.amazon.device.ads.AdLayout;
+import com.amazon.device.ads.AdListener;
+import com.amazon.device.ads.AdProperties;
+import com.amazon.device.ads.AdRegistration;
+import com.amazon.device.ads.AdTargetingOptions;
 import com.facebook.Request;
 import com.facebook.Response;
 import com.facebook.Session;
@@ -44,13 +55,22 @@ import com.google.android.gms.common.GooglePlayServicesClient;
 import com.google.android.gms.plus.PlusClient;
 import com.nineoldandroids.view.ViewHelper;
 import com.socialone.android.R;
+import com.socialone.android.appnet.adnlib.AppDotNetClient;
+import com.socialone.android.appnet.adnlib.response.UserResponseHandler;
+import com.socialone.android.condesales.EasyFoursquareAsync;
+import com.socialone.android.condesales.listeners.AccessTokenRequestListener;
+import com.socialone.android.condesales.listeners.UserInfoRequestListener;
+import com.socialone.android.condesales.models.User;
 import com.socialone.android.fragment.AboutFragment;
 import com.socialone.android.fragment.OptiFeedFragment;
+import com.socialone.android.fragment.SettingsFragment;
+import com.socialone.android.fragment.SocialCheckInFragment;
+import com.socialone.android.fragment.SocialConnectFragment;
 import com.socialone.android.fragment.SocialFragment;
+import com.socialone.android.fragment.StoreFragment;
 import com.socialone.android.fragment.UserProfileFragment;
 import com.socialone.android.fragment.appnet.AppNetNavFragment;
 import com.socialone.android.fragment.facebook.FacebookMainFeedFragment;
-import com.socialone.android.fragment.fivehund.FiveHundEditorFragment;
 import com.socialone.android.fragment.fivehund.FiveHundNavFragment;
 import com.socialone.android.fragment.flickr.FlickrNavFragment;
 import com.socialone.android.fragment.foursquare.FoursquareNavFragment;
@@ -64,6 +84,9 @@ import com.socialone.android.utils.OldBlurTransformation;
 import com.socialone.android.utils.RoundTransformation;
 import com.socialone.android.viewcomponents.NavDrawerItem;
 import com.squareup.picasso.Picasso;
+
+import oak.util.FontTypefaceSpan;
+import oauth.signpost.OAuth;
 
 //import com.amazon.device.ads.AdLayout;
 //import com.amazon.device.ads.AdTargetingOptions;
@@ -84,7 +107,6 @@ public class MainActivity extends SherlockFragmentActivity implements GooglePlay
     ActionBarDrawerToggle mActionBarDrawerToggle;
     FragmentManager mfragmentManager;
     NavDrawerItem currentNavigationDrawerItem;
-    Context mContext;
     FragmentTransaction ft;
 
     BlurDrawerToggle blurDrawerToggle;
@@ -121,12 +143,22 @@ public class MainActivity extends SherlockFragmentActivity implements GooglePlay
     public static final int NAV_TUMBLR = R.id.nav_item_tumblr;
     public static final int NAV_FIVEHUN = R.id.nav_item_fivehundred;
     public static final int NAV_LINKEDIN = R.id.nav_item_linkdin;
+    public static final int NAV_STORE = R.id.nav_item_store;
+    public static final int NAV_SETTINGS = R.id.nav_item_settings;
+
+    SharedPreferences prefs;
+    EasyFoursquareAsync easyFoursquareAsync;
+    AppDotNetClient client;
+    Context mContext;
+
+    AdLayout adView;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
         setContentView(R.layout.main);
+
         mDrawerLayout = (DrawerLayout) findViewById(R.id.drawer_root);
         mBlurImage = (ImageView) findViewById(R.id.blur_image);
         mContent = (FrameLayout) findViewById(R.id.fragment_container);
@@ -136,6 +168,39 @@ public class MainActivity extends SherlockFragmentActivity implements GooglePlay
         userNameText = (TextView) findViewById(R.id.user_name);
         userLocationText = (TextView) findViewById(R.id.user_location);
 
+        adView = (AdLayout)findViewById(R.id.ad_view);
+        adView.setListener(new AdListener() {
+            @Override
+            public void onAdLoaded(AdLayout adLayout, AdProperties adProperties) {
+
+            }
+
+            @Override
+            public void onAdExpanded(AdLayout adLayout) {
+
+            }
+
+            @Override
+            public void onAdCollapsed(AdLayout adLayout) {
+
+            }
+
+            @Override
+            public void onAdFailedToLoad(AdLayout adLayout, AdError adError) {
+
+            }
+        });
+
+        try {
+            AdRegistration.setAppKey("9dc03c16047340d88ed5e306f717b2ac");
+        } catch (Exception e) {
+            Log.e("ad", "Exception thrown: " + e.toString());
+            return;
+        }
+
+        AdTargetingOptions adOptions = new AdTargetingOptions();
+        adView.loadAd(adOptions);
+
         mContext = this;
         mfragmentManager = getSupportFragmentManager();
         ActionBar actionBar = getSupportActionBar();
@@ -144,6 +209,7 @@ public class MainActivity extends SherlockFragmentActivity implements GooglePlay
         actionBar.setDisplayHomeAsUpEnabled(true);
         actionBar.setIcon(android.R.color.transparent);
 
+        prefs = PreferenceManager.getDefaultSharedPreferences(this);
 //        // Get the intent that started this activity
 //        Intent intent = getIntent();
 //        Uri data = intent.getData();
@@ -170,6 +236,12 @@ public class MainActivity extends SherlockFragmentActivity implements GooglePlay
             setContentFragment(NAV_SHARE);
         }
 
+        userImage.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                startActivity(new Intent(mContext, SocialConnectFragment.class));
+            }
+        });
 //        plusClient = new PlusClient.Builder(this, new GooglePlayServicesClient.ConnectionCallbacks() {
 //            @Override
 //            public void onConnected(Bundle bundle) {
@@ -206,81 +278,147 @@ public class MainActivity extends SherlockFragmentActivity implements GooglePlay
         mActionBarDrawerToggle.syncState();
         mDrawerLayout.setDrawerListener(mActionBarDrawerToggle);
         mDrawerLayout.setScrimColor(getResources().getColor(R.color.translucent_black));
+        brandGlowEffect(mContext, mContext.getResources().getColor(R.color.app_main_color));
+
+        String title = getResources().getString(R.string.app_name);
+        SpannableString s = new SpannableString(title);
+        s.setSpan(new FontTypefaceSpan(this, "RobotoSlab-Light.ttf"), 0, s.length(),
+                Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
+        getSupportActionBar().setTitle(s);
     }
 
     private void getUserInfo() {
 
-        session = ensureFacebookSessionFromCache(mContext);
-        Request meRequest = Request.newMeRequest(session, new Request.GraphUserCallback() {
-            @Override
-            public void onCompleted(GraphUser user, Response response) {
-                if (user != null) {
-                    userProfileImageLink = Constants.FACEBOOK_GRAPH + user.getId() + "/picture?type=large";
-                    userHeaderImageLink = Constants.FACEBOOK_GRAPH + user.getId() + "/picture?type=large";
-                    userName = user.getName();
-                    if (user.getLocation() != null) {
-                        userLocation = user.getLocation().getCity() + " " + user.getLocation().getState();
-                    } else {
-                        userLocation = "Location Unavail";
-                    }
+        if(prefs.getBoolean("facebook", false)) {
+            session = ensureFacebookSessionFromCache(mContext);
+            Request meRequest = Request.newMeRequest(session, new Request.GraphUserCallback() {
+                @Override
+                public void onCompleted(GraphUser user, Response response) {
+                    if (user != null) {
+                        userProfileImageLink = Constants.FACEBOOK_GRAPH + user.getId() + "/picture?type=large";
+                        userHeaderImageLink = Constants.FACEBOOK_GRAPH + user.getId() + "/picture?type=large";
+                        userName = user.getName();
+                        if (user.getLocation() != null) {
+                            userLocation = user.getLocation().getCity() + " " + user.getLocation().getState();
+                        } else {
+                            userLocation = "Location Unavail";
+                        }
 
-                    //sets user information
-                    userNameText.setText(userName);
-                    userLocationText.setText(userLocation);
+                        //sets user information
+                        userNameText.setText(userName);
+                        userLocationText.setText(userLocation);
 
-                    //displays user's profile image
-                    Picasso.with(mContext)
-                            .load(userProfileImageLink)
-                            .resize(200, 200)
-                            .centerCrop()
-                            .transform(new RoundTransformation())
-                            .into(userImage);
-
-                    //use large banner image if available
-                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.ICE_CREAM_SANDWICH) {
+                        //displays user's profile image
                         Picasso.with(mContext)
-                                .load(userHeaderImageLink)
-                                .resize(400, 400)
+                                .load(userProfileImageLink)
+                                .resize(200, 200)
                                 .centerCrop()
-                                .transform(new BlurTransformation(mContext))
-                                .into(userBackground);
-                    } else {
-                        Picasso.with(mContext)
-                                .load(userHeaderImageLink)
-                                .resize(400, 400)
-                                .centerCrop()
-                                .transform(new OldBlurTransformation())
-                                .into(userBackground);
+                                .transform(new RoundTransformation())
+                                .into(userImage);
+
+                        //use large banner image if available
+                        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.ICE_CREAM_SANDWICH) {
+                            Picasso.with(mContext)
+                                    .load(userHeaderImageLink)
+                                    .resize(400, 400)
+                                    .centerCrop()
+                                    .transform(new BlurTransformation(mContext))
+                                    .into(userBackground);
+                        } else {
+                            Picasso.with(mContext)
+                                    .load(userHeaderImageLink)
+                                    .resize(400, 400)
+                                    .centerCrop()
+                                    .transform(new OldBlurTransformation())
+                                    .into(userBackground);
+                        }
                     }
                 }
-            }
-        });
-        meRequest.executeAsync();
+            });
+            meRequest.executeAsync();
 
-//        //displays user's profile image
-//        Picasso.with(mContext)
-//                .load(userProfileImageLink)
-//                .resize(200, 200)
-//                .centerCrop()
-//                .transform(new RoundTransformation())
-//                .into(userImage);
-//
-//        //use large banner image if available
-//        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.ICE_CREAM_SANDWICH) {
-//            Picasso.with(mContext)
-//                    .load(userHeaderImageLink)
-//                    .resize(400, 400)
-//                    .centerCrop()
-//                    .transform(new BlurTransformation(mContext))
-//                    .into(userBackground);
-//        } else {
-//            Picasso.with(mContext)
-//                    .load(userHeaderImageLink)
-//                    .resize(400, 400)
-//                    .centerCrop()
-//                    .transform(new OldBlurTransformation())
-//                    .into(userBackground);
-//        }
+        }else if(prefs.getBoolean("foursquare", false)) {
+            easyFoursquareAsync = new EasyFoursquareAsync(MainActivity.this);
+            easyFoursquareAsync.requestAccess(new AccessTokenRequestListener() {
+                @Override
+                public void onAccessGrant(String accessToken) {
+                    easyFoursquareAsync.getUserInfo(new UserInfoRequestListener() {
+                        @Override
+                        public void onUserInfoFetched(User user) {
+                            //displays user's profile image
+                            userNameText.setText(user.getFirstName() + " " + user.getLastName());
+                            userLocationText.setText(user.getHomeCity());
+
+                            Picasso.with(mContext)
+                                    .load(user.getPhoto())
+                                    .resize(200, 200)
+                                    .centerCrop()
+                                    .transform(new RoundTransformation())
+                                    .into(userImage);
+
+                            //use large banner image if available
+                            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.ICE_CREAM_SANDWICH) {
+                                Picasso.with(mContext)
+                                        .load(user.getPhoto())
+                                        .resize(400, 400)
+                                        .centerCrop()
+                                        .transform(new BlurTransformation(mContext))
+                                        .into(userBackground);
+                            } else {
+                                Picasso.with(mContext)
+                                        .load(user.getPhoto())
+                                        .resize(400, 400)
+                                        .centerCrop()
+                                        .transform(new OldBlurTransformation())
+                                        .into(userBackground);
+                            }
+                        }
+
+                        @Override
+                        public void onError(String errorMsg) {
+
+                        }
+                    });
+                }
+
+                @Override
+                public void onError(String errorMsg) {
+
+                }
+            });
+        }else if(prefs.getBoolean("appnet", false)) {
+            client = new AppDotNetClient(prefs.getString(OAuth.OAUTH_TOKEN, null));
+            client.retrieveCurrentUser(new UserResponseHandler() {
+                @Override
+                public void onSuccess(final com.socialone.android.appnet.adnlib.data.User responseData) {
+//                final User data = responseData;
+                    runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            userNameText.setText(responseData.getName());
+                            userLocationText.setText(responseData.getLocale());
+                            android.os.Process.setThreadPriority(android.os.Process.THREAD_PRIORITY_BACKGROUND);
+                            Picasso.with(mContext)
+                                    .load(responseData.getAvatarImage().getUrl())
+                                    .resize(200, 200)
+                                    .centerCrop()
+                                    .transform(new RoundTransformation())
+                                    .into(userImage);
+
+                            Picasso.with(mContext)
+                                    .load(responseData.getCoverImage().getUrl())
+                                    .resize(2000, 2000)
+                                    .centerCrop()
+                                    .transform(new BlurTransformation(mContext))
+                                    .into(userBackground);
+
+                        }
+                    });
+
+                }
+
+            });
+        }
     }
 
 
@@ -303,7 +441,7 @@ public class MainActivity extends SherlockFragmentActivity implements GooglePlay
                 fragment = new UserProfileFragment();
                 break;
             case NAV_SHARE:
-                fragment = new SocialFragment();
+                fragment = new SocialCheckInFragment();
                 break;
             case NAV_OPTI:
                 fragment = new OptiFeedFragment();
@@ -340,6 +478,12 @@ public class MainActivity extends SherlockFragmentActivity implements GooglePlay
                 break;
             case NAV_FIVEHUN:
                 fragment = new FiveHundNavFragment();
+                break;
+            case NAV_STORE:
+                fragment = new StoreFragment();
+                break;
+            case NAV_SETTINGS:
+                fragment = new SettingsFragment();
                 break;
             default:
                 return;
@@ -807,5 +951,16 @@ public class MainActivity extends SherlockFragmentActivity implements GooglePlay
         super.onStop();
         EasyTracker.getInstance().activityStop(this); // Add this method.
 //        plusClient.disconnect();
+    }
+
+    static void brandGlowEffect(Context context, int brandColor) {
+        //glow
+        int glowDrawableId = context.getResources().getIdentifier("overscroll_glow", "drawable", "android");
+        Drawable androidGlow = context.getResources().getDrawable(glowDrawableId);
+        androidGlow.setColorFilter(brandColor, PorterDuff.Mode.SRC_IN);
+        //edge
+        int edgeDrawableId = context.getResources().getIdentifier("overscroll_edge", "drawable", "android");
+        Drawable androidEdge = context.getResources().getDrawable(edgeDrawableId);
+        androidEdge.setColorFilter(brandColor, PorterDuff.Mode.SRC_IN);
     }
 }

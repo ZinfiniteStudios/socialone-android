@@ -197,7 +197,7 @@ public class TwitterCheckInFragment extends SherlockFragment {
                 public void onClick(View v) {
                     //TODO
                     try {
-                        StatusUpdate statusUpdate = new StatusUpdate("at " + place.getName());
+                        StatusUpdate statusUpdate = new StatusUpdate("I'm at " + place.getName() + " using SocialOne for Android!");
                         statusUpdate.setPlaceId(place.getId());
                         statusUpdate.setLocation(geoLocation);
                         statusUpdate.setDisplayCoordinates(true);

@@ -40,13 +40,18 @@
 
     <Button
         android:id="@+id/social_connect_twitter_btn"
+        android:textColor="@color/white"
+        android:drawableLeft="@drawable/twitter"
         android:layout_width="fill_parent"
         android:layout_height="56dp"
+        android:layout_marginTop="12dp"
+        android:layout_marginBottom="12dp"
         android:layout_marginLeft="36dp"
         android:layout_marginRight="36dp"
         android:text="@string/twitter" />
 
     <com.google.android.gms.common.SignInButton
+        android:visibility="gone"
         android:id="@+id/social_connect_plus_btn"
         android:layout_width="fill_parent"
         android:layout_height="56dp"
@@ -58,14 +63,19 @@
 
     <Button
         android:id="@+id/social_connect_foursquare_btn"
+        android:background="@drawable/connect_to_foursquare_blue_default"
         android:layout_width="fill_parent"
         android:layout_height="56dp"
+        android:layout_marginTop="12dp"
+        android:layout_marginBottom="12dp"
         android:layout_marginLeft="36dp"
         android:layout_marginRight="36dp"
         android:text="@string/four_square" />
 
     <Button
         android:id="@+id/social_connect_appnet_btn"
+        android:drawableLeft="@drawable/appnet"
+        android:textColor="@color/white"
         android:layout_width="fill_parent"
         android:layout_height="56dp"
         android:layout_marginLeft="36dp"
@@ -75,6 +85,7 @@
         android:text="@string/app_net" />
 
     <Button
+        android:visibility="gone"
         android:id="@+id/social_connect_myspace_btn"
         android:layout_width="fill_parent"
         android:layout_height="56dp"
@@ -83,6 +94,7 @@
         android:text="@string/myspace" />
 
     <Button
+        android:visibility="gone"
         android:id="@+id/social_connect_instagram_btn"
         android:layout_width="fill_parent"
         android:layout_height="56dp"
@@ -93,6 +105,7 @@
         android:text="@string/instagram" />
 
     <Button
+        android:visibility="gone"
         android:id="@+id/social_connect_tumblr_btn"
         android:layout_width="fill_parent"
         android:layout_height="56dp"
@@ -102,6 +115,7 @@
         android:text="@string/tumblr" />
 
     <Button
+        android:visibility="gone"
         android:id="@+id/social_connect_linkdin_btn"
         android:layout_width="fill_parent"
         android:layout_height="56dp"
@@ -111,6 +125,7 @@
         android:text="@string/linkedin" />
 
     <Button
+        android:visibility="gone"
         android:id="@+id/social_connect_flickr_btn"
         android:layout_width="fill_parent"
         android:layout_height="56dp"
@@ -120,6 +135,7 @@
         android:text="@string/flickr" />
 
     <Button
+        android:visibility="gone"
         android:id="@+id/social_connect_500px_btn"
         android:layout_width="fill_parent"
         android:layout_height="56dp"

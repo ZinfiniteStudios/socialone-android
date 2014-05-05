@@ -40,26 +40,29 @@
                     android:layout_alignParentLeft="true"
                     android:scaleType="centerCrop" />
 
-                <oak.widget.TextViewWithFont
-                    style="@style/ShadowText"
-                    android:textColor="@color/light_text_color"
-                    android:id="@+id/user_name"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_alignParentBottom="true"
-                    android:layout_marginBottom="24dp"
-                    android:layout_marginLeft="85dp" />
 
                 <oak.widget.TextViewWithFont
                     style="@style/ShadowText"
                     android:textColor="@color/light_text_color"
                     android:id="@+id/user_location"
+                    android:visibility="gone"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_alignParentBottom="true"
                     android:layout_marginBottom="4dp"
                     android:layout_marginLeft="85dp"
                     oak:font="Roboto-Thin.ttf" />
+
+                <oak.widget.TextViewWithFont
+                    oak:font="RobotoSlab-Thin.ttf"
+                    style="@style/ShadowText"
+                    android:textColor="@color/light_text_color"
+                    android:id="@+id/user_name"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentBottom="true"
+                    android:layout_marginBottom="4dp"
+                    android:layout_marginLeft="85dp" />
 
             </RelativeLayout>
 
@@ -69,12 +72,13 @@
             <com.socialone.android.viewcomponents.NavDrawerItem
                 style="@style/NavDrawerItem"
                 android:id="@+id/nav_item_share"
-                socialone:itemText="Share" />
+                socialone:itemText="Checkin" />
 
 
 
             <com.socialone.android.viewcomponents.NavDrawerItem
                 style="@style/NavDrawerItem"
+                android:visibility="gone"
                 android:id="@+id/nav_item_optifeed"
                 socialone:itemText="ClusterFuckFeed" />
 
@@ -82,11 +86,13 @@
 
             <com.socialone.android.viewcomponents.NavDrawerItem
                 style="@style/NavDrawerItem"
+                android:visibility="gone"
                 android:id="@+id/nav_item_facebook"
                 socialone:itemText="Facebook" />
 
             <com.socialone.android.viewcomponents.NavDrawerItem
                 style="@style/NavDrawerItem"
+                android:visibility="gone"
                 android:id="@+id/nav_item_twitter"
                 socialone:itemText="Twitter" />
 
@@ -94,18 +100,21 @@
             <com.socialone.android.viewcomponents.NavDrawerItem
                 style="@style/NavDrawerItem"
                 android:id="@+id/nav_item_gplus"
+                android:visibility="gone"
                 socialone:itemText="Google+" />
 
 
             <com.socialone.android.viewcomponents.NavDrawerItem
                 style="@style/NavDrawerItem"
                 android:id="@+id/nav_item_myspace"
+                android:visibility="gone"
                 socialone:itemText="Myspace" />
 
 
 
             <com.socialone.android.viewcomponents.NavDrawerItem
                 style="@style/NavDrawerItem"
+                android:visibility="gone"
                 android:id="@+id/nav_item_appnet"
                 socialone:itemText="App.net" />
 
@@ -118,24 +127,28 @@
             <com.socialone.android.viewcomponents.NavDrawerItem
                 style="@style/NavDrawerItem"
                 android:id="@+id/nav_item_linkdin"
+                android:visibility="gone"
                 socialone:itemText="LinkdIn" />
 
 
             <com.socialone.android.viewcomponents.NavDrawerItem
                 style="@style/NavDrawerItem"
                 android:id="@+id/nav_item_instagram"
+                android:visibility="gone"
                 socialone:itemText="Instagram" />
 
 
             <com.socialone.android.viewcomponents.NavDrawerItem
                     style="@style/NavDrawerItem"
                     android:id="@+id/nav_item_fivehundred"
+                android:visibility="gone"
                     socialone:itemText="500px" />
 
 
             <com.socialone.android.viewcomponents.NavDrawerItem
                     style="@style/NavDrawerItem"
                     android:id="@+id/nav_item_flickr"
+                android:visibility="gone"
                     socialone:itemText="Flickr" />
 
 
@@ -143,7 +156,13 @@
             <com.socialone.android.viewcomponents.NavDrawerItem
                     style="@style/NavDrawerItem"
                     android:id="@+id/nav_item_tumblr"
+                android:visibility="gone"
                     socialone:itemText="Tumblr" />
+
+            <com.socialone.android.viewcomponents.NavDrawerItem
+                style="@style/NavDrawerItem"
+                android:id="@+id/nav_item_store"
+                socialone:itemText="Store" />
 
 
 

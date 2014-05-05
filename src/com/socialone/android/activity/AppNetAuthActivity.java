@@ -65,6 +65,7 @@ public class AppNetAuthActivity extends SherlockActivity {
                             edit.putBoolean("appnet", true);
                             edit.commit();
                             Log.d("app.net", "Welcome " + responseData.getName());
+//                            Toast.makeText(AppNetAuthActivity.this, "Welcome " + responseData.getName(), Toast.LENGTH_LONG).show();
                             finish();
                         }
 

@@ -3,17 +3,23 @@ package com.socialone.android.fragment.facebook;
 import android.app.Dialog;
 import android.content.Context;
 import android.content.Intent;
-import android.location.Criteria;
+import android.graphics.Color;
 import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
 import android.os.Bundle;
+import android.os.StrictMode;
+import android.text.Spannable;
+import android.text.SpannableString;
+import android.text.style.ForegroundColorSpan;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.Button;
+import android.widget.CheckBox;
+import android.widget.CompoundButton;
 import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.TextView;
@@ -32,8 +38,21 @@ import com.facebook.model.GraphPlace;
 import com.google.analytics.tracking.android.EasyTracker;
 import com.haarman.listviewanimations.swinginadapters.prepared.SwingBottomInAnimationAdapter;
 import com.socialone.android.R;
+import com.socialone.android.services.LocationService;
+import com.socialone.android.utils.Constants;
+
+import org.brickred.socialauth.android.DialogListener;
+import org.brickred.socialauth.android.SocialAuthAdapter;
+import org.brickred.socialauth.android.SocialAuthError;
 
 import java.util.List;
+
+import twitter4j.GeoLocation;
+import twitter4j.Status;
+import twitter4j.StatusUpdate;
+import twitter4j.Twitter;
+import twitter4j.TwitterFactory;
+import twitter4j.conf.ConfigurationBuilder;
 
 /**
  * Created by david.hodge on 12/25/13.
@@ -53,9 +72,17 @@ public class FacebookCheckInFragment extends SherlockFragment implements Locatio
     Button cancelCheckinBtn;
     Button checkinBtn;
 
+    LocationService locationService;
+
+    TwitterFactory tf;
+    Twitter twitter;
+    SocialAuthAdapter mAuthAdapter;
+
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        locationService = new LocationService(getSherlockActivity());
 
         uiHelper = new UiLifecycleHelper(getSherlockActivity(), new Session.StatusCallback() {
             @Override
@@ -64,6 +91,9 @@ public class FacebookCheckInFragment extends SherlockFragment implements Locatio
             }
         });
         uiHelper.onCreate(savedInstanceState);
+
+        StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder().permitAll().build();
+        StrictMode.setThreadPolicy(policy);
     }
 
     @Override
@@ -80,17 +110,18 @@ public class FacebookCheckInFragment extends SherlockFragment implements Locatio
     }
 
     private void getLocations(){
-        locationManager = (LocationManager) getSherlockActivity().getSystemService(getSherlockActivity().LOCATION_SERVICE);
-        String bestProvider = locationManager.getBestProvider(new Criteria(), false);
-        location = locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
+//        locationManager = (LocationManager) getSherlockActivity().getSystemService(getSherlockActivity().LOCATION_SERVICE);
+//        String bestProvider = locationManager.getBestProvider(new Criteria(), false);
+//        location = locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
+        location = locationService.getLocation();
         getFacebookLocations(location);
-        if(location != null) {
-            Log.v("location", location.getLatitude() + " and " + location.getLongitude());
-            location = locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
-            getFacebookLocations(location);
-        }else {
-            locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 0, 0, this);
-        }
+//        if(location != null) {
+//            Log.v("location", location.getLatitude() + " and " + location.getLongitude());
+//            location = locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
+//            getFacebookLocations(location);
+//        }else {
+//            locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 0, 0, this);
+//        }
     }
 
     public void getFacebookLocations(Location location){
@@ -202,7 +233,7 @@ public class FacebookCheckInFragment extends SherlockFragment implements Locatio
         return activeSession;
     }
 
-    public void checkinDialog(GraphPlace place){
+    public void checkinDialog(final GraphPlace place){
         final String placeName = place.getName();
         final String placeId = place.getId();
 
@@ -211,6 +242,47 @@ public class FacebookCheckInFragment extends SherlockFragment implements Locatio
         checkinMessge =  (EditText) dialog.findViewById(R.id.checkin_message);
         cancelCheckinBtn = (Button) dialog.findViewById(R.id.checkin_message_cancel);
         checkinBtn = (Button) dialog.findViewById(R.id.checkin_message_checkin);
+
+        final CheckBox twitterCheckbox = (CheckBox) dialog.findViewById(R.id.twitter_share_box);
+        twitterCheckbox.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                if(isChecked){
+
+                    mAuthAdapter = new SocialAuthAdapter(new DialogListener() {
+                        @Override
+                        public void onComplete(Bundle bundle) {
+                            ConfigurationBuilder cb = new ConfigurationBuilder();
+                            cb.setDebugEnabled(true)
+                                    .setOAuthConsumerKey(Constants.TWIT_CONSUMER_KEY)
+                                    .setOAuthConsumerSecret(Constants.TWIT_CONSUMER_SECRET)
+                                    .setOAuthAccessToken(mAuthAdapter.getCurrentProvider().getAccessGrant().getKey())
+                                    .setOAuthAccessTokenSecret(mAuthAdapter.getCurrentProvider().getAccessGrant().getSecret());
+                            tf = new TwitterFactory(cb.build());
+                            twitter = tf.getInstance();
+                        }
+
+                        @Override
+                        public void onError(SocialAuthError socialAuthError) {
+                            Log.e("twitter", "auth adapter " + socialAuthError.getMessage());
+                        }
+
+                        @Override
+                        public void onCancel() {
+                            //stub
+                        }
+
+                        @Override
+                        public void onBack() {
+                            //stub
+                        }
+                    });
+
+                    mAuthAdapter.addCallBack(SocialAuthAdapter.Provider.TWITTER, Constants.TWITTER_CALLBACK);
+                    mAuthAdapter.authorize(getSherlockActivity(), SocialAuthAdapter.Provider.TWITTER);
+                }
+            }
+        });
 
         cancelCheckinBtn.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -250,10 +322,26 @@ public class FacebookCheckInFragment extends SherlockFragment implements Locatio
                 RequestAsyncTask task = new RequestAsyncTask(request);
                 task.execute();
 
+                if(twitterCheckbox.isChecked()){
+                    try {
+                        StatusUpdate statusUpdate = new StatusUpdate("I'm at " + place.getName() + " via @SocialOne_App");
+                        statusUpdate.setPlaceId(place.getId());
+                        GeoLocation geoLocation = new GeoLocation(location.getLatitude(), location.getLongitude());
+                        statusUpdate.setLocation(geoLocation);
+                        statusUpdate.setDisplayCoordinates(true);
+                        statusUpdate.placeId(place.getId());
+                        Status status = twitter.updateStatus(statusUpdate);
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
+                }
+
             }
         });
+        SpannableString str = new SpannableString(placeName);
+        str.setSpan(new ForegroundColorSpan(Color.BLACK), 0, placeName.length(), Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
 
-        dialog.setTitle(placeName);
+        dialog.setTitle(str);
         dialog.show();
     }
 
@@ -301,6 +389,8 @@ public class FacebookCheckInFragment extends SherlockFragment implements Locatio
                 viewHolder = new ViewHolder();
                 viewHolder.textView = (TextView) view.findViewById(R.id.social_checkin_name);
                 viewHolder.checkBox = (Button) view.findViewById(R.id.social_checkin_checkbox);
+                viewHolder.locAddr = (TextView) view.findViewById(R.id.social_checkin_address);
+                viewHolder.mapbtn = (Button) view.findViewById(R.id.social_checkin_map_btn);
 
                 view.setTag(viewHolder);
 
@@ -316,7 +406,14 @@ public class FacebookCheckInFragment extends SherlockFragment implements Locatio
                     checkinDialog(place);
                 }
             });
-//            setImageView(viewHolder, position);
+
+            viewHolder.locAddr.setText(place.getLocation().getStreet());
+            viewHolder.mapbtn.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    //TODO
+                }
+            });
 
             return view;
         }
@@ -324,6 +421,9 @@ public class FacebookCheckInFragment extends SherlockFragment implements Locatio
         public class ViewHolder {
             TextView textView;
             Button checkBox;
+
+            TextView locAddr;
+            Button mapbtn;
         }
     }
 }

@@ -1,9 +1,11 @@
 package com.socialone.android.fragment.foursquare;
 
 import android.content.Context;
+import android.content.Intent;
 import android.location.Criteria;
 import android.location.Location;
 import android.location.LocationManager;
+import android.net.Uri;
 import android.os.Bundle;
 import android.text.Html;
 import android.util.Log;
@@ -178,7 +180,19 @@ public class FoursquareFriendsFeedFragment extends SherlockFragment {
             viewHolder.textView.setText(post.getUser().getFirstName() + " @ " + post.getVenue().getName());
             viewHolder.postTime.setReferenceTime(new Date(post.getCreatedAt() * 1000).getTime());
             //TODO add on click to these to open the respective client or user profile
-            viewHolder.postClient.setText("via " + post.getSource().getName());
+            try {
+                viewHolder.postClient.setText("via " + post.getSource().getName());
+                viewHolder.postClient.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        mContext.startActivity(new Intent(Intent.ACTION_VIEW,
+                                Uri.parse(post.getSource().getUrl())));
+                    }
+                });
+            }catch (Exception e){
+
+            }
+
             viewHolder.postInfo.setText(post.getShout());
             Picasso.with(mContext)
                     .load(post.getUser().getPhoto())

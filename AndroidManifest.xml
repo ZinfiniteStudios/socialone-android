@@ -150,6 +150,8 @@
         <activity android:name="com.socialone.android.activity.InstagramImageViewer" />
 
         <service android:name="com.socialone.android.fivehundredpx.api.services.UploadService" />
+
+        <activity android:name="com.amazon.device.ads.AdActivity" android:configChanges="keyboardHidden|orientation|screenSize"/>
     </application>
 
 </manifest>
