@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.socialone.android"
-    android:versionCode="1"
-    android:versionName="1.0.0">
+    android:versionCode="2"
+    android:versionName="1.0.1">
 
     <uses-sdk
         android:minSdkVersion="15"
@@ -10,18 +10,16 @@
 
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
-    <uses-permission android:name="android.permission.READ_PHONE_STATE" />
+    <!--<uses-permission android:name="android.permission.READ_PHONE_STATE" />-->
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
     <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.GET_TASKS" />
     <uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />
-    <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
-    <uses-permission android:name="android.permission.VIBRATE" />
-    <uses-permission android:name="android.permission.SEND_SMS" />
+    <uses-permission android:name="com.android.vending.BILLING" />
 
-    <uses-permission android:name="android.permission.GET_ACCOUNTS" />
-    <uses-permission android:name="android.permission.USE_CREDENTIALS" />
+    <!--<uses-permission android:name="android.permission.GET_ACCOUNTS" />-->
+    <!--<uses-permission android:name="android.permission.USE_CREDENTIALS" />-->
 
     <permission
         android:name="com.socialone.android.MAPS_RECEIVE"
@@ -134,23 +132,14 @@
         <!--</intent-filter>-->
         <!--</receiver>-->
 
-        <activity android:name="com.uservoice.uservoicesdk.activity.PortalActivity" />
-        <activity android:name="com.uservoice.uservoicesdk.activity.ForumActivity" />
-        <activity android:name="com.uservoice.uservoicesdk.activity.ArticleActivity" />
-        <activity android:name="com.uservoice.uservoicesdk.activity.TopicActivity" />
-        <activity
-            android:name="com.uservoice.uservoicesdk.activity.ContactActivity"
-            android:configChanges="orientation|keyboardHidden|screenSize" />
-        <activity
-            android:name="com.uservoice.uservoicesdk.activity.PostIdeaActivity"
-            android:configChanges="orientation|keyboardHidden|screenSize" />
-
         <activity android:name="com.socialone.android.fragment.SocialConnectFragment" />
         <activity android:name="com.socialone.android.activity.FlickrImageViewer" />
         <activity android:name="com.socialone.android.activity.InstagramImageViewer" />
 
         <service android:name="com.socialone.android.fivehundredpx.api.services.UploadService" />
 
+        <activity android:name="com.google.android.gms.ads.AdActivity"
+            android:configChanges="keyboard|keyboardHidden|orientation|screenLayout|uiMode|screenSize|smallestScreenSize"/>
         <activity android:name="com.amazon.device.ads.AdActivity" android:configChanges="keyboardHidden|orientation|screenSize"/>
     </application>
 

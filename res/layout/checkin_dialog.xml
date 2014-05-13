@@ -1,31 +1,72 @@
 <?xml version="1.0" encoding="utf-8"?>
 
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:oak="http://oak/oak/schema"
+    android:layout_margin="8dp"
     android:orientation="vertical"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-    <EditText
+    <oak.widget.CancelEditText
+        oak:font="Roboto-Light.ttf"
         android:id="@+id/checkin_message"
         android:hint="your message here...."
         android:layout_width="fill_parent"
         android:layout_height="wrap_content" />
 
-    <oak.widget.CheckBoxWithFont
-        android:id="@+id/twitter_share_box"
-        android:layout_marginLeft="8dp"
-        android:layout_marginRight="8dp"
-        android:text="Share to Twitter"
-        android:layout_width="match_parent"
+    <oak.widget.TextViewWithFont
+        oak:font="Roboto-Light.ttf"
+        android:id="@+id/share_text"
+        android:textColor="@color/black"
+        android:padding="6dp"
+        android:text="Share this app!"
+        android:textSize="14sp"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content" />
 
+    <View
+        android:background="@color/black_overlay"
+        android:layout_marginLeft="6dp"
+        android:layout_marginRight="6dp"
+        android:layout_width="match_parent"
+        android:layout_height="1dp"/>
+
     <LinearLayout
-        android:layout_margin="8dp"
+        android:weightSum="2"
+        android:orientation="horizontal"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <oak.widget.CheckBoxWithFont
+            oak:font="Roboto-Light.ttf"
+            android:layout_weight="1"
+            android:id="@+id/twitter_share_box"
+            android:layout_marginLeft="8dp"
+            android:layout_marginRight="8dp"
+            android:text="Twitter"
+            android:layout_width="0px"
+            android:layout_height="wrap_content" />
+
+        <oak.widget.CheckBoxWithFont
+            oak:font="Roboto-Light.ttf"
+            android:layout_weight="1"
+            android:id="@+id/gplus_share_box"
+            android:layout_marginLeft="8dp"
+            android:layout_marginRight="8dp"
+            android:text="G+"
+            android:layout_width="0px"
+            android:layout_height="wrap_content" />
+
+    </LinearLayout>
+
+    <LinearLayout
         android:weightSum="2"
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
 
         <oak.widget.ButtonWithFont
+            oak:font="Roboto-Light.ttf"
             android:layout_weight="1"
             android:id="@+id/checkin_message_cancel"
             android:text="Cancel"
@@ -33,6 +74,7 @@
             android:layout_height="wrap_content" />
 
         <oak.widget.ButtonWithFont
+            oak:font="Roboto-Light.ttf"
             android:layout_weight="1"
             android:id="@+id/checkin_message_checkin"
             android:text="Check-in"

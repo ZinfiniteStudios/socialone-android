@@ -7,7 +7,7 @@
 
     <com.viewpagerindicator.TitlePageIndicator
         android:id="@+id/social_tpi"
-        style="@style/CustomTitlePageIndicator"
+        style="@style/CheckinTitlePageIndicator"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content" />
 

@@ -71,8 +71,8 @@ import oauth.signpost.commonshttp.CommonsHttpOAuthProvider;
  */
 public class SocialConnectFragment extends RoboSherlockFragmentActivity
         implements XAuth500pxTask.Delegate,
-            UserDetailTask.Delegate,
-            GooglePlayServicesClient.ConnectionCallbacks, GooglePlayServicesClient.OnConnectionFailedListener {
+        UserDetailTask.Delegate,
+        GooglePlayServicesClient.ConnectionCallbacks, GooglePlayServicesClient.OnConnectionFailedListener {
 
     LoginButton facebookBtn;
     Button twitterBtn;
@@ -105,7 +105,7 @@ public class SocialConnectFragment extends RoboSherlockFragmentActivity
     LoginAdapter instagramAdapter;
     LoginAdapter linkedinAdapter;
     LoginAdapter flickrAdapter;
-//    JumblrClient jumblrClient;
+    //    JumblrClient jumblrClient;
     AppDotNetClient client;
     EasyFoursquareAsync easyFoursquareAsync;
     XAuth500pxTask loginTask;
@@ -189,28 +189,32 @@ public class SocialConnectFragment extends RoboSherlockFragmentActivity
 
     }
 
-    private void setUpFacebook(){
+    private void setUpFacebook() {
         facebookBtn = (LoginButton) findViewById(R.id.social_connect_facebook_btn);
         facebookBtn.setReadPermissions(
                 Arrays.asList("user_photos", "read_stream", "user_status", "friends_photos",
-                        "friends_status", "friends_birthday", "basic_info", "user_location"));
+                        "friends_status", "friends_birthday", "basic_info", "user_location")
+        );
 
         facebookBtn.setLoginBehavior(SessionLoginBehavior.SUPPRESS_SSO);
-//        Session session = Utils.ensureFacebookSessionFromCache(getBaseContext());
-        session = Session.getActiveSession();
+
         final Request meRequest = Request.newMeRequest(session, new Request.GraphUserCallback() {
             @Override
             public void onCompleted(GraphUser user, Response response) {
-                edit.putBoolean("facebook", true);
-                edit.commit();
-                Toast.makeText(SocialConnectFragment.this, "Connected to Facebook", Toast.LENGTH_SHORT).show();
+                if (user != null) {
+                    edit.putBoolean("facebook", true);
+                    edit.commit();
+                    Toast.makeText(SocialConnectFragment.this, "Connected to Facebook", Toast.LENGTH_SHORT).show();
+                }
             }
         });
         meRequest.executeAsync();
+//        Session session = Utils.ensureFacebookSessionFromCache(getBaseContext());
+        session = Session.getActiveSession();
 
     }
 
-    private void setUpTwitter(){
+    private void setUpTwitter() {
         twitterBtn = (Button) findViewById(R.id.social_connect_twitter_btn);
         twitterLoginAdapter = new TwitterAuth(mContext);
         twitterLoginAdapter.setListener(new LoginListener() {
@@ -238,12 +242,16 @@ public class SocialConnectFragment extends RoboSherlockFragmentActivity
         twitterBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                twitterLoginAdapter.authorize();
+                if(prefs.getBoolean("twit-p", false) == true) {
+                    twitterLoginAdapter.authorize();
+                }else{
+                    Toast.makeText(mContext, "Twitter unlock in app purchase required!", Toast.LENGTH_SHORT).show();
+                }
             }
         });
     }
 
-    private void setUpPlus(){
+    private void setUpPlus() {
         plusBtn = (SignInButton) findViewById(R.id.social_connect_plus_btn);
 
         plusLoginAdapter = new GooglePlusAuth(mContext);
@@ -279,12 +287,12 @@ public class SocialConnectFragment extends RoboSherlockFragmentActivity
                 if (connectionResult == null) {
 //                    connectionProgressDialog.show();..........................
                 } else {
-                try {
-                    connectionResult.startResolutionForResult(SocialConnectFragment.this, 900);
-                } catch (IntentSender.SendIntentException e) {
-                    // Try connecting again.
-                    plusClient.connect();
-                }
+                    try {
+                        connectionResult.startResolutionForResult(SocialConnectFragment.this, 900);
+                    } catch (IntentSender.SendIntentException e) {
+                        // Try connecting again.
+                        plusClient.connect();
+                    }
                 }
             }
         });
@@ -302,10 +310,10 @@ public class SocialConnectFragment extends RoboSherlockFragmentActivity
 
     @Override
     public void onConnectionFailed(ConnectionResult connectionResult) {
-            Log.d("googleplus", connectionResult.getErrorCode() +  " " + connectionResult.toString());
+        Log.d("googleplus", connectionResult.getErrorCode() + " " + connectionResult.toString());
     }
 
-    private void setUpFourSquare(){
+    private void setUpFourSquare() {
         fourSquareBtn = (Button) findViewById(R.id.social_connect_foursquare_btn);
         fourLoginAdapter = new FourSquareAuth(mContext);
         fourLoginAdapter.setListener(new LoginListener() {
@@ -337,7 +345,7 @@ public class SocialConnectFragment extends RoboSherlockFragmentActivity
         });
     }
 
-    private void setUpMyspace(){
+    private void setUpMyspace() {
         myspaceBtn = (Button) findViewById(R.id.social_connect_myspace_btn);
         myspaceLoginAdapter = new MyspaceAuth(mContext);
         myspaceLoginAdapter.setListener(new LoginListener() {
@@ -370,7 +378,7 @@ public class SocialConnectFragment extends RoboSherlockFragmentActivity
         });
     }
 
-    private void setUpAppNet(){
+    private void setUpAppNet() {
         appNetBtn = (Button) findViewById(R.id.social_connect_appnet_btn);
 //        client = new AppDotNetClient("zza9bRtZ63UGNAxG965a3Kr2uUkmXAqr", "LV6NbFgtJpCmhh6VADnkcWXGHF4tj5eq");
         appNetBtn.setOnClickListener(new View.OnClickListener() {
@@ -394,7 +402,7 @@ public class SocialConnectFragment extends RoboSherlockFragmentActivity
         });
     }
 
-    private void welcomeAppNetUser(){
+    private void welcomeAppNetUser() {
         client.retrieveCurrentUser(new UserResponseHandler() {
             @Override
             public void onSuccess(User responseData) {
@@ -403,7 +411,7 @@ public class SocialConnectFragment extends RoboSherlockFragmentActivity
         });
     }
 
-    private void setUpInstagram(){
+    private void setUpInstagram() {
         instagramBtn = (Button) findViewById(R.id.social_connect_instagram_btn);
         instagramAdapter = new InstagramAuth(mContext);
         instagramAdapter.setListener(new LoginListener() {
@@ -456,7 +464,7 @@ public class SocialConnectFragment extends RoboSherlockFragmentActivity
 //        builder.show();
 //    }
 
-    private void setUpTumblr(){
+    private void setUpTumblr() {
         tumblrBtn = (Button) findViewById(R.id.social_connect_tumblr_btn);
 //        jumblrClient = new JumblrClient(Constants.TUMBLR_CONSUMER_KEY, Constants.TUMBLR_CONSUMER_SECRET);
 
@@ -473,11 +481,11 @@ public class SocialConnectFragment extends RoboSherlockFragmentActivity
         });
     }
 
-    private void tumblrAuth(){
+    private void tumblrAuth() {
 
     }
 
-    private void setUpLinkedin(){
+    private void setUpLinkedin() {
         linkedinBtn = (Button) findViewById(R.id.social_connect_linkdin_btn);
         linkedinAdapter = new LinkedinAuth(mContext);
         linkedinAdapter.setListener(new LoginListener() {
@@ -512,7 +520,7 @@ public class SocialConnectFragment extends RoboSherlockFragmentActivity
 
     }
 
-    private void setUpFlickr(){
+    private void setUpFlickr() {
         flickrBtn = (Button) findViewById(R.id.social_connect_flickr_btn);
         flickrAdapter = new FlickrAuth(mContext);
         flickrAdapter.setListener(new LoginListener() {
@@ -545,7 +553,7 @@ public class SocialConnectFragment extends RoboSherlockFragmentActivity
         });
     }
 
-    private void setUpFivePx(){
+    private void setUpFivePx() {
         fiveUser = new com.socialone.android.fivehundredpx.api.auth.User();
         loginTask = new XAuth500pxTask(this);
         fivePxBtn = (Button) findViewById(R.id.social_connect_500px_btn);
@@ -557,11 +565,11 @@ public class SocialConnectFragment extends RoboSherlockFragmentActivity
         });
     }
 
-    public void checkinDialog(){
+    public void checkinDialog() {
 
         dialog = new Dialog(mContext);
         dialog.setContentView(R.layout.five_hund_signin);
-        userName =  (FloatLabel) dialog.findViewById(R.id.five_username);
+        userName = (FloatLabel) dialog.findViewById(R.id.five_username);
         userName.setLabelAnimator(new CustomLabelAnimator());
         password = (FloatLabel) dialog.findViewById(R.id.five_password);
         password.setLabelAnimator(new CustomLabelAnimator());
@@ -598,7 +606,7 @@ public class SocialConnectFragment extends RoboSherlockFragmentActivity
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        switch (item.getItemId()){
+        switch (item.getItemId()) {
             case R.id.connect_done:
                 startActivity(new Intent(mContext, MainActivity.class));
                 finish();
@@ -610,10 +618,21 @@ public class SocialConnectFragment extends RoboSherlockFragmentActivity
 
     private void onSessionStateChange(Session session, SessionState state, Exception exception) {
         if (state.isOpened()) {
+            final Request meRequest = Request.newMeRequest(session, new Request.GraphUserCallback() {
+                @Override
+                public void onCompleted(GraphUser user, Response response) {
+                    if (user != null) {
+                        edit.putBoolean("facebook", true);
+                        edit.commit();
+                        Toast.makeText(SocialConnectFragment.this, "Connected to Facebook", Toast.LENGTH_SHORT).show();
+                    }
+                }
+            });
+            meRequest.executeAsync();
 //            Toast.makeText(this, "connected", Toast.LENGTH_SHORT).show();
 //            getUserInfo();
         } else if (state.isClosed()) {
-            Toast.makeText(this, "error",Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, "error", Toast.LENGTH_SHORT).show();
         }
     }
 
@@ -673,10 +692,10 @@ public class SocialConnectFragment extends RoboSherlockFragmentActivity
 
     @Override
     public void onSuccess(JSONObject user) {
-        try{
+        try {
             String userName = user.getString("fullname");
             Toast.makeText(mContext, "Welcome " + userName, Toast.LENGTH_LONG).show();
-        }catch (Exception e){
+        } catch (Exception e) {
 
         }
     }

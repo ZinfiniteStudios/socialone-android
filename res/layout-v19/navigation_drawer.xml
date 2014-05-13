@@ -1,0 +1,187 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:socialone="http://socialone-android/schema"
+    xmlns:ads="http://schemas.android.com/apk/res-auto"
+    xmlns:oak="http://oak/oak/schema"
+    android:orientation="vertical"
+    android:layout_width="240dp"
+    android:layout_height="match_parent"
+    android:layout_gravity="start"
+    android:background="@color/nav_background"
+    android:fitsSystemWindows="false" >
+
+    <ScrollView
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent"
+        android:scrollbars="none"
+        android:overScrollMode="never">
+
+        <LinearLayout
+            android:orientation="vertical"
+            android:layout_width="fill_parent"
+            android:layout_height="fill_parent">
+
+            <RelativeLayout
+                android:id="@+id/drawer_user_profile"
+                android:layout_height="180dp"
+                android:layout_width="fill_parent" >
+
+                <ImageView
+                    android:id="@+id/user_background_image"
+                    android:layout_height="fill_parent"
+                    android:layout_width="fill_parent"
+                    android:scaleType="centerCrop"/>
+
+                <ImageView
+                    android:id="@+id/user_profile_image"
+                    android:layout_width="75dp"
+                    android:layout_height="75dp"
+                    android:layout_margin="4dp"
+                    android:layout_alignParentBottom="true"
+                    android:layout_alignParentLeft="true"
+                    android:scaleType="centerCrop" />
+
+
+                <oak.widget.TextViewWithFont
+                    style="@style/ShadowText"
+                    android:textColor="@color/light_text_color"
+                    android:id="@+id/user_location"
+                    android:visibility="gone"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentBottom="true"
+                    android:layout_marginBottom="4dp"
+                    android:layout_marginLeft="85dp"
+                    oak:font="Roboto-Thin.ttf" />
+
+                <oak.widget.TextViewWithFont
+                    oak:font="RobotoSlab-Thin.ttf"
+                    style="@style/ShadowText"
+                    android:textColor="@color/light_text_color"
+                    android:id="@+id/user_name"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentBottom="true"
+                    android:layout_marginBottom="4dp"
+                    android:layout_marginLeft="85dp" />
+
+            </RelativeLayout>
+
+            <View
+                style="@style/NavigationDrawerDivider"/>
+
+            <com.socialone.android.viewcomponents.NavDrawerItem
+                style="@style/NavDrawerItem"
+                android:id="@+id/nav_item_share"
+                socialone:itemText="Checkin" />
+
+
+
+            <com.socialone.android.viewcomponents.NavDrawerItem
+                style="@style/NavDrawerItem"
+                android:visibility="gone"
+                android:id="@+id/nav_item_optifeed"
+                socialone:itemText="ClusterFuckFeed" />
+
+
+
+            <com.socialone.android.viewcomponents.NavDrawerItem
+                style="@style/NavDrawerItem"
+                android:visibility="gone"
+                android:id="@+id/nav_item_facebook"
+                socialone:itemText="Facebook" />
+
+            <com.socialone.android.viewcomponents.NavDrawerItem
+                style="@style/NavDrawerItem"
+                android:visibility="gone"
+                android:id="@+id/nav_item_twitter"
+                socialone:itemText="Twitter" />
+
+
+            <com.socialone.android.viewcomponents.NavDrawerItem
+                style="@style/NavDrawerItem"
+                android:id="@+id/nav_item_gplus"
+                android:visibility="gone"
+                socialone:itemText="Google+" />
+
+
+            <com.socialone.android.viewcomponents.NavDrawerItem
+                style="@style/NavDrawerItem"
+                android:id="@+id/nav_item_myspace"
+                android:visibility="gone"
+                socialone:itemText="Myspace" />
+
+
+
+            <com.socialone.android.viewcomponents.NavDrawerItem
+                style="@style/NavDrawerItem"
+                android:visibility="gone"
+                android:id="@+id/nav_item_appnet"
+                socialone:itemText="App.net" />
+
+
+            <com.socialone.android.viewcomponents.NavDrawerItem
+                style="@style/NavDrawerItem"
+                android:id="@+id/nav_item_foursquare"
+                socialone:itemText="Foursquare" />
+
+            <com.socialone.android.viewcomponents.NavDrawerItem
+                style="@style/NavDrawerItem"
+                android:id="@+id/nav_item_linkdin"
+                android:visibility="gone"
+                socialone:itemText="LinkdIn" />
+
+
+            <com.socialone.android.viewcomponents.NavDrawerItem
+                style="@style/NavDrawerItem"
+                android:id="@+id/nav_item_instagram"
+                android:visibility="gone"
+                socialone:itemText="Instagram" />
+
+
+            <com.socialone.android.viewcomponents.NavDrawerItem
+                style="@style/NavDrawerItem"
+                android:id="@+id/nav_item_fivehundred"
+                android:visibility="gone"
+                socialone:itemText="500px" />
+
+
+            <com.socialone.android.viewcomponents.NavDrawerItem
+                style="@style/NavDrawerItem"
+                android:id="@+id/nav_item_flickr"
+                android:visibility="gone"
+                socialone:itemText="Flickr" />
+
+
+
+            <com.socialone.android.viewcomponents.NavDrawerItem
+                style="@style/NavDrawerItem"
+                android:id="@+id/nav_item_tumblr"
+                android:visibility="gone"
+                socialone:itemText="Tumblr" />
+
+            <com.socialone.android.viewcomponents.NavDrawerItem
+                style="@style/NavDrawerItem"
+                android:id="@+id/nav_item_store"
+                socialone:itemText="Store" />
+
+
+
+            <com.socialone.android.viewcomponents.NavDrawerItem
+                style="@style/NavDrawerItem"
+                android:id="@+id/nav_item_settings"
+                socialone:itemText="Settings" />
+
+
+
+            <com.socialone.android.viewcomponents.NavDrawerItem
+                style="@style/NavDrawerItem"
+                android:id="@+id/nav_item_about"
+                socialone:itemText="About" />
+
+
+        </LinearLayout>
+    </ScrollView>
+
+</LinearLayout>

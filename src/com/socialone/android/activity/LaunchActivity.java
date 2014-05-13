@@ -29,8 +29,10 @@ public class LaunchActivity extends SherlockActivity {
         //TODO check all networks and only go to login screen if none are signed in
         if(prefs.getBoolean("facebook", false) == true || prefs.getBoolean("appnet", false) == true || prefs.getBoolean("foursquare", false) == true){
             startActivity(new Intent(LaunchActivity.this, MainActivity.class));
+            this.finish();
         }else{
             startActivity(new Intent(LaunchActivity.this, SocialConnectFragment.class));
+            this.finish();
         }
     }
 }

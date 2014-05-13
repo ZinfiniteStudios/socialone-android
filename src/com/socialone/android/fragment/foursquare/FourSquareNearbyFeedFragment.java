@@ -1,6 +1,7 @@
 package com.socialone.android.fragment.foursquare;
 
 import android.content.Context;
+import android.graphics.Typeface;
 import android.location.Criteria;
 import android.location.Location;
 import android.location.LocationManager;
@@ -187,6 +188,9 @@ public class FourSquareNearbyFeedFragment extends SherlockFragment {
                     viewHolder.postClient.setText(post.getVenue().getLocation().getState() + ", " + post.getVenue().getLocation().getCountry());
                 }
             }
+
+            Typeface tf = Typeface.createFromAsset(mContext.getAssets(), "fonts/Roboto-Light.ttf");
+            viewHolder.postTime.setTypeface(tf);
 
            viewHolder.postUser.setText(post.getText());
 

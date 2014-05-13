@@ -1,5 +1,6 @@
 package com.socialone.android.activity;
 
+import android.annotation.TargetApi;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
@@ -7,6 +8,7 @@ import android.content.IntentSender;
 import android.content.SharedPreferences;
 import android.content.res.Configuration;
 import android.graphics.Bitmap;
+import android.graphics.Color;
 import android.graphics.PorterDuff;
 import android.graphics.drawable.Drawable;
 import android.os.Build;
@@ -29,6 +31,8 @@ import android.view.ActionProvider;
 import android.view.ContextMenu;
 import android.view.SubMenu;
 import android.view.View;
+import android.view.Window;
+import android.view.WindowManager;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -50,6 +54,8 @@ import com.facebook.SessionState;
 import com.facebook.UiLifecycleHelper;
 import com.facebook.model.GraphUser;
 import com.google.analytics.tracking.android.EasyTracker;
+import com.google.android.gms.ads.AdRequest;
+import com.google.android.gms.ads.AdView;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GooglePlayServicesClient;
 import com.google.android.gms.plus.PlusClient;
@@ -62,8 +68,8 @@ import com.socialone.android.condesales.listeners.AccessTokenRequestListener;
 import com.socialone.android.condesales.listeners.UserInfoRequestListener;
 import com.socialone.android.condesales.models.User;
 import com.socialone.android.fragment.AboutFragment;
+import com.socialone.android.fragment.NotConnectedFragment;
 import com.socialone.android.fragment.OptiFeedFragment;
-import com.socialone.android.fragment.SettingsFragment;
 import com.socialone.android.fragment.SocialCheckInFragment;
 import com.socialone.android.fragment.SocialConnectFragment;
 import com.socialone.android.fragment.SocialFragment;
@@ -82,8 +88,11 @@ import com.socialone.android.utils.BlurTransformation;
 import com.socialone.android.utils.Constants;
 import com.socialone.android.utils.OldBlurTransformation;
 import com.socialone.android.utils.RoundTransformation;
+import com.socialone.android.utils.SystemBarTintManager;
 import com.socialone.android.viewcomponents.NavDrawerItem;
 import com.squareup.picasso.Picasso;
+
+import java.util.Random;
 
 import oak.util.FontTypefaceSpan;
 import oauth.signpost.OAuth;
@@ -152,12 +161,26 @@ public class MainActivity extends SherlockFragmentActivity implements GooglePlay
     Context mContext;
 
     AdLayout adView;
+    NavDrawerItem fourItem;
+    SystemBarTintManager systemBarTintManager;
+    AdView adMob;
+    AdTargetingOptions adOptions;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
         setContentView(R.layout.main);
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
+            setTranslucentStatus(true);
+        }
+
+        systemBarTintManager = new SystemBarTintManager(this);
+        systemBarTintManager.setStatusBarTintEnabled(true);
+        systemBarTintManager.setStatusBarTintColor(Color.parseColor("#222222"));
+        systemBarTintManager.setNavigationBarTintEnabled(true);
+        systemBarTintManager.setNavigationBarTintColor(Color.parseColor("#222222"));
+
 
         mDrawerLayout = (DrawerLayout) findViewById(R.id.drawer_root);
         mBlurImage = (ImageView) findViewById(R.id.blur_image);
@@ -168,11 +191,15 @@ public class MainActivity extends SherlockFragmentActivity implements GooglePlay
         userNameText = (TextView) findViewById(R.id.user_name);
         userLocationText = (TextView) findViewById(R.id.user_location);
 
+        fourItem = (NavDrawerItem) findViewById(R.id.nav_item_foursquare);
+
+        adMob = (AdView) findViewById(R.id.google_ad);
         adView = (AdLayout)findViewById(R.id.ad_view);
         adView.setListener(new AdListener() {
             @Override
             public void onAdLoaded(AdLayout adLayout, AdProperties adProperties) {
-
+                adMob.setVisibility(View.GONE);
+                adView.setVisibility(View.VISIBLE);
             }
 
             @Override
@@ -187,7 +214,11 @@ public class MainActivity extends SherlockFragmentActivity implements GooglePlay
 
             @Override
             public void onAdFailedToLoad(AdLayout adLayout, AdError adError) {
-
+                Log.e("ad", adError.getMessage());
+                adMob.setVisibility(View.VISIBLE);
+                adView.setVisibility(View.GONE);
+                AdRequest adRequest = new AdRequest.Builder().build();
+                adMob.loadAd(adRequest);
             }
         });
 
@@ -198,8 +229,14 @@ public class MainActivity extends SherlockFragmentActivity implements GooglePlay
             return;
         }
 
-        AdTargetingOptions adOptions = new AdTargetingOptions();
-        adView.loadAd(adOptions);
+        prefs = PreferenceManager.getDefaultSharedPreferences(this);
+
+        adOptions = new AdTargetingOptions();
+        if(prefs.getBoolean("ads", false) == true){
+
+        }else {
+            adView.loadAd(adOptions);
+        }
 
         mContext = this;
         mfragmentManager = getSupportFragmentManager();
@@ -210,6 +247,12 @@ public class MainActivity extends SherlockFragmentActivity implements GooglePlay
         actionBar.setIcon(android.R.color.transparent);
 
         prefs = PreferenceManager.getDefaultSharedPreferences(this);
+
+        if(prefs.getBoolean("foursquare", false)) {
+            fourItem.setVisibility(View.VISIBLE);
+        }else{
+            fourItem.setVisibility(View.GONE);
+        }
 //        // Get the intent that started this activity
 //        Intent intent = getIntent();
 //        Uri data = intent.getData();
@@ -256,6 +299,29 @@ public class MainActivity extends SherlockFragmentActivity implements GooglePlay
 //                .setScopes(Scopes.PLUS_LOGIN, Scopes.PLUS_PROFILE, Scopes.APP_STATE).build();
 //
 //        plusClient.connect();
+    }
+
+    private void loadRandomAd(){
+        int min = 1;
+        int max = 3;
+
+        Random r = new Random();
+        int i = r.nextInt(max - min + 1) + min;
+
+        if(i == 1){
+            adView.loadAd(adOptions);
+        }else if(i == 2){
+            adMob.setVisibility(View.VISIBLE);
+            adView.setVisibility(View.GONE);
+            AdRequest adRequest = new AdRequest.Builder().build();
+            adMob.loadAd(adRequest);
+        }else{
+            adView.loadAd(adOptions);
+//            adMob.setVisibility(View.VISIBLE);
+//            adView.setVisibility(View.GONE);
+//            AdRequest adRequest = new AdRequest.Builder().build();
+//            adMob.loadAd(adRequest);
+        }
     }
 
     @Override
@@ -317,7 +383,7 @@ public class MainActivity extends SherlockFragmentActivity implements GooglePlay
                                 .into(userImage);
 
                         //use large banner image if available
-                        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.ICE_CREAM_SANDWICH) {
+                        if (Build.VERSION.SDK_INT >= 17) {
                             Picasso.with(mContext)
                                     .load(userHeaderImageLink)
                                     .resize(400, 400)
@@ -357,7 +423,7 @@ public class MainActivity extends SherlockFragmentActivity implements GooglePlay
                                     .into(userImage);
 
                             //use large banner image if available
-                            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.ICE_CREAM_SANDWICH) {
+                            if (Build.VERSION.SDK_INT >= 17) {
                                 Picasso.with(mContext)
                                         .load(user.getPhoto())
                                         .resize(400, 400)
@@ -405,12 +471,21 @@ public class MainActivity extends SherlockFragmentActivity implements GooglePlay
                                     .transform(new RoundTransformation())
                                     .into(userImage);
 
-                            Picasso.with(mContext)
-                                    .load(responseData.getCoverImage().getUrl())
-                                    .resize(2000, 2000)
-                                    .centerCrop()
-                                    .transform(new BlurTransformation(mContext))
-                                    .into(userBackground);
+                            if(Build.VERSION.SDK_INT >= 17) {
+                                Picasso.with(mContext)
+                                        .load(responseData.getCoverImage().getUrl())
+                                        .resize(400, 400)
+                                        .centerCrop()
+                                        .transform(new BlurTransformation(mContext))
+                                        .into(userBackground);
+                            }else{
+                                Picasso.with(mContext)
+                                        .load(responseData.getCoverImage().getUrl())
+                                        .resize(400, 400)
+                                        .centerCrop()
+                                        .transform(new OldBlurTransformation())
+                                        .into(userBackground);
+                            }
 
                         }
                     });
@@ -468,7 +543,11 @@ public class MainActivity extends SherlockFragmentActivity implements GooglePlay
                 fragment = new TumblrMainFeedFragment();
                 break;
             case NAV_FOURSQUARE:
-                fragment = new FoursquareNavFragment();
+                if(prefs.getBoolean("foursquare", false)) {
+                    fragment = new FoursquareNavFragment();
+                }else{
+                    fragment = new NotConnectedFragment();
+                }
                 break;
             case NAV_FLICKR:
                 fragment = new FlickrNavFragment();
@@ -483,12 +562,19 @@ public class MainActivity extends SherlockFragmentActivity implements GooglePlay
                 fragment = new StoreFragment();
                 break;
             case NAV_SETTINGS:
-                fragment = new SettingsFragment();
+                fragment = new SocialCheckInFragment();
+                mContext.startActivity(new Intent(mContext, SocialConnectFragment.class));
+//                fragment = new SettingsFragment();
                 break;
             default:
                 return;
         }
 
+        if(prefs.getBoolean("ads", false) == true){
+
+        }else {
+            adView.loadAd(adOptions);
+        }
         fragment.setArguments(args);
         fragment.setRetainInstance(true);
         ft = mfragmentManager.beginTransaction();
@@ -501,11 +587,7 @@ public class MainActivity extends SherlockFragmentActivity implements GooglePlay
 
     @Override
     public void onBackPressed() {
-//        getFragmentManager().getBackStackEntryCount();
-        if (mfragmentManager.getBackStackEntryCount() == 1) {
-            this.finish();
-        }
-        mfragmentManager.popBackStack();
+        this.finish();
     }
 
     @Override
@@ -793,6 +875,7 @@ public class MainActivity extends SherlockFragmentActivity implements GooglePlay
     public void onPause() {
         super.onPause();
         uiHelper.onPause();
+
     }
 
     private void onSessionStateChange(Session session, SessionState state, Exception exception) {
@@ -918,8 +1001,13 @@ public class MainActivity extends SherlockFragmentActivity implements GooglePlay
 //            plusClient.connect();
 //        }
         uiHelper.onActivityResult(requestCode, resultCode, data);
-        Fragment fragment = getSupportFragmentManager().findFragmentById(R.id.fragment_container);
-        fragment.onActivityResult(requestCode, resultCode, data);
+        try {
+            Fragment fragment = getSupportFragmentManager().findFragmentById(R.id.fragment_container);
+            fragment.onActivityResult(requestCode, resultCode, data);
+        }catch (Exception e){
+            e.printStackTrace();
+        }
+
     }
 
     @Override
@@ -962,5 +1050,21 @@ public class MainActivity extends SherlockFragmentActivity implements GooglePlay
         int edgeDrawableId = context.getResources().getIdentifier("overscroll_edge", "drawable", "android");
         Drawable androidEdge = context.getResources().getDrawable(edgeDrawableId);
         androidEdge.setColorFilter(brandColor, PorterDuff.Mode.SRC_IN);
+    }
+
+    @TargetApi(19)
+    private void setTranslucentStatus(boolean on) {
+        Window win = getWindow();
+        WindowManager.LayoutParams winParams = win.getAttributes();
+        final int bits = WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS;
+        final int bits1 = WindowManager.LayoutParams.FLAG_TRANSLUCENT_NAVIGATION;
+        if (on) {
+            winParams.flags |= bits;
+            winParams.flags |= bits1;
+        } else {
+            winParams.flags &= ~bits;
+            winParams.flags &= ~bits1;
+        }
+        win.setAttributes(winParams);
     }
 }

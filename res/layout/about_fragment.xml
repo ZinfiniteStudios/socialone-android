@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:oak="http://oak/oak/schema"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
@@ -12,7 +13,8 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content">
 
-            <TextView
+            <oak.widget.TextViewWithFont
+                oak:font="Roboto-Light.ttf"
                 android:text="About App"
                 android:textSize="16sp"
                 android:layout_width="wrap_content"
@@ -23,7 +25,8 @@
                 android:layout_width="match_parent"
                 android:layout_height="1dp"/>
 
-            <TextView
+            <oak.widget.TextViewWithFont
+                oak:font="Roboto-Thin.ttf"
                 android:id="@+id/dhodge_text"
                 android:padding="6dp"
                 android:text="Creator: David Hodge"
@@ -32,7 +35,8 @@
                 android:layout_height="wrap_content" />
 
 
-            <TextView
+            <oak.widget.TextViewWithFont
+                oak:font="Roboto-Light.ttf"
                 android:layout_marginTop="6dp"
                 android:text="Contact Info (support/feedback/say hi!)"
                 android:textSize="16sp"
@@ -44,7 +48,8 @@
                 android:layout_width="match_parent"
                 android:layout_height="1dp"/>
 
-            <TextView
+            <oak.widget.TextViewWithFont
+                oak:font="Roboto-Thin.ttf"
                 android:id="@+id/twitter_text"
                 android:padding="6dp"
                 android:text="Twitter: @davidhodge229"
@@ -60,7 +65,8 @@
                 android:layout_height="1dp"/>
 
 
-            <TextView
+            <oak.widget.TextViewWithFont
+                oak:font="Roboto-Thin.ttf"
                 android:id="@+id/app_net_text"
                 android:padding="6dp"
                 android:text="App.net: david_hodge"
@@ -76,7 +82,8 @@
                 android:layout_height="1dp"/>
 
 
-            <TextView
+            <oak.widget.TextViewWithFont
+                oak:font="Roboto-Thin.ttf"
                 android:id="@+id/email_text"
                 android:padding="6dp"
                 android:text="Email: dhodge.jr229@gmail.com"
@@ -91,7 +98,8 @@
                 android:layout_width="match_parent"
                 android:layout_height="1dp"/>
 
-            <TextView
+            <oak.widget.TextViewWithFont
+                oak:font="Roboto-Thin.ttf"
                 android:id="@+id/plus_text"
                 android:padding="6dp"
                 android:text="Google Plus: +DavidHodge229"
@@ -100,7 +108,8 @@
                 android:layout_height="wrap_content" />
 
 
-            <TextView
+            <oak.widget.TextViewWithFont
+                oak:font="Roboto-Light.ttf"
                 android:layout_marginTop="6dp"
                 android:text="Extras"
                 android:textSize="16sp"
@@ -112,7 +121,8 @@
                 android:layout_width="match_parent"
                 android:layout_height="1dp"/>
 
-            <TextView
+            <oak.widget.TextViewWithFont
+                oak:font="Roboto-Thin.ttf"
                 android:id="@+id/share_text"
                 android:padding="6dp"
                 android:text="Share this app!"
@@ -127,7 +137,8 @@
                 android:layout_width="match_parent"
                 android:layout_height="1dp"/>
 
-            <TextView
+            <oak.widget.TextViewWithFont
+                oak:font="Roboto-Thin.ttf"
                 android:id="@+id/rate_text"
                 android:padding="6dp"
                 android:text="Rate this app?"
@@ -142,7 +153,8 @@
                 android:layout_width="match_parent"
                 android:layout_height="1dp"/>
 
-            <TextView
+            <oak.widget.TextViewWithFont
+                oak:font="Roboto-Thin.ttf"
                 android:id="@+id/other_apps_text"
                 android:padding="6dp"
                 android:text="Check out my other apps"

@@ -1,0 +1,154 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:oak="http://oak/oak/schema"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <LinearLayout
+        android:layout_marginTop="8dp"
+        android:layout_marginLeft="8dp"
+        android:layout_marginRight="8dp"
+        android:orientation="vertical"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <oak.widget.TextViewWithFont
+            oak:font="Roboto-Light.ttf"
+            android:text="Remove Ads - $1.99"
+            android:textSize="20sp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" />
+
+        <View
+            android:background="@color/translucent_white"
+            android:layout_width="match_parent"
+            android:layout_height="1dp"/>
+
+        <LinearLayout
+            android:orientation="horizontal"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <oak.widget.TextViewWithFont
+                oak:font="Roboto-Thin.ttf"
+                android:layout_weight="1"
+                android:layout_gravity="center_vertical"
+                android:gravity="center_vertical"
+                android:layout_marginRight="16dp"
+                android:layout_marginLeft="8dp"
+                android:text="Small one time fee to remove ads for life!"
+                android:textSize="14sp"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content" />
+
+            <Button
+                android:text="Purchase"
+                android:textColor="@color/white"
+                android:textSize="14sp"
+                android:id="@+id/ads_btn"
+                android:layout_width="wrap_content"
+                android:layout_height="48dp" />
+
+        </LinearLayout>
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_marginTop="8dp"
+        android:layout_marginLeft="8dp"
+        android:layout_marginRight="8dp"
+        android:orientation="vertical"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <oak.widget.TextViewWithFont
+            oak:font="Roboto-Light.ttf"
+            android:text="Unlock Twitter - $0.99"
+            android:textSize="20sp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" />
+
+        <View
+            android:background="@color/translucent_white"
+            android:layout_width="match_parent"
+            android:layout_height="1dp"/>
+
+        <LinearLayout
+            android:orientation="horizontal"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <oak.widget.TextViewWithFont
+                oak:font="Roboto-Thin.ttf"
+                android:layout_weight="1"
+                android:layout_marginRight="16dp"
+                android:layout_marginLeft="8dp"
+                android:layout_gravity="center_vertical"
+                android:gravity="center_vertical"
+                android:text="Small one time fee to unlock automatic sharing to Twitter!"
+                android:textSize="14sp"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content" />
+
+            <Button
+                android:text="Purchase"
+                android:textColor="@color/white"
+                android:textSize="14sp"
+                android:id="@+id/twitter_btn"
+                android:layout_width="wrap_content"
+                android:layout_height="48dp" />
+
+        </LinearLayout>
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_marginTop="8dp"
+        android:layout_marginLeft="8dp"
+        android:layout_marginRight="8dp"
+        android:orientation="vertical"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <oak.widget.TextViewWithFont
+            oak:font="Roboto-Light.ttf"
+            android:text="Donate - $1.99"
+            android:textSize="20sp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" />
+
+        <View
+            android:background="@color/translucent_white"
+            android:layout_width="match_parent"
+            android:layout_height="1dp"/>
+
+        <LinearLayout
+            android:orientation="horizontal"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <oak.widget.TextViewWithFont
+                oak:font="Roboto-Thin.ttf"
+                android:layout_weight="1"
+                android:layout_marginRight="16dp"
+                android:layout_marginLeft="8dp"
+                android:layout_gravity="center_vertical"
+                android:gravity="center_vertical"
+                android:text="Buy me a Monster? Monsters help spur development!"
+                android:textSize="14sp"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content" />
+
+            <Button
+                android:text="Purchase"
+                android:textColor="@color/white"
+                android:textSize="14sp"
+                android:id="@+id/donate_btn"
+                android:layout_width="wrap_content"
+                android:layout_height="48dp" />
+
+        </LinearLayout>
+    </LinearLayout>
+
+</LinearLayout>

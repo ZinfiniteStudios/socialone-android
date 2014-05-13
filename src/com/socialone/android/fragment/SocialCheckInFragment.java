@@ -410,8 +410,12 @@ public class SocialCheckInFragment extends SherlockFragment {
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         uiHelper.onActivityResult(requestCode, resultCode, data);
-        Fragment fragment = getChildFragmentManager().findFragmentById(googleCheckInFragment.getId());
-        fragment.onActivityResult(requestCode, resultCode, data);
+        try {
+            Fragment fragment = getChildFragmentManager().findFragmentById(googleCheckInFragment.getId());
+            fragment.onActivityResult(requestCode, resultCode, data);
+        }catch (NullPointerException e){
+            Log.e("socailone", e.toString());
+        }
     }
 
     @Override

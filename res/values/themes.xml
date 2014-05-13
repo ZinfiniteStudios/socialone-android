@@ -6,6 +6,10 @@
         <!--<item name="android:windowBackground">@color/white</item>-->
         <item name="android:textColor">@color/light_text_color</item>
         <item name="android:popupMenuStyle">@style/MyApp.PopupMenu</item>
+        <item name="android:actionBarStyle">@style/Widget.One.ActionBar</item>
+        <!--<item name="android:windowActionBarOverlay">false</item>-->
+        <!--<item name="android:windowTranslucentStatus">true</item>-->
+        <!--<item name="android:windowTranslucentNavigation">true</item>-->
         <!--<item name="android:windowTranslucentNavigation">true</item>-->
         <!--<item name="android:fitsSystemWindows">true</item>-->
     </style>

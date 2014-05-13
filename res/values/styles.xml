@@ -1,4 +1,11 @@
 <resources>
+
+    <style name="Widget.One.ActionBar" parent="Widget.Sherlock.Light.ActionBar.Solid.Inverse">
+        <item name="android:background">@color/ab_color</item>
+        <item name="background">@color/ab_color</item>
+        <item name="android:windowContentOverlay">@drawable/abs__ab_solid_shadow_holo</item>
+    </style>
+
     <style name="Fill">
         <item name="android:layout_width">fill_parent</item>
         <item name="android:layout_height">fill_parent</item>
@@ -59,12 +66,12 @@
     </style>
 
     <style name="CheckinTitlePageIndicator">
-        <item name="android:background">@color/translucent_black</item>
+        <item name="android:background">@color/transparent</item>
         <item name="footerColor">#32CD99</item>
         <item name="footerLineHeight">1dp</item>
         <item name="footerIndicatorHeight">3dp</item>
         <item name="footerIndicatorStyle">underline</item>
-        <item name="android:textColor">#E5E5E5</item>
+        <item name="android:textColor">@color/translucent_white</item>
         <item name="selectedColor">#E5E5E5</item>
         <item name="selectedBold">true</item>
     </style>

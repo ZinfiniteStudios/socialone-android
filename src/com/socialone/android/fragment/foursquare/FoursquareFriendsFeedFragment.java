@@ -2,6 +2,7 @@ package com.socialone.android.fragment.foursquare;
 
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Typeface;
 import android.location.Criteria;
 import android.location.Location;
 import android.location.LocationManager;
@@ -193,6 +194,8 @@ public class FoursquareFriendsFeedFragment extends SherlockFragment {
 
             }
 
+            Typeface tf = Typeface.createFromAsset(mContext.getAssets(), "fonts/Roboto-Light.ttf");
+            viewHolder.postTime.setTypeface(tf);
             viewHolder.postInfo.setText(post.getShout());
             Picasso.with(mContext)
                     .load(post.getUser().getPhoto())

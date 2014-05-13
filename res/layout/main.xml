@@ -1,12 +1,18 @@
 <?xml version="1.0" encoding="utf-8"?>
-<android.support.v4.widget.DrawerLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<android.support.v4.widget.DrawerLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:Amazon="http://schemas.android.com/apk/lib/com.amazon.device.ads"
+    xmlns:ads="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/drawer_root"
     android:layout_height="match_parent"
-    android:layout_width="match_parent">
+    android:layout_width="match_parent"
+    android:fitsSystemWindows="false"
+    tools:context=".MainActivity" >
 
     <LinearLayout
         android:orientation="vertical"
+        android:fitsSystemWindows="true"
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
@@ -22,6 +28,17 @@
             android:layout_height="match_parent"
             android:scaleType="centerCrop"
             android:visibility="gone" />
+
+        <com.google.android.gms.ads.AdView
+            android:id="@+id/google_ad"
+            android:visibility="gone"
+            android:gravity="center"
+            android:layout_gravity="center"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            ads:adUnitId="ca-app-pub-5640708555066600/5310594495"
+            ads:adSize="BANNER" />
+
 
         <com.amazon.device.ads.AdLayout
             android:id="@+id/ad_view"

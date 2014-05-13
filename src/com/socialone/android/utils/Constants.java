@@ -179,4 +179,8 @@ public class Constants {
     public static final String EMAIL_URL = "dhodge.jr229@gmail.com";
     public static final String APP_RATE_URL = "https://play.google.com/store/apps/details?id=com.socialone.android";
     public static final String OTHER_APPS_URL = "https://play.google.com/store/apps/developer?id=Vapr-Ware";
+
+    public static final String BASE_PURCHASE_KEY = "MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAjA105LRVs+RQBMW6Hm+X0OF4V4QK98T31InM/ul1Yko2fRZOvby0PuedfHrhx6U4GYui3wZGRYMtkdLzNM336hj5EHE5rNblEggqMvGXcpYgk20V93F9zL5m2LI6giVrywfmea+Jw5nuR8WgssV7Fg+JJI1zivarzUWlRBVeM1fOPZcxI7F7pNNqw8whHp/VYJWIURdJMESuYkz+Emc81AK8bfP4JL/ADO2xOuL2Kysx54yXbuppHJj/k3qY+ESeEOSQCtPlxMm0MpnXu3Cb4+lytGUQiPCNPXBUgwMmkIXt6a2PlmAdc497ATVNfE8mgFSL77JzyP6kx0wN8cc+2QIDAQAB";
+
+    public static final String APP_SHARE = "";
 }

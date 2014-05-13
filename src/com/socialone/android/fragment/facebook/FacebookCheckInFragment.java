@@ -3,12 +3,15 @@ package com.socialone.android.fragment.facebook;
 import android.app.Dialog;
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
+import android.net.Uri;
 import android.os.Bundle;
 import android.os.StrictMode;
+import android.preference.PreferenceManager;
 import android.text.Spannable;
 import android.text.SpannableString;
 import android.text.style.ForegroundColorSpan;
@@ -36,6 +39,7 @@ import com.facebook.SessionState;
 import com.facebook.UiLifecycleHelper;
 import com.facebook.model.GraphPlace;
 import com.google.analytics.tracking.android.EasyTracker;
+import com.google.android.gms.plus.PlusShare;
 import com.haarman.listviewanimations.swinginadapters.prepared.SwingBottomInAnimationAdapter;
 import com.socialone.android.R;
 import com.socialone.android.services.LocationService;
@@ -53,6 +57,7 @@ import twitter4j.StatusUpdate;
 import twitter4j.Twitter;
 import twitter4j.TwitterFactory;
 import twitter4j.conf.ConfigurationBuilder;
+
 
 /**
  * Created by david.hodge on 12/25/13.
@@ -77,11 +82,15 @@ public class FacebookCheckInFragment extends SherlockFragment implements Locatio
     TwitterFactory tf;
     Twitter twitter;
     SocialAuthAdapter mAuthAdapter;
+    SharedPreferences prefs;
+    SharedPreferences.Editor edit;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
+        prefs = PreferenceManager.getDefaultSharedPreferences(getActivity());
+        edit = prefs.edit();
         locationService = new LocationService(getSherlockActivity());
 
         uiHelper = new UiLifecycleHelper(getSherlockActivity(), new Session.StatusCallback() {
@@ -244,42 +253,50 @@ public class FacebookCheckInFragment extends SherlockFragment implements Locatio
         checkinBtn = (Button) dialog.findViewById(R.id.checkin_message_checkin);
 
         final CheckBox twitterCheckbox = (CheckBox) dialog.findViewById(R.id.twitter_share_box);
+        final CheckBox gplusCheckbox = (CheckBox) dialog.findViewById(R.id.gplus_share_box);
+
+
         twitterCheckbox.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
                 if(isChecked){
 
-                    mAuthAdapter = new SocialAuthAdapter(new DialogListener() {
-                        @Override
-                        public void onComplete(Bundle bundle) {
-                            ConfigurationBuilder cb = new ConfigurationBuilder();
-                            cb.setDebugEnabled(true)
-                                    .setOAuthConsumerKey(Constants.TWIT_CONSUMER_KEY)
-                                    .setOAuthConsumerSecret(Constants.TWIT_CONSUMER_SECRET)
-                                    .setOAuthAccessToken(mAuthAdapter.getCurrentProvider().getAccessGrant().getKey())
-                                    .setOAuthAccessTokenSecret(mAuthAdapter.getCurrentProvider().getAccessGrant().getSecret());
-                            tf = new TwitterFactory(cb.build());
-                            twitter = tf.getInstance();
-                        }
+                    if(prefs.getBoolean("twit_p", false) == true) {
+                        mAuthAdapter = new SocialAuthAdapter(new DialogListener() {
+                            @Override
+                            public void onComplete(Bundle bundle) {
+                                ConfigurationBuilder cb = new ConfigurationBuilder();
+                                cb.setDebugEnabled(true)
+                                        .setOAuthConsumerKey(Constants.TWIT_CONSUMER_KEY)
+                                        .setOAuthConsumerSecret(Constants.TWIT_CONSUMER_SECRET)
+                                        .setOAuthAccessToken(mAuthAdapter.getCurrentProvider().getAccessGrant().getKey())
+                                        .setOAuthAccessTokenSecret(mAuthAdapter.getCurrentProvider().getAccessGrant().getSecret());
+                                tf = new TwitterFactory(cb.build());
+                                twitter = tf.getInstance();
+                            }
 
-                        @Override
-                        public void onError(SocialAuthError socialAuthError) {
-                            Log.e("twitter", "auth adapter " + socialAuthError.getMessage());
-                        }
+                            @Override
+                            public void onError(SocialAuthError socialAuthError) {
+                                Log.e("twitter", "auth adapter " + socialAuthError.getMessage());
+                            }
 
-                        @Override
-                        public void onCancel() {
-                            //stub
-                        }
+                            @Override
+                            public void onCancel() {
+                                //stub
+                            }
 
-                        @Override
-                        public void onBack() {
-                            //stub
-                        }
-                    });
+                            @Override
+                            public void onBack() {
+                                //stub
+                            }
+                        });
 
-                    mAuthAdapter.addCallBack(SocialAuthAdapter.Provider.TWITTER, Constants.TWITTER_CALLBACK);
-                    mAuthAdapter.authorize(getSherlockActivity(), SocialAuthAdapter.Provider.TWITTER);
+                        mAuthAdapter.addCallBack(SocialAuthAdapter.Provider.TWITTER, Constants.TWITTER_CALLBACK);
+                        mAuthAdapter.authorize(getSherlockActivity(), SocialAuthAdapter.Provider.TWITTER);
+                    }else{
+                        Toast.makeText(getActivity(), "Twitter unlock must be purchased!", Toast.LENGTH_SHORT).show();
+                        twitterCheckbox.setChecked(false);
+                    }
                 }
             }
         });
@@ -294,6 +311,7 @@ public class FacebookCheckInFragment extends SherlockFragment implements Locatio
         checkinBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+
                 //just text post
                 Bundle postParams = new Bundle();
                 postParams.putString("type", "checkin");
@@ -301,7 +319,6 @@ public class FacebookCheckInFragment extends SherlockFragment implements Locatio
                 postParams.putString("place", placeId);
                 Request.Callback callback = new Request.Callback() {
                     public void onCompleted(Response response) {
-
                         FacebookRequestError error = response.getError();
                         if (error != null) {
                             dialog.dismiss();
@@ -313,6 +330,25 @@ public class FacebookCheckInFragment extends SherlockFragment implements Locatio
                             Toast.makeText(getSherlockActivity(),
                                     "Facebook Share completed",
                                     Toast.LENGTH_LONG).show();
+                            if (gplusCheckbox.isChecked()) {
+                                Uri locUrl;
+                                try {
+                                    locUrl = Uri.parse(place.getId());
+                                } catch (Exception e) {
+                                    Log.e("socialone", e.toString());
+                                    //TODO change to app site
+                                    locUrl = Uri.parse(Constants.APP_RATE_URL);
+                                }
+
+                                Intent shareIntent = new PlusShare.Builder(getActivity())
+                                        .setType("text/plain")
+                                        .setText("At " + place.getName() + " " + checkinMessge.getText().toString())
+                                        .setContentUrl(locUrl)
+                                        .getIntent();
+
+                                getActivity().startActivityForResult(shareIntent, 0);
+
+                            }
                         }
                     }
                 };

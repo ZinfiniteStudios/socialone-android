@@ -2,6 +2,7 @@ package com.socialone.android.viewcomponents;
 
 import android.content.Context;
 import android.content.res.TypedArray;
+import android.graphics.Paint;
 import android.os.Handler;
 import android.os.Parcel;
 import android.os.Parcelable;
@@ -11,6 +12,8 @@ import android.view.View;
 import android.widget.TextView;
 
 import com.socialone.android.R;
+
+import oak.util.OakUtils;
 
 /**
  * Created by david.hodge on 1/3/14.
@@ -40,11 +43,41 @@ public class RelativeTimeTextView extends TextView {
     public RelativeTimeTextView(Context context, AttributeSet attrs) {
         super(context, attrs);
         init(context, attrs);
+        setPaintFlags(getPaintFlags() | Paint.SUBPIXEL_TEXT_FLAG);
     }
 
     public RelativeTimeTextView(Context context, AttributeSet attrs, int defStyle) {
         super(context, attrs, defStyle);
         init(context, attrs);
+        setPaintFlags(getPaintFlags() | Paint.SUBPIXEL_TEXT_FLAG);
+
+        if (isInEditMode()) return;
+
+        String fontName = null;
+        if (attrs != null) {
+            TypedArray typedArray = context.obtainStyledAttributes(attrs, R.styleable.TextViewWithFont);
+            if (typedArray != null) {
+                try {
+                    fontName = typedArray.getString(R.styleable.TextViewWithFont_oakFont);
+                    if (fontName != null) {
+                        setTypeface(OakUtils.getStaticTypeFace(context, fontName));
+                    }
+                } catch (IllegalArgumentException e) {
+                    try {
+                        int fontNameRes = typedArray.getResourceId(R.styleable.TextViewWithFont_oakFont, -1);
+                        if (fontNameRes != -1) {
+                            fontName = context.getString(fontNameRes);
+                            if (fontName != null) {
+                                setTypeface(OakUtils.getStaticTypeFace(context, fontName));
+                            }
+                        }
+                    } catch (IllegalArgumentException f) {
+                        f.printStackTrace();
+                    }
+                }
+                typedArray.recycle();
+            }
+        }
     }
 
     private void init(Context context, AttributeSet attrs) {
@@ -61,6 +94,8 @@ public class RelativeTimeTextView extends TextView {
         } catch (NumberFormatException nfe) {
             mReferenceTime = -1L;
         }
+//        Typeface tf = Typeface.createFromAsset(context.getAssets(), "Roboto-Light.ttf");
+//        setTypeface(tf);
 
     }
 
